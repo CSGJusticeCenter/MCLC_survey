@@ -2,5 +2,5 @@
 
 ## Repository Structure 
 
-|-- code  
-  |-- import.R                # imports MCLC survey data from Google Sheets  
+    |-- code  
+      |-- import.R                # imports MCLC survey data from Google Sheets  
