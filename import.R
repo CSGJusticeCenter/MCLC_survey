@@ -15,4 +15,5 @@ library(googlesheets4)
 # googlesheets4::gs4_auth()
 
 # read google sheets data into R
-x <- read_sheet('https://docs.google.com/spreadsheets/d/1xP5TUaEJ5My4djXqytVw5RKWHMsG1Vz9ejQ3oU4Mros/edit?usp=sharing')
+# each sheet is a state
+alabama <- read_sheet('https://docs.google.com/spreadsheets/d/1SXBqghzBE5wgOzt7zs52yhK1oDw0R85gysyiKH0RRw0/edit?usp=sharing')
