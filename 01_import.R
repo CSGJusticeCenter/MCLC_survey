@@ -10,14 +10,14 @@
 # load packages
 library(googlesheets4)
 
-# # Use thi code to connect to gdrive, fetch new token, and authorize tidyverse api
-# # make sure you select the option to be able edit all sheets
+# # Use this code to connect to google drive, fetch new token, and authorize tidyverse api
+# # Make sure the sheets have been officially shared with you
 # googlesheets4::gs4_deauth()
 # googlesheets4::gs4_auth()
 
 # read google sheets data into r
 # each sheet is a state
-alabama.xlsx        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMloM9Y5W4mkZeGIi020Ycvbvxbw9TS-mbI_H0c3cY/edit?usp=sharing')
+Alabama          <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMloM9Y5W4mkZeGIi020Ycvbvxbw9TS-mbI_H0c3cY/edit?usp=sharing')
 # alaska.xlsx          <- read_sheet('')
 # arizona.xlsx         <- read_sheet('')
 # arkansas.xlsx        <- read_sheet('')
@@ -28,10 +28,10 @@ alabama.xlsx        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMlo
 # florida        <- read_sheet('')
 # georgia        <- read_sheet('')
 # hawaii         <- read_sheet('')
-# idaho          <- read_sheet('')
+Idaho            <- read_sheet('https://docs.google.com/spreadsheets/d/1KpmE0WJIbrBs9Uuc-CyF77cJ8nETWHM4k0LYW0VPlPk/edit?usp=sharing')
 # illinois       <- read_sheet('')
 # indiana        <- read_sheet('')
-# iowa           <- read_sheet('')
+Iowa             <- read_sheet('https://docs.google.com/spreadsheets/d/1AxedM8YOYems1YslCHQncHPiv8ENvIZnr3-dXJ6FzNY/edit?usp=sharing')
 # kansas         <- read_sheet('')
 # kentucky       <- read_sheet('')
 # louisiana      <- read_sheet('')
@@ -41,7 +41,7 @@ alabama.xlsx        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMlo
 # michigan       <- read_sheet('')
 # minnesota      <- read_sheet('')
 # mississippi    <- read_sheet('')
-# missouri       <- read_sheet('')
+Missouri         <- read_sheet('https://docs.google.com/spreadsheets/d/1-aVOwXJvxqMNLNkrqbcX_cSF4S_T8u2PIl3L7rdk4Oc/edit?usp=sharing')
 # montana        <- read_sheet('')
 # nebraska       <- read_sheet('')
 # nevada         <- read_sheet('')
@@ -54,12 +54,12 @@ alabama.xlsx        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMlo
 # ohio           <- read_sheet('')
 # oklahoma       <- read_sheet('')
 # oregon         <- read_sheet('')
-# pennsylvania   <- read_sheet('')
+Pennsylvania     <- read_sheet('https://docs.google.com/spreadsheets/d/1FcMVgowc4fdYL-L_btFzUi-SgaA0Z3QTG2kxJncKOZo/edit?usp=sharing')
 # rhode_island   <- read_sheet('')
 # south_carolina <- read_sheet('')
 # south_dakota   <- read_sheet('')
 # tennessee      <- read_sheet('')
-# texas          <- read_sheet('')
+# texas # can't access google sheets
 # utah           <- read_sheet('')
 # vermont        <- read_sheet('')
 # virginia       <- read_sheet('')

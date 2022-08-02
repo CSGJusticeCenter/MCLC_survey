@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: functions.r
-# Last updated: July 25, 2022
+# Last updated: August 2, 2022
 # Author: Mari Roberts
 
 # Custom functions
@@ -11,9 +11,8 @@ library(dplyr)
 library(janitor)
 library(stringr)
 
-
 #################
-# custom function to extract name and email
+# Custom function to extract name and email
 #################
 
 fnc_contact_info <- function(df, state_name){
@@ -25,9 +24,15 @@ fnc_contact_info <- function(df, state_name){
            email = 2)
 }
 
+clean_titles <- function(x) {
+  x <- gsub("_", " ", x)
+  x <- gsub("\\b([a-z])", "\\U\\1", x, perl = TRUE)
+  x
+}
+
 #################
-# custom function to generate state data checklist
-# for example, if numbers add up, what was left blank, etc.
+# Custom function to generate state data checklist
+# If numbers add up, what was left blank, no data
 #################
 
 fnc_create_state_data_checklist <- function(df, state_name){
@@ -36,51 +41,41 @@ fnc_create_state_data_checklist <- function(df, state_name){
   df1 <- janitor::clean_names(df)
 
   # combine columns of text
-  df1$metric <- apply(df1[,1:2], 1, function(x) x[!is.na(x)][1])
+  df1$metric <- apply(df1[,1:3], 1, function(x) x[!is.na(x)][1])
 
-  # select data area in spreadsheet (remove white space and instructions that imported from Google Sheet)
+  # select admissions and population data in spreadsheet
+  # rename variables
+  # remove white space and instructions that imported from Google Sheets
   df_numbers <- df1 %>% select(metric,
-                               year_2018 = x4,
-                               year_2019 = x5,
-                               year_2020 = x6,
-                               year_2021 = x7)
-  df_numbers <- df_numbers[c(24:33, 36:45),]
-
-  # if data left blank, indicate with "left blank" - only works if all numeric
-  df_numbers <- df_numbers %>%
-    mutate_if(is.numeric, funs(ifelse(is.na(.), "left blank", .)))
-
-  # change all data to characters
-  df_numbers[] <- as.data.frame(lapply(df_numbers, as.character))
+                               year_2018 = x5,
+                               year_2019 = x6,
+                               year_2020 = x7,
+                               year_2021 = x8)
+  df_numbers <- df_numbers[c(22:31, 34:43),]
 
   # make all data lowercase
-  # replace NAs and nulls (blanks) to "left blank"
+  # if data left blank or says NULL, indicate with "left blank"
+  # change all data to characters
   # indicate various ways to spell NA as "no data"
   df_numbers <- df_numbers %>%
+    mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
-
     mutate_if(is.character, funs(ifelse(is.na(.), "left blank", .))) %>%
-    mutate_if(is.character, ~replace(., . == "null", "left blank")) %>%
-
-    mutate_if(is.character, ~replace(., . == "na", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "n/a", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "nodata", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "no data", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "not available", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "notavailable", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "notready", "no data")) %>%
-    mutate_if(is.character, ~replace(., . == "not ready", "no data"))
-
-  # remove all blank spaces and punctuation - NEED???????????????????
-  # df_numbers <- apply(df_numbers, 2, str_remove_all, " ")
-  # df_numbers <- apply(df_numbers,2,function(x)gsub('\\s+', '',x))
-  # df_numbers <- as.data.frame(apply(df_numbers,2,function(x)gsub('\\s+', '',x)))
+    mutate_if(grepl('null',.), ~replace(., grepl('null', .), "left blank")) %>%
+    mutate(across(everything(), ~replace(., . ==  "na" |
+                                           . ==  "nodata" |
+                                           . ==  "no data" |
+                                           . ==  "notavailable" |
+                                           . ==  "not available" |
+                                           . ==  "notready" |
+                                           . ==  "not ready"
+                                         , "no data")))
 
   # transpose data
-  df_numbers <- as.data.frame(t(df_numbers))
+  df_transposed <- as.data.frame(t(df_numbers))
 
-  # make first row header, get year and make all text lower case
-  df_numbers <- df_numbers %>%
+  # make first row header and get year
+  df_transposed <- df_transposed %>%
     row_to_names(row_number = 1) %>%
     tibble::rownames_to_column("year") %>%
     janitor::clean_names() %>%
@@ -94,13 +89,13 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # supervision violations = probation + parole violations
   # probation violations = technical probation + new offense probation
   # parole violations = technical parole + new offense parole
-  df_numbers <- df_numbers %>%
-    mutate(check_other_prison_admissions = as.numeric(total_prison_admissions) - as.numeric(supervision_violation_admissions),
-           check_other_prison_population = as.numeric(total_prison_population) - as.numeric(supervision_violation_population),
+  df_final <- df_transposed %>%
+    mutate(check_other_prison_admissions = as.numeric(total_prison_admissions) - as.numeric(total_supervision_violation_admissions),
+           check_other_prison_population = as.numeric(total_prison_population) - as.numeric(total_supervision_violation_population),
 
-           check_supervision_violation_admissions = case_when(as.numeric(supervision_violation_admissions) == as.numeric(probation_violation_admissions) + as.numeric(parole_violation_admissions) ~ "correct",
-                                                              supervision_violation_admissions == "no data" ~ "no data",
-                                                              supervision_violation_admissions == "left blank" ~ "left blank",
+           check_supervision_violation_admissions = case_when(as.numeric(total_supervision_violation_admissions) == as.numeric(probation_violation_admissions) + as.numeric(parole_violation_admissions) ~ "correct",
+                                                              total_supervision_violation_admissions == "no data" ~ "no data",
+                                                              total_supervision_violation_admissions == "left blank" ~ "left blank",
                                                               TRUE ~ "doesn't add up"),
            check_probation_violation_admissions   = case_when(as.numeric(probation_violation_admissions) == as.numeric(technical_probation_violation_admissions) + as.numeric(new_offense_probation_admissions) ~ "correct",
                                                               probation_violation_admissions == "no data" ~ "no data",
@@ -119,8 +114,11 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                                               parole_violation_population == "left blank" ~ "left blank",
                                                               TRUE ~ "doesn't add up"),
            state = state_name)
-  return(df_numbers)
+  return(df_final)
 }
 
-
+#################
+# Custom function to generate state data checklist
+# If data is different from what was submitted before
+#################
 
