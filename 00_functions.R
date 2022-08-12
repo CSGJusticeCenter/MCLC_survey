@@ -64,7 +64,9 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                            . ==  "notavailable" |
                                            . ==  "not available" |
                                            . ==  "notready" |
-                                           . ==  "not ready"
+                                           . ==  "not ready" |
+                                           . == "[none]" |
+                                           . == "none"
                                          , "No Data")))
 
   # transpose data
@@ -78,7 +80,8 @@ fnc_create_state_data_checklist <- function(df, state_name){
     mutate(year = case_when(grepl("2018", year) ~ 2018,
                             grepl("2019", year) ~ 2019,
                             grepl("2020", year) ~ 2020,
-                            grepl("2021", year) ~ 2021))
+                            grepl("2021", year) ~ 2021)) %>%
+    rename_with(~ paste0(., "_22"), -c(year))
 
 
   # check to see if numbers add up correctly
@@ -86,29 +89,29 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # probation violations = technical probation + new offense probation
   # parole violations = technical parole + new offense parole
   df_final <- df_transposed %>%
-    mutate(check_other_prison_admissions = as.numeric(total_prison_admissions) - as.numeric(total_supervision_violation_admissions),
-           check_other_prison_population = as.numeric(total_prison_population) - as.numeric(total_supervision_violation_population),
+    mutate(check_other_prison_admissions_22 = as.numeric(total_prison_admissions_22) - as.numeric(total_supervision_violation_admissions_22),
+           check_other_prison_population_22 = as.numeric(total_prison_population_22) - as.numeric(total_supervision_violation_population_22),
 
-           check_supervision_violation_admissions = case_when(as.numeric(total_supervision_violation_admissions) == as.numeric(probation_violation_admissions) + as.numeric(parole_violation_admissions) ~ "correct",
-                                                              total_supervision_violation_admissions == "No Data" ~ "No Data",
-                                                              total_supervision_violation_admissions == "Left Blank" ~ "Left Blank",
-                                                              TRUE ~ "doesn't add up"),
-           check_probation_violation_admissions   = case_when(as.numeric(probation_violation_admissions) == as.numeric(technical_probation_violation_admissions) + as.numeric(new_offense_probation_violation_admissions) ~ "correct",
-                                                              probation_violation_admissions == "No Data" ~ "No Data",
-                                                              probation_violation_admissions == "Left Blank" ~ "Left Blank",
-                                                              TRUE ~ "doesn't add up"),
-           check_parole_violation_admissions      = case_when(as.numeric(parole_violation_admissions) == as.numeric(technical_parole_violation_admissions) + as.numeric(new_offense_parole_violation_admissions) ~ "correct",
-                                                              parole_violation_admissions == "No Data" ~ "No Data",
-                                                              parole_violation_admissions == "Left Blank" ~ "Left Blank",
-                                                              TRUE ~ "doesn't add up"),
-           check_probation_violation_population   = case_when(as.numeric(probation_violation_population) == as.numeric(technical_probation_violation_population) + as.numeric(new_offense_probation_violation_population) ~ "correct",
-                                                              probation_violation_population == "No Data" ~ "No Data",
-                                                              probation_violation_population == "Left Blank" ~ "Left Blank",
-                                                              TRUE ~ "doesn't add up"),
-           check_parole_violation_population      = case_when(as.numeric(parole_violation_population) == as.numeric(technical_parole_violation_population) + as.numeric(new_offense_parole_violation_population) ~ "correct",
-                                                              parole_violation_population == "No Data" ~ "No Data",
-                                                              parole_violation_population == "Left Blank" ~ "Left Blank",
-                                                              TRUE ~ "doesn't add up"),
+           check_supervision_violation_admissions_22 = case_when(as.numeric(total_supervision_violation_admissions_22) == as.numeric(probation_violation_admissions_22) + as.numeric(parole_violation_admissions_22) ~ "Correct",
+                                                              total_supervision_violation_admissions_22 == "No Data" ~ "No Data",
+                                                              total_supervision_violation_admissions_22 == "Left Blank" ~ "Left Blank",
+                                                              TRUE ~ "Doesn't Add Up"),
+           check_probation_violation_admissions_22   = case_when(as.numeric(probation_violation_admissions_22) == as.numeric(technical_probation_violation_admissions_22) + as.numeric(new_offense_probation_violation_admissions_22) ~ "Correct",
+                                                              probation_violation_admissions_22 == "No Data" ~ "No Data",
+                                                              probation_violation_admissions_22 == "Left Blank" ~ "Left Blank",
+                                                              TRUE ~ "Doesn't Add Up"),
+           check_parole_violation_admissions_22      = case_when(as.numeric(parole_violation_admissions_22) == as.numeric(technical_parole_violation_admissions_22) + as.numeric(new_offense_parole_violation_admissions_22) ~ "Correct",
+                                                              parole_violation_admissions_22 == "No Data" ~ "No Data",
+                                                              parole_violation_admissions_22 == "Left Blank" ~ "Left Blank",
+                                                              TRUE ~ "Doesn't Add Up"),
+           check_probation_violation_population_22   = case_when(as.numeric(probation_violation_population_22) == as.numeric(technical_probation_violation_population_22) + as.numeric(new_offense_probation_violation_population_22) ~ "Correct",
+                                                              probation_violation_population_22 == "No Data" ~ "No Data",
+                                                              probation_violation_population_22 == "Left Blank" ~ "Left Blank",
+                                                              TRUE ~ "Doesn't Add Up"),
+           check_parole_violation_population_22      = case_when(as.numeric(parole_violation_population_22) == as.numeric(technical_parole_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Correct",
+                                                              parole_violation_population_22 == "No Data" ~ "No Data",
+                                                              parole_violation_population_22 == "Left Blank" ~ "Left Blank",
+                                                              TRUE ~ "Doesn't Add Up"),
            state = state_name)
   return(df_final)
 }

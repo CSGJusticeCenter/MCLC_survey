@@ -46,11 +46,12 @@ adm_pop <- adm_pop %>%
 # subset for now
 previous_survey <- adm_pop %>% filter(state == "Alabama" | state == "Idaho" | state == "Iowa" )
 
-# rename variables so they're consistent with new survey (slight variations...)
+# rename variables so they're consistent with new survey
 # change all data to characters
-# if data left blank or NA, indicate with "left blank"
+# if data left blank or NA, indicate with "Left Blank or No Data"
 # add "previous survey" indicator to metrics
-# this way we can compare what was submitted last year, if they changed any numbers from 2018-2020
+# this way we can compare what was submitted last year, e.g. if they changed any numbers from 2018-2020
+# append "21" to variables so we know these metrics are from the 2021 survey
 previous_survey <- previous_survey %>%
 
   select(state,
@@ -78,6 +79,6 @@ previous_survey <- previous_survey %>%
          new_offense_parole_violation_population) %>%
 
   mutate(across(everything(), as.character)) %>%
-  mutate_if(is.character, funs(ifelse(is.na(.), "left blank or no data", .))) %>%
-  rename_with(~ paste0("prev_", .), -c(state, year)) %>%
+  mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank or No Data", .))) %>%
+  rename_with(~ paste0(., "_21"), -c(state, year)) %>%
   mutate(year = as.numeric(year))

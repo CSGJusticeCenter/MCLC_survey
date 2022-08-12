@@ -75,6 +75,7 @@ test_email <-
     body = md(glue::glue("Hello, Thank you for submitting the 2022 More Community, Less Confinement data collection {form}.",
 
                          tbl_html,
+                         email_table,
 
                          "For questions, please contact Mari Roberts at [mroberts@csg.org](mailto:mroberts@csg.org).
 
