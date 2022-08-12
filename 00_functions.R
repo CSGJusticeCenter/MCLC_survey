@@ -7,10 +7,6 @@
 # Custom functions
 ############################################
 
-library(dplyr)
-library(janitor)
-library(stringr)
-
 #################
 # Custom function to extract name and email
 #################
@@ -32,7 +28,7 @@ clean_titles <- function(x) {
 
 #################
 # Custom function to generate state data checklist
-# If numbers add up, what was left blank, no data
+# If numbers add up, what was Left Blank, No Data
 #################
 
 fnc_create_state_data_checklist <- function(df, state_name){
@@ -54,14 +50,14 @@ fnc_create_state_data_checklist <- function(df, state_name){
   df_numbers <- df_numbers[c(22:31, 34:43),]
 
   # make all data lowercase
-  # if data left blank or says NULL, indicate with "left blank"
+  # if data Left Blank or says NULL, indicate with "Left Blank"
   # change all data to characters
-  # indicate various ways to spell NA as "no data"
+  # indicate various ways to spell NA as "No Data"
   df_numbers <- df_numbers %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
-    mutate_if(is.character, funs(ifelse(is.na(.), "left blank", .))) %>%
-    mutate_if(grepl('null',.), ~replace(., grepl('null', .), "left blank")) %>%
+    mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
+    mutate_if(grepl('null',.), ~replace(., grepl('null', .), "Left Blank")) %>%
     mutate(across(everything(), ~replace(., . ==  "na" |
                                            . ==  "nodata" |
                                            . ==  "no data" |
@@ -69,7 +65,7 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                            . ==  "not available" |
                                            . ==  "notready" |
                                            . ==  "not ready"
-                                         , "no data")))
+                                         , "No Data")))
 
   # transpose data
   df_transposed <- as.data.frame(t(df_numbers))
@@ -94,24 +90,24 @@ fnc_create_state_data_checklist <- function(df, state_name){
            check_other_prison_population = as.numeric(total_prison_population) - as.numeric(total_supervision_violation_population),
 
            check_supervision_violation_admissions = case_when(as.numeric(total_supervision_violation_admissions) == as.numeric(probation_violation_admissions) + as.numeric(parole_violation_admissions) ~ "correct",
-                                                              total_supervision_violation_admissions == "no data" ~ "no data",
-                                                              total_supervision_violation_admissions == "left blank" ~ "left blank",
+                                                              total_supervision_violation_admissions == "No Data" ~ "No Data",
+                                                              total_supervision_violation_admissions == "Left Blank" ~ "Left Blank",
                                                               TRUE ~ "doesn't add up"),
-           check_probation_violation_admissions   = case_when(as.numeric(probation_violation_admissions) == as.numeric(technical_probation_violation_admissions) + as.numeric(new_offense_probation_admissions) ~ "correct",
-                                                              probation_violation_admissions == "no data" ~ "no data",
-                                                              probation_violation_admissions == "left blank" ~ "left blank",
+           check_probation_violation_admissions   = case_when(as.numeric(probation_violation_admissions) == as.numeric(technical_probation_violation_admissions) + as.numeric(new_offense_probation_violation_admissions) ~ "correct",
+                                                              probation_violation_admissions == "No Data" ~ "No Data",
+                                                              probation_violation_admissions == "Left Blank" ~ "Left Blank",
                                                               TRUE ~ "doesn't add up"),
-           check_parole_violation_admissions      = case_when(as.numeric(parole_violation_admissions) == as.numeric(technical_parole_violation_admissions) + as.numeric(new_offense_parole_admissions) ~ "correct",
-                                                              parole_violation_admissions == "no data" ~ "no data",
-                                                              parole_violation_admissions == "left blank" ~ "left blank",
+           check_parole_violation_admissions      = case_when(as.numeric(parole_violation_admissions) == as.numeric(technical_parole_violation_admissions) + as.numeric(new_offense_parole_violation_admissions) ~ "correct",
+                                                              parole_violation_admissions == "No Data" ~ "No Data",
+                                                              parole_violation_admissions == "Left Blank" ~ "Left Blank",
                                                               TRUE ~ "doesn't add up"),
-           check_probation_violation_population   = case_when(as.numeric(probation_violation_population) == as.numeric(technical_probation_violation_population) + as.numeric(new_offense_probation_population) ~ "correct",
-                                                              probation_violation_population == "no data" ~ "no data",
-                                                              probation_violation_population == "left blank" ~ "left blank",
+           check_probation_violation_population   = case_when(as.numeric(probation_violation_population) == as.numeric(technical_probation_violation_population) + as.numeric(new_offense_probation_violation_population) ~ "correct",
+                                                              probation_violation_population == "No Data" ~ "No Data",
+                                                              probation_violation_population == "Left Blank" ~ "Left Blank",
                                                               TRUE ~ "doesn't add up"),
-           check_parole_violation_population      = case_when(as.numeric(parole_violation_population) == as.numeric(technical_parole_violation_population) + as.numeric(new_offense_parole_population) ~ "correct",
-                                                              parole_violation_population == "no data" ~ "no data",
-                                                              parole_violation_population == "left blank" ~ "left blank",
+           check_parole_violation_population      = case_when(as.numeric(parole_violation_population) == as.numeric(technical_parole_violation_population) + as.numeric(new_offense_parole_violation_population) ~ "correct",
+                                                              parole_violation_population == "No Data" ~ "No Data",
+                                                              parole_violation_population == "Left Blank" ~ "Left Blank",
                                                               TRUE ~ "doesn't add up"),
            state = state_name)
   return(df_final)

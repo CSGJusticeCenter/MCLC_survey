@@ -8,14 +8,13 @@
 # Send emails
 ############################################
 
-
 library(blastula)      #for creating emails with HTML
 library(Microsoft365R) #for sending emails
 library(webshot)       #for converting html output (markdown) to a picture format (png)
 library(shiny)         #to write HTML code for custom buttons (blastula package is limited to a single html format)
 library(tidyverse)
 
-Lantern_PA <- "C:/Users/atallaksen/OneDrive - The Council of State Governments/GitProjects/LanternPA/Recommitment Reports/"
+# Lantern_PA <- "C:/Users/atallaksen/OneDrive - The Council of State Governments/GitProjects/LanternPA/Recommitment Reports/"
 
 # I don't actually remember how I did this for the first time (once registered, you can just run this command again and again),
 # but it is done through the Microsoft365R package
@@ -48,29 +47,42 @@ mybutton <-
 # Create pngs
 #############################################################################################################
 
-(
-  fig_1 <- mtcars %>%
-    ggplot(aes(x = wt, y = mpg)) + geom_point()
-)
-ggsave("fig_1.png", path = Lantern_PA, width = 5, height=6, bg = "transparent")
+# (
+#   fig_1 <- mtcars %>%
+#     ggplot(aes(x = wt, y = mpg)) + geom_point()
+# )
+# ggsave("fig_1.png", path = Lantern_PA, width = 5, height=6, bg = "transparent")
 
 ###################################################################################################################
 # Create email
 ####################################################################################################################
 
-test_email <- compose_email(
-  body = md(glue::glue(
+# test table
+tbl_html <-
+  mtcars %>%
+  gt() %>%
+  as_raw_html()
 
-    "Hello,
+# set form depenging on state
+# Alabama for now
+form <- "[form](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
 
-      This is a test email:
+# md uses markdown text
+test_email <-
 
-      {mybutton}
-      {paste0(add_image(file = paste0(Lantern_PA, 'fig_1.png'),width=500))}
+  compose_email(
 
-      That's it")),
+    body = md(glue::glue("Hello, Thank you for submitting the 2022 More Community, Less Confinement data collection {form}.",
 
-  footer = glue::glue("The Council of State Governments Justice Center."))
+                         tbl_html,
+
+                         "For questions, please contact Mari Roberts at [mroberts@csg.org](mailto:mroberts@csg.org).
+
+                         Thank you for your participation in the project.")),
+
+    footer = glue::glue("The Council of State Governments Justice Center.")
+  )
+
 
 ################################################################################################################################
 # inspect emails
