@@ -134,53 +134,24 @@ alabama_adm_21_22 <- alabama_adm_21_22 %>%
   mutate(metric = gsub("_", " ", metric, fixed=TRUE)) %>%
   mutate(metric = str_to_title(metric))
 
-alabama_adm <- merge(alabama_adm_22, alabama_adm_21, by = "metric", all.x = TRUE, all.y = TRUE)
+alabama_adm <- merge(alabama_adm_21, alabama_adm_22, by = "metric", all.x = TRUE, all.y = TRUE)
 alabama_adm <- merge(alabama_adm, alabama_adm_21_22, by = "metric", all.x = TRUE, all.y = TRUE)
-
-library(dplyr)
-library(reactable)
-
-make_color_pal <- function(colors, bias = 1) {
-  get_color <- colorRamp(colors, bias = bias)
-  function(x) rgb(get_color(x), maxColorValue = 255)
-}
-
-good_color <- make_color_pal(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"), bias = 2)
-
-reactable(
-  alabama_adm,
-  pagination = FALSE,
-  compact = TRUE,
-  borderless = FALSE,
-  striped = FALSE,
-  fullWidth = FALSE,
-
-  # Add theme for the top border
-  theme = reactableTheme(
-    headerStyle = list(
-      "&:hover[aria-sort]" = list(background = "hsl(0, 0%, 96%)"),
-      "&[aria-sort='ascending'], &[aria-sort='descending']" = list(background = "hsl(0, 0%, 96%)"),
-      borderColor = "#555"
-    )
+alabama_adm <- alabama_adm %>%
+  mutate(order = case_when(
+    metric == "Total Prison Admissions"                     ~ 1,
+    metric == "Total Supervision Violation Admissions"      ~ 2,
+    metric == "Probation Violation Admissions"              ~ 3,
+    metric == "Parole Violation Admissions"                 ~ 4,
+    metric == "Total Technical Violation Admissions"        ~ 5,
+    metric == "Technical Probation Violation Admissions"    ~ 6,
+    metric == "Technical Parole Violation Admissions"       ~ 7,
+    metric == "Total New Offense Admissions"                ~ 8,
+    metric == "New Offense Probation Violation Admissions"  ~ 9,
+    metric == "New Offense Parole Violation Admissions"     ~ 10
   ),
-
-  defaultColDef = colDef(align = "center", minWidth = 75),
-
-  columns = list(
-    current_2018 = colDef(name = "2018"),
-    current_2019 = colDef(name = "2019"),
-    current_2020 = colDef(name = "2020"),
-    # current_2021 = colDef(name = "2021"),
-    current_2021 = colDef(
-      # style = function() {list(background = "yellow")},
-      style = JS("{background: 'rgba(0, 0, 0, 0.03)'}")
-    ),
-    previous_2018 = colDef(name = "2018"),
-    previous_2019 = colDef(name = "2019"),
-    previous_2020 = colDef(name = "2020")
-  ),
-  columnGroups = list(
-    colGroup(name = "2022 Survey", columns = c("current_2018", "current_2019", "current_2020", "current_2021")),
-    colGroup(name = "2021 Survey", columns = c("previous_2018", "previous_2019", "previous_2020"))
-  )
-)
+  current_2018 = as.numeric(current_2018),
+  current_2019 = as.numeric(current_2019),
+  current_2020 = as.numeric(current_2020),
+  current_2021 = as.numeric(current_2021)) %>%
+  arrange(order) %>%
+  select(-order)

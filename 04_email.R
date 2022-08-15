@@ -13,6 +13,10 @@ library(Microsoft365R) #for sending emails
 library(webshot)       #for converting html output (markdown) to a picture format (png)
 library(shiny)         #to write HTML code for custom buttons (blastula package is limited to a single html format)
 library(tidyverse)
+library(reactable)
+library(glue)
+library(gt)
+library(gtExtras)
 
 # Lantern_PA <- "C:/Users/atallaksen/OneDrive - The Council of State Governments/GitProjects/LanternPA/Recommitment Reports/"
 
@@ -57,29 +61,22 @@ mybutton <-
 # Create email
 ####################################################################################################################
 
-# test table
-tbl_html <-
-  mtcars %>%
-  gt() %>%
-  as_raw_html()
-
-# set form depenging on state
+# set survey depenging on state
 # Alabama for now
-form <- "[form](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
+survey <- "[survey](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
+mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
 
 # md uses markdown text
 test_email <-
 
   compose_email(
 
-    body = md(glue::glue("Hello, Thank you for submitting the 2022 More Community, Less Confinement data collection {form}.",
+    body = md(glue::glue("Hello, Thank you for submitting the 2022 More Community, Less Confinement data collection {survey}.",
 
-                         tbl_html,
-                         email_table,
+                         adm_table_email,
 
-                         "For questions, please contact Mari Roberts at [mroberts@csg.org](mailto:mroberts@csg.org).
-
-                         Thank you for your participation in the project.")),
+                         "<br>
+                         For questions, please contact Mari Roberts at {mari_email}. Thank you for your participation in the project.")),
 
     footer = glue::glue("The Council of State Governments Justice Center.")
   )
