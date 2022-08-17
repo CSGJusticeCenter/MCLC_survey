@@ -35,8 +35,8 @@ subject_line_text <- "Your Submission to the MCLC Survey (2022)"
 ############################################################################################################################
 ############################################################################################################################
 
-#create button to link to Cerberus
-mybutton <-
+#create button to link to form
+form_button <-
   HTML('<table align="center">
        <tr>
            <td style="background-color:#446e9b; border-radius:10px; padding:10px; border: 1px solid #36587c;
@@ -47,31 +47,21 @@ mybutton <-
        </tr>
        </table>')
 
-############################################################################################################
-# Create pngs
-#############################################################################################################
-
-# (
-#   fig_1 <- mtcars %>%
-#     ggplot(aes(x = wt, y = mpg)) + geom_point()
-# )
-# ggsave("fig_1.png", path = Lantern_PA, width = 5, height=6, bg = "transparent")
-
 ###################################################################################################################
 # Create email
 ####################################################################################################################
 
 # set survey depenging on state
 # Alabama for now
-survey <- "[survey](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
+form <- "[here](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
 mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
 
 # md uses markdown text
 test_email <-
 
-  compose_email(
+  blastula::compose_email(
 
-    body = md(glue::glue("Hello, Thank you for submitting the 2022 More Community, Less Confinement data collection {survey}.",
+    body = md(glue::glue("Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. Access your state's {form}.",
 
                          adm_table_email,
 
@@ -81,10 +71,6 @@ test_email <-
     footer = glue::glue("The Council of State Governments Justice Center.")
   )
 
-
-################################################################################################################################
-# inspect emails
-################################################################################################################################
 
 # check emails
 test_email

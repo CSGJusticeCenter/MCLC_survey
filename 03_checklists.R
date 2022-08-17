@@ -7,23 +7,13 @@
 # Save state contact info
 # Generate state checklists
 # Checklist for data, definitions, costs, notes
+
+# Checklists created:
+# state_data_checklist = checks for no data and if data doesn't add up
+# previous_survey_checklist = check for changes in data between the two surveys
+# adm_table_checklist = final admissions table that will be formatted in an email
+# pop_table_checklist = final population table that will be formatted in an email
 ############################################
-
-
-formattable(temp3,
-            list(metric = formatter("span", style = ~ style(color = "black",font.weight = "bold")),
-                 previous_2018 = formatter("span", style = ~style(display = "block", padding = "0 4px", `border-radius` = "1px",
-                                                                  `background-color`= case_when(current_2018 == "Same" ~ "white",
-                                                                                                current_2018 == "Different" ~ "lightseagreen"))),
-                 previous_2019 = formatter("span", style = ~style(display = "block", padding = "0 4px", `border-radius` = "1px",
-                                                                  `background-color`= case_when(current_2019 == "Same" ~ "white",
-                                                                                                current_2019 == "Different" ~ "lightseagreen"))),
-                 previous_2020 = formatter("span", style = ~style(display = "block", padding = "0 4px", `border-radius` = "1px",
-                                                                  `background-color`= case_when(current_2020 == "Same" ~ "white",
-                                                                                                current_2020 == "Different" ~ "lightseagreen")))
-
-            ))
-
 
 # create list containing each state's submission in google sheets
 dfs <- list(Alabama, Idaho, Iowa)
@@ -37,11 +27,12 @@ states <- c("Alabama", "Idaho", "Iowa")
 # accounts for misspellings of "na"
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing data value
-# change list into a data frame
 state_data_checklist <- map(.x = states,  .f = function(x) {
   df_state <- dfs[[x]]
   df_final[x] <- fnc_create_state_data_checklist(df_state, x)
 })
+
+# change list into a data frame
 state_data_checklist <- bind_rows(state_data_checklist)
 
 # merge with previous survey data to check for data changes for 2018-2020
@@ -81,77 +72,26 @@ previous_survey_checklist <- previous_survey_checklist %>%
          check_new_offense_parole_violation_population_21_22    = case_when(new_offense_parole_violation_population_21    == new_offense_parole_violation_population_22 ~ "Same", TRUE ~ "Different")
          )
 
-# Admissions
-# Previous checklist
+# run custom function that creates an admissions table for email with data quality checks
+# these final tables will include previously submitted data, new data, and columns for quality checks
+# ignore the warning message, it's about changing some values to NA when-
+# it's not possible to calculate something because of a missing data value
+adm_table_checklist <- map(.x = states,  .f = function(x) {
+  df_state <- dfs[[x]]
+  df_final[x] <- fnc_adm_table_checklist(df_state, x)
+})
 
-alabama_adm_21 <- previous_survey_checklist %>% filter(state == "Alabama") %>%
-  select(year, total_prison_admissions_21:new_offense_parole_violation_admissions_21) %>%
-  mutate(across(everything(), as.numeric)) %>%
-  mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank or No Data", .)))
+# change list into a data frame
+adm_table_checklist <- bind_rows(adm_table_checklist)
 
-alabama_adm_21_22 <- previous_survey_checklist %>% filter(state == "Alabama") %>%
-  select(year, check_total_prison_admissions_21_22:check_new_offense_parole_violation_admissions_21_22)
+# run custom function that creates an population table for email with data quality checks
+# these final tables will include previously submitted data, new data, and columns for quality checks
+# ignore the warning message, it's about changing some values to NA when-
+# it's not possible to calculate something because of a missing data value
+pop_table_checklist <- map(.x = states,  .f = function(x) {
+  df_state <- dfs[[x]]
+  df_final[x] <- fnc_pop_table_checklist(df_state, x)
+})
 
-alabama_adm_22 <- state_data_checklist %>% filter(state == "Alabama") %>%
-  select(year, total_prison_admissions_22:new_offense_parole_violation_admissions_22)
-alabama_adm_22 <- reshape2::dcast(reshape2::melt(alabama_adm_22, id.vars = "year"), variable ~ year)
-alabama_adm_22 <- alabama_adm_22 %>%
-  clean_names() %>%
-  rename(current_2018 = x2018,
-         current_2019 = x2019,
-         current_2020 = x2020,
-         current_2021 = x2021,
-         metric = variable) %>%
-  mutate(metric = gsub("_22", "", metric, fixed=TRUE)) %>%
-  mutate(metric = gsub("_", " ", metric, fixed=TRUE)) %>%
-  mutate(metric = str_to_title(metric))
-
-alabama_adm_21 <- reshape2::dcast(reshape2::melt(alabama_adm_21, id.vars = "year"), variable ~ year)
-alabama_adm_21 <- alabama_adm_21 %>%
-  clean_names() %>%
-  rename(previous_2018 = x2018,
-         previous_2019 = x2019,
-         previous_2020 = x2020) %>%
-  filter(variable != "state") %>%
-  rename(metric = variable) %>%
-  mutate(previous_2018 = comma(previous_2018, digits = 0),
-         previous_2019 = comma(previous_2019, digits = 0),
-         previous_2020 = comma(previous_2020, digits = 0)) %>%
-  mutate(metric = gsub("_21", "", metric, fixed=TRUE)) %>%
-  mutate(metric = gsub("_", " ", metric, fixed=TRUE)) %>%
-  mutate(metric = str_to_title(metric))
-
-alabama_adm_21_22 <- reshape2::dcast(reshape2::melt(alabama_adm_21_22, id.vars = "year"), variable ~ year)
-alabama_adm_21_22 <- alabama_adm_21_22 %>%
-  clean_names() %>%
-  rename(check_2018 = x2018,
-         check_2019 = x2019,
-         check_2020 = x2020) %>%
-  filter(variable != "state") %>%
-  rename(metric = variable) %>%
-  mutate(metric = gsub("_21_22", "", metric, fixed=TRUE)) %>%
-  mutate(metric = gsub("check_", "", metric, fixed=TRUE)) %>%
-  mutate(metric = gsub("_", " ", metric, fixed=TRUE)) %>%
-  mutate(metric = str_to_title(metric))
-
-alabama_adm <- merge(alabama_adm_21, alabama_adm_22, by = "metric", all.x = TRUE, all.y = TRUE)
-alabama_adm <- merge(alabama_adm, alabama_adm_21_22, by = "metric", all.x = TRUE, all.y = TRUE)
-alabama_adm <- alabama_adm %>%
-  mutate(order = case_when(
-    metric == "Total Prison Admissions"                     ~ 1,
-    metric == "Total Supervision Violation Admissions"      ~ 2,
-    metric == "Probation Violation Admissions"              ~ 3,
-    metric == "Parole Violation Admissions"                 ~ 4,
-    metric == "Total Technical Violation Admissions"        ~ 5,
-    metric == "Technical Probation Violation Admissions"    ~ 6,
-    metric == "Technical Parole Violation Admissions"       ~ 7,
-    metric == "Total New Offense Admissions"                ~ 8,
-    metric == "New Offense Probation Violation Admissions"  ~ 9,
-    metric == "New Offense Parole Violation Admissions"     ~ 10
-  ),
-  current_2018 = as.numeric(current_2018),
-  current_2019 = as.numeric(current_2019),
-  current_2020 = as.numeric(current_2020),
-  current_2021 = as.numeric(current_2021)) %>%
-  arrange(order) %>%
-  select(-order)
+# change list into a data frame
+pop_table_checklist <- bind_rows(pop_table_checklist)

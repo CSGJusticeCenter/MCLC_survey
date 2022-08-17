@@ -79,6 +79,6 @@ previous_survey <- previous_survey %>%
          new_offense_parole_violation_population) %>%
 
   mutate(across(everything(), as.character)) %>%
-  mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank or No Data", .))) %>%
+  mutate_if(is.character, dplyr::funs(ifelse(is.na(.), "Left Blank or No Data", .))) %>%
   rename_with(~ paste0(., "_21"), -c(state, year)) %>%
   mutate(year = as.numeric(year))

@@ -26,7 +26,7 @@ library(formattable)
 library(data.table)
 
 # get sharepoint path with data from 2021
-sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project", "50 State Survey (2021)", "Data"))
+sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Survey (2021)", "Data"))
 
 # # Use this code to connect to google drive, fetch new token, and authorize tidyverse api
 # # Make sure the sheets have been officially shared with you and you have editing access
@@ -46,8 +46,8 @@ pop20 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep
 # test sheets for developing this code
 # some of these will have accurate data and some will have issues
 Alabama <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
-Idaho <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
-Iowa <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
+Idaho   <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
+Iowa    <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
 
 # read google sheets data into r
 # each sheet is a state
@@ -82,7 +82,7 @@ Iowa <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQ
 # New_Hampshire  <- read_sheet('https://docs.google.com/spreadsheets/d/10UiIo5REsUfGopkW22vrK4aETVDrrAnF0tlxk2u6ykE/edit?usp=sharing')
 # New_Jersey     <- read_sheet('https://docs.google.com/spreadsheets/d/1C6xKjf5yWTTowXbbiKcrcCoL_eN3aptl7GYECBkoxY8/edit?usp=sharing')
 # New_Mexico     <- read_sheet('https://docs.google.com/spreadsheets/d/1CANUAioqFepSGNPxkG4ogYSYD568S-aIfvB_0uTnQw8/edit?usp=sharing')
-# New_York       <- read_sheet('https://docs.google.com/spreadsheets/d/1IrIFxk5t2cAEAY2UjYayw5O7FkvgoKZNrLfZFg7itMc/edit?usp=sharing')
+# # # New York can't use google sheets
 # North_Carolina <- read_sheet('https://docs.google.com/spreadsheets/d/1LlsTsiu6JUwEK-tFsdOhWiTdMe-9Y582dT-0ba4swkw/edit?usp=sharing')
 # North_Dakota   <- read_sheet('https://docs.google.com/spreadsheets/d/1NysXznACYJwzq9P8J5pDamcwQ7myPcscjnaDhI_Xg4g/edit?usp=sharing')
 # Ohio           <- read_sheet('https://docs.google.com/spreadsheets/d/1MylXsxfWaSVYefUJOdUTiFmH1g51xxS17moCCOxOiR8/edit?usp=sharing')
