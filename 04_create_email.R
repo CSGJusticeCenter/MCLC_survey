@@ -89,15 +89,3 @@ test_email <-
 # check emails
 test_email
 
-#######################################################################################################################
-# add recipients to each email
-#######################################################################################################################
-
-# this is where the subject_line_text variable, which we created above, is useful
-test_email <- outlb$create_email(test_email, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = c("mroberts@csg.org"))
-
-################################################################################################################################
-# send emails
-###############################################################################################################################
-
-test_email$send()
