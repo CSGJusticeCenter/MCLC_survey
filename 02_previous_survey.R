@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: previous_survey.R
-# Last updated: August 10, 2022
+# Last updated: August 18, 2022
 # Author: Mari Roberts
 
 # Format data from previous MCLC survey to check for data submission changes

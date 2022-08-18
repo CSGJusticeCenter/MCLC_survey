@@ -1,16 +1,17 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: functions.r
-# Last updated: August 2, 2022
+# Last updated: August 18, 2022
 # Author: Mari Roberts
 
 # Custom functions
 ############################################
 
-#################
+#############################################
 # Custom function to extract name and email
-#################
+#############################################
 
+# custom function to extract name and email
 fnc_contact_info <- function(df, state_name){
   name  <- df[18,2]
   email <- df[18,4]
@@ -21,16 +22,18 @@ fnc_contact_info <- function(df, state_name){
            email = 2)
 }
 
+# make string title case
 clean_titles <- function(x) {
   x <- gsub("_", " ", x)
   x <- gsub("\\b([a-z])", "\\U\\1", x, perl = TRUE)
   x
 }
 
-#################
+#############################################
 # Custom function to extract notes and additional comments
-#################
+#############################################
 
+# custom function to extract notes and additional comments
 fnc_notes_comments <- function(df, state_name){
   notes    <- df[49,2]
   comments <- df[49,10]
@@ -41,9 +44,9 @@ fnc_notes_comments <- function(df, state_name){
            comments = 2)
 }
 
-#################
+#############################################
 # Custom function to extract costs
-#################
+#############################################
 
 fnc_costs <- function(df, state_name){
   # clean variable names
@@ -56,6 +59,9 @@ fnc_costs <- function(df, state_name){
   df_costs <- df_costs[46,]
   df_costs <- as.data.frame(df_costs)
 
+  # indicate when data was left blank, NA was entered
+  # format numbers to currency
+  # a lot of code because one column can have number and character data type
   df_costs <- df_costs %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
@@ -93,10 +99,10 @@ fnc_costs <- function(df, state_name){
     select(-c(check_year_2019, check_year_2020, check_year_2021))
 }
 
-#################
+#############################################
 # Custom function to generate state data checklist
 # If numbers don't add up, what was left blank, no data
-#################
+#############################################
 
 fnc_create_state_data_checklist <- function(df, state_name){
 
@@ -338,16 +344,15 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                                                       TRUE ~ new_offense_probation_violation_population_22),
            new_offense_parole_violation_population_22     = case_when(new_offense_parole_violation_population_22 == "NA"  ~ entry_check_new_offense_parole_violation_population_22,
                                                                       TRUE ~ new_offense_parole_violation_population_22)) %>%
-    #select(-c(entry_check_total_prison_admissions_22:entry_check_new_offense_parole_violation_population_22)) %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, funs(ifelse(is.na(.), "No Data", .)))
   return(df_final)
 }
 
-#################
+#############################################
 # Custom function to generate previous survey checklist
 # If data is different from what was submitted before
-#################
+#############################################
 
 # admissions table
 fnc_adm_table_checklist <- function(df, state_name){
@@ -527,15 +532,18 @@ fnc_pop_table_checklist <- function(df, state_name){
     select(-order)
 }
 
-#####
+#############################################
+# GT Tables for Email
+#############################################
 
-fnc_add_specific_customizations <- function(gt_object){
+# table customizations for admissions and population tables
+fnc_table_customizations <- function(gt_object){
   gt_object %>%
     cols_width(
       "metric"        ~ px(270),
       "previous_2018" ~ px(70),
-      "previous_2018" ~ px(70),
-      "previous_2018" ~ px(70),
+      "previous_2019" ~ px(70),
+      "previous_2020" ~ px(70),
       "current_2018"  ~ px(70),
       "current_2019"  ~ px(70),
       "current_2020"  ~ px(70),
@@ -547,6 +555,25 @@ fnc_add_specific_customizations <- function(gt_object){
       previous_2019 = "2019",
       previous_2020 = "2020",
       current_2018	= "2018",
+      current_2019	= "2019",
+      current_2020	= "2020",
+      current_2021	= "2021"
+    )
+}
+
+# table customizations for costs table
+fnc_table_customizations_costs <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      "previous_2019" ~ px(70),
+      "previous_2020" ~ px(70),
+      "current_2019"  ~ px(70),
+      "current_2020"  ~ px(70),
+      "current_2021"  ~ px(70)
+    ) %>%
+    cols_label(
+      previous_2019 = "2019",
+      previous_2020 = "2020",
       current_2019	= "2019",
       current_2020	= "2020",
       current_2021	= "2021"
@@ -623,7 +650,7 @@ fnc_gt_adm_table <- function(df, state_name){
     ) %>%
 
     # specifications for column widths and labels
-    fnc_add_specific_customizations() %>%
+    fnc_table_customizations() %>%
 
     # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -715,7 +742,7 @@ fnc_gt_pop_table <- function(df, state_name){
     ) %>%
 
     # specifications for column widths and labels
-    fnc_add_specific_customizations() %>%
+    fnc_table_customizations() %>%
 
     # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -735,4 +762,99 @@ fnc_gt_pop_table <- function(df, state_name){
     as_raw_html()
 
   return(pop_table)
+}
+
+fnc_gt_costs_table <- function(df, state_name){
+
+  # filter by state
+  df <- costs_table_checklist %>%
+    filter(state == state_name) %>%
+    select(-c(state))
+  df <- tibble(df)
+
+  gt(df) %>%
+
+    # spanner for 2021 Survey
+    tab_spanner(label = "Survey 2021", columns = c(previous_2019, previous_2020)) %>%
+    tab_style(style = cell_text(size = px(12)),
+              locations = cells_column_labels(columns = c(previous_2019, previous_2020))) %>%
+
+    # spanner for 2022 survey
+    tab_spanner(label = "Survey 2022", columns = c(current_2019, current_2020, current_2021)) %>%
+    tab_style(style = cell_text(size = px(12)),
+              locations = cells_column_labels(columns = c(current_2019, current_2020, current_2021))) %>%
+
+    # table title and subtitle
+    tab_header(title = "Cost Per Day Per Person", subtitle = "2021 Data and Changes in Data from 2018 to 2020") %>%
+    tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
+              locations = cells_title("title")) %>%
+    tab_style(style = cell_text(color = "#696969", weight = "normal", align = "left"),
+              locations = cells_title("subtitle")) %>%
+
+    # border lines around 2021 survey
+    tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
+              locations = cells_body(columns = c(previous_2019))) %>%
+    tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
+              locations = cells_body(columns = c(current_2019))) %>%
+
+    # hide data check columns
+    cols_hide(columns = c(check_2019_21_22, check_2020_21_22)) %>%
+
+    # appearance settings
+    tab_options(#table.width = px(760),
+      table.align = "left",
+      heading.align = "left",
+
+      # remove row at top
+      table.border.top.style = "hidden",
+      # table.border.bottom.style = "transparent",
+      heading.border.bottom.style = "hidden",
+      table.border.bottom.color = "gray",
+
+      # need to set this to transparent so that cells_borders of the cells can display properly
+      table_body.border.bottom.style = "transparent",
+      table_body.border.top.style = "transparent",
+      column_labels.border.bottom.width = px(2),
+      column_labels.border.bottom.color = "gray",
+
+      # font sizes
+      heading.title.font.size = px(14),
+      heading.subtitle.font.size = px(12),
+      column_labels.font.size = px(12),
+      table.font.size = px(12),
+      source_notes.font.size = px(12),
+      footnotes.font.size = px(12),
+
+      # row group label and border options
+      row_group.font.size = px(12),
+      row_group.border.top.style = "transparent",
+      row_group.border.bottom.style = "hidden",
+      stub.border.style = "dashed"
+    ) %>%
+
+    # specifications for column widths and labels
+    fnc_table_customizations_costs() %>%
+
+    # change color to yellow if a field was left blank
+    # change colors to green if data was changed between years
+    # change colors to green if the data is new (2021)
+    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
+              locations = cells_body(columns = c(previous_2019, current_2019), rows = current_2019 != "Left Blank" &
+                                       previous_2019 != current_2019)) %>%
+
+    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
+              locations = cells_body(columns = c(previous_2020, current_2020), rows = current_2020 != "Left Blank" &
+                                       previous_2020 != current_2020)) %>%
+
+    tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+              locations = cells_body(columns = current_2019, rows = current_2019 == "Left Blank")) %>%
+
+    tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+              locations = cells_body(columns = current_2020, rows = current_2020 == "Left Blank")) %>%
+
+    tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+              locations = cells_body(columns = current_2021, rows = current_2021 == "Left Blank")) %>%
+
+    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
+              locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank"))
 }

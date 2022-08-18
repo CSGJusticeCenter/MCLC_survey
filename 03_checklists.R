@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
-# File: generate.R
-# Last updated: July 25, 2022
+# File: checklists.R
+# Last updated: August 18, 2022
 # Author: Mari Roberts
 
 # Save state contact info
@@ -116,12 +116,8 @@ costs_table_checklist <- costs_table_checklist %>%
 # perform checks by seeing if what was submitted last year is different from what was submitted this year for 2018-2020
 # append 21_22 to variables so we know we are comparing 2021 survey to 2022 survey
 costs_table_checklist <- costs_table_checklist %>%
-  mutate(check_costs_2019_21_22 = case_when(current_2019 == previous_2019 ~ "Same", TRUE ~ "Different"),
-         check_costs_2020_21_22 = case_when(current_2020 == previous_2020 ~ "Same", TRUE ~ "Different"))
-
-
-
-
+  mutate(check_2019_21_22 = case_when(current_2019 == previous_2019 ~ "Same", TRUE ~ "Different"),
+         check_2020_21_22 = case_when(current_2020 == previous_2020 ~ "Same", TRUE ~ "Different"))
 
 # run custom function that extracts notes and additional comments for each state
 # ignore warning message

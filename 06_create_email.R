@@ -45,7 +45,7 @@ form_button <-
 form <- "[here](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
 mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
 
-state_submission_sentence <- "We noticed you left some data blank and that some numbers may be inaccurate."
+
 
 # email
 # md uses markdown text
