@@ -18,22 +18,11 @@ library(glue)
 library(gt)
 library(gtExtras)
 
-# Lantern_PA <- "C:/Users/atallaksen/OneDrive - The Council of State Governments/GitProjects/LanternPA/Recommitment Reports/"
-
-# I don't actually remember how I did this for the first time (once registered, you can just run this command again and again),
-# but it is done through the Microsoft365R package
+# connect to outlook
 outlb <- get_business_outlook()
 
-############################################################################################################################
-########## Enter new dates etc., every month ###################################################################
-############################################################################################################################
-
-# CHANGE MM/YYYY FOR EMAIL SUBJECT LINES:
-subject_line_text <- "Your Submission to the MCLC Survey (2022)"
-
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
+# email subject line
+subject_line_text <- "More Community, Less Confinement Project (2022)"
 
 #create button to link to form
 form_button <-
@@ -56,22 +45,36 @@ form_button <-
 form <- "[here](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
 mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
 
+state_submission_sentence <- "We noticed you left some data blank and that some numbers may be inaccurate."
+
+# email
 # md uses markdown text
-test_email <-
+email <- compose_email(
+  body = md(c(
 
-  blastula::compose_email(
+    "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project.",
+    "<br>",
+    "<br>",
+    "### Data Quality Check",
 
-    body = md(glue::glue("Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. Access your state's {form}.",
-
-                         adm_table_email,
-
-                         "<br>
-                         For questions, please contact Mari Roberts at {mari_email}. Thank you for your participation in the project.")),
-
-    footer = glue::glue("The Council of State Governments Justice Center.")
-  )
+    state_submission_sentence,
+    "<br>",
+    "<br>",
+    "<br>",
 
 
-# check emails
-test_email
+    "### Your Submission",
+    "Legend: Green = data is new; Yellow = left blank",
+
+
+    adm_table,
+    "<br>",
+
+    pop_table,
+    "<br>"
+
+  )),
+  footer = glue::glue("The Council of State Governments Justice Center")
+)
+email
 

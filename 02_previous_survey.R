@@ -9,6 +9,17 @@
 # File: Data for web team 2021 v13.xlsx
 ############################################
 
+# get costs for 2019 and 2020 from the 2021 survey
+previous_costs <- clean_names(costs) %>%
+  rename(previous_2019 = cost_in_2019,
+         previous_2020 = cost_in_2020,
+         state = states) %>%
+  mutate(previous_2019 = comma(previous_2019, digits = 2),
+         previous_2020 = comma(previous_2020, digits = 2)) %>%
+  mutate(previous_2019 = paste("$", previous_2019, sep = ""),
+         previous_2020 = paste("$", previous_2020, sep = "")) %>%
+  mutate(across(everything(), ~replace(., . ==  "$ NA", "No Data")))
+
 # add year variable
 adm18$year <- "2018"
 adm19$year <- "2019"
@@ -43,16 +54,13 @@ adm_pop <- adm_pop %>%
          total_technical_violation_admissions = technical_parole_violation_admissions + technical_probation_violation_admissions,
          total_technical_violation_population = technical_parole_violation_population + technical_probation_violation_population)
 
-# subset for now
-previous_survey <- adm_pop %>% filter(state == "Alabama" | state == "Idaho" | state == "Iowa" )
-
 # rename variables so they're consistent with new survey
 # change all data to characters
-# if data left blank or NA, indicate with "Left Blank or No Data"
+# if data left blank or NA, indicate with "No Data"
 # add "previous survey" indicator to metrics
 # this way we can compare what was submitted last year, e.g. if they changed any numbers from 2018-2020
 # append "21" to variables so we know these metrics are from the 2021 survey
-previous_survey <- previous_survey %>%
+previous_survey <- adm_pop %>%
 
   select(state,
          year,
@@ -78,7 +86,31 @@ previous_survey <- previous_survey %>%
          new_offense_probation_violation_population,
          new_offense_parole_violation_population) %>%
 
+  mutate(total_prison_admissions                     = comma(total_prison_admissions, digits = 0),
+         total_supervision_violation_admissions      = comma(total_supervision_violation_admissions, digits = 0),
+         probation_violation_admissions              = comma(probation_violation_admissions, digits = 0),
+         parole_violation_admissions                 = comma(parole_violation_admissions, digits = 0),
+         total_technical_violation_admissions        = comma(total_technical_violation_admissions, digits = 0),
+         technical_probation_violation_admissions    = comma(technical_probation_violation_admissions, digits = 0),
+         technical_parole_violation_admissions       = comma(technical_parole_violation_admissions, digits = 0),
+         total_new_offense_admissions                = comma(total_new_offense_admissions, digits = 0),
+         new_offense_probation_violation_admissions  = comma(new_offense_probation_violation_admissions, digits = 0),
+         new_offense_parole_violation_admissions     = comma(new_offense_parole_violation_admissions, digits = 0),
+
+         total_prison_population                     = comma(total_prison_population, digits = 0),
+         total_supervision_violation_population      = comma(total_supervision_violation_population, digits = 0),
+         probation_violation_population              = comma(probation_violation_population, digits = 0),
+         parole_violation_population                 = comma(parole_violation_population, digits = 0),
+         total_technical_violation_population        = comma(total_technical_violation_population, digits = 0),
+         technical_probation_violation_population    = comma(technical_probation_violation_population, digits = 0),
+         technical_parole_violation_population       = comma(technical_parole_violation_population, digits = 0),
+         total_new_offense_population                = comma(total_new_offense_population, digits = 0),
+         new_offense_probation_violation_population  = comma(new_offense_probation_violation_population, digits = 0),
+         new_offense_parole_violation_population     = comma(new_offense_parole_violation_population, digits = 0))
+
+# Replace NAs with "No Data"
+previous_survey <- previous_survey %>%
   mutate(across(everything(), as.character)) %>%
-  mutate_if(is.character, dplyr::funs(ifelse(is.na(.), "Left Blank or No Data", .))) %>%
   rename_with(~ paste0(., "_21"), -c(state, year)) %>%
-  mutate(year = as.numeric(year))
+  mutate(year = as.numeric(year)) %>%
+  mutate(across(.cols = everything(), ~str_replace( ., "NA", "No Data")))

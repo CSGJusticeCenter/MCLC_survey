@@ -16,11 +16,11 @@
 ############################################
 
 # create list containing each state's submission in google sheets
-dfs <- list(Alabama, Idaho, Iowa)
-dfs <- setNames(dfs,c("Alabama", "Idaho", "Iowa"))
+dfs <- list(Alabama, Idaho, Iowa, Pennsylvania)
+dfs <- setNames(dfs,c("Alabama", "Idaho", "Iowa", "Pennsylvania"))
 
 # create a vector state names
-states <- c("Alabama", "Idaho", "Iowa")
+states <- c("Alabama", "Idaho", "Iowa", "Pennsylvania")
 
 # run custom function that creates a list of data checklists for each state
 # for example, if data doesn't add up correctly or they didn't input data
@@ -38,15 +38,14 @@ state_data_checklist <- bind_rows(state_data_checklist)
 # merge with previous survey data to check for data changes for 2018-2020
 # remove 2021 since we're comparing 2018-2020 between both 2021 and 2022 data collection
 # remove variables not needed
-previous_survey_checklist <- state_data_checklist %>%
+survey_checklist <- state_data_checklist %>%
   left_join(previous_survey, by = c("state", "year")) %>%
   filter(year != 2021) %>%
-  select(state, year, everything()) %>%
-  select(-c(check_other_prison_admissions_22:check_parole_violation_population_22))
+  select(state, year, everything())
 
-# perform checks by seeinng if what was submitted last year is different from what was submitted this year for 2018-2020
+# perform checks by seeing if what was submitted last year is different from what was submitted this year for 2018-2020
 # append 21_22 to variables so we know we are comparing 2021 survey to 2022 survey
-previous_survey_checklist <- previous_survey_checklist %>%
+survey_checklist <- survey_checklist %>%
   mutate(check_total_prison_admissions_21_22                    = case_when(total_prison_admissions_21                    == total_prison_admissions_22 ~ "Same", TRUE ~ "Different"),
          check_total_supervision_violation_admissions_21_22     = case_when(total_supervision_violation_admissions_21     == total_supervision_violation_admissions_22 ~ "Same", TRUE ~ "Different"),
          check_probation_violation_admissions_21_22             = case_when(probation_violation_admissions_21             == probation_violation_admissions_22 ~ "Same", TRUE ~ "Different"),
@@ -73,7 +72,7 @@ previous_survey_checklist <- previous_survey_checklist %>%
          )
 
 # run custom function that creates an admissions table for email with data quality checks
-# these final tables will include previously submitted data, new data, and columns for quality checks
+# these final tables will include previously submitted data, new data
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing data value
 adm_table_checklist <- map(.x = states,  .f = function(x) {
@@ -85,7 +84,7 @@ adm_table_checklist <- map(.x = states,  .f = function(x) {
 adm_table_checklist <- bind_rows(adm_table_checklist)
 
 # run custom function that creates an population table for email with data quality checks
-# these final tables will include previously submitted data, new data, and columns for quality checks
+# these final tables will include previously submitted data, new data
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing data value
 pop_table_checklist <- map(.x = states,  .f = function(x) {
@@ -95,3 +94,52 @@ pop_table_checklist <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 pop_table_checklist <- bind_rows(pop_table_checklist)
+
+# run custom function that creates an cost table for email with data quality checks
+# ignore the warning message, it's about changing some values to NA
+costs_table_checklist <- map(.x = states,  .f = function(x) {
+  df_state <- dfs[[x]]
+  df_final[x] <- fnc_costs(df_state, x)
+})
+
+# change list into a data frame
+costs_table_checklist <- bind_rows(costs_table_checklist)
+
+# rename variables and merge with cost data from previous survey
+costs_table_checklist <- costs_table_checklist %>%
+  left_join(previous_costs, by = c("state")) %>%
+  select(state, previous_2019, previous_2020,
+         current_2019 = year_2019,
+         current_2020 = year_2020,
+         current_2021 = year_2021)
+
+# perform checks by seeing if what was submitted last year is different from what was submitted this year for 2018-2020
+# append 21_22 to variables so we know we are comparing 2021 survey to 2022 survey
+costs_table_checklist <- costs_table_checklist %>%
+  mutate(check_costs_2019_21_22 = case_when(current_2019 == previous_2019 ~ "Same", TRUE ~ "Different"),
+         check_costs_2020_21_22 = case_when(current_2020 == previous_2020 ~ "Same", TRUE ~ "Different"))
+
+
+
+
+
+# run custom function that extracts notes and additional comments for each state
+# ignore warning message
+notes_comments_list <- map(.x = states,  .f = function(x) {
+  df_state <- dfs[[x]]
+  df_final[x] <- fnc_notes_comments(df_state, x)
+})
+
+# change list into a data frame
+notes_comments_list <- bind_rows(notes_comments_list)
+
+# run custom function that extracts contact info for each state
+# ignore error message
+contact_list <- map(.x = states,  .f = function(x) {
+  df_state <- dfs[[x]]
+  df_final[x] <- fnc_contact_info(df_state, x)
+})
+
+# change list into a data frame
+contact_list <- bind_rows(contact_list)
+
