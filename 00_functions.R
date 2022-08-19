@@ -65,7 +65,7 @@ fnc_costs <- function(df, state_name){
   df_costs <- df_costs %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
-    mutate(across(everything(), ~replace(., . ==  "na" |
+    mutate(across(everything(), ~replace(., . == "na" |
                                            . ==  "nodata" |
                                            . ==  "no data" |
                                            . ==  "notavailable" |
@@ -546,8 +546,8 @@ fnc_pop_table_checklist <- function(df, state_name){
 # GT Tables for Email
 #############################################
 
-# table customizations for admissions and population tables
-fnc_table_customizations <- function(gt_object){
+# table headers for admissions and population tables
+fnc_headers <- function(gt_object){
   gt_object %>%
     cols_width(
       "metric"        ~ px(270),
@@ -571,8 +571,8 @@ fnc_table_customizations <- function(gt_object){
     )
 }
 
-# table customizations for costs table
-fnc_table_customizations_costs <- function(gt_object){
+# table headers for costs table
+fnc_headers_costs <- function(gt_object){
   gt_object %>%
     cols_width(
       "previous_2019" ~ px(70),
@@ -590,7 +590,103 @@ fnc_table_customizations_costs <- function(gt_object){
     )
 }
 
+# table appearance settings for all gt tables
+fnc_table_settings <- function(gt_object){
+  gt_object %>%
+      tab_options(#table.width = px(760),
+      table.align = "left",
+      heading.align = "left",
+
+      # remove row at top
+      table.border.top.style = "hidden",
+      # table.border.bottom.style = "transparent",
+      heading.border.bottom.style = "hidden",
+      table.border.bottom.color = "gray",
+
+      # need to set this to transparent so that cells_borders of the cells can display properly
+      table_body.border.bottom.style = "transparent",
+      table_body.border.top.style = "transparent",
+      column_labels.border.bottom.width = px(2),
+      column_labels.border.bottom.color = "gray",
+
+      # font sizes
+      heading.title.font.size = px(14),
+      heading.subtitle.font.size = px(12),
+      column_labels.font.size = px(12),
+      table.font.size = px(12),
+      source_notes.font.size = px(12),
+      footnotes.font.size = px(12),
+
+      # row group label and border options
+      row_group.font.size = px(12),
+      row_group.border.top.style = "transparent",
+      row_group.border.bottom.style = "hidden",
+      stub.border.style = "dashed"
+    )
+}
+
+####################################################################
+# gt table qa checks
+# if data adds up
+####################################################################
+
+# QA table for state and metric with data quality issues - if data doesn't add up
+fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, variable_4, header){
+
+  # filter by state and metrics selected
+  df1 <- df %>%
+    dplyr::filter(state == state_name) %>%
+    dplyr::select(-c(state)) %>%
+    dplyr::mutate(plus = "+",
+                  equal = "=") %>%
+    dplyr::select(year, variable_1, plus, variable_2, equal, variable_3, variable_4)
+  df1 <- tibble(df1)
+
+  qa_table <- gt(df1) %>%
+
+    # table title and subtitle
+    tab_header(title = "Data may not be accurate") %>%
+    tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
+              locations = cells_title("title")) %>%
+
+    # bold headers and year column
+    tab_style(style = cell_text(weight = 'bold'), locations = cells_body(columns = c(year))) %>%
+    tab_style(locations = cells_column_labels(columns = everything()),
+              style = list(cell_text(weight = "bold"))) %>%
+
+    # add custom table settings and unique header (functions below) depending on metric
+    fnc_table_settings() %>%
+    header
+    # %>%
+    # # change to raw html for email
+    # as_raw_html()
+
+  return(qa_table)
+}
+
+# table headers for QA parole population
+fnc_qa_parole_pop_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "parole_violation_population_22" ~ px(80),
+      "new_offense_parole_violation_population_22" ~ px(80),
+      "technical_parole_violation_population_22" ~ px(80),
+      "check_parole_violation_population_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      parole_violation_population_22             = "Parole Violation Population",
+      new_offense_parole_violation_population_22 = "New Offense Parole Violation Population",
+      technical_parole_violation_population_22   = "Technical Parole Violation Population",
+      check_parole_violation_population_22       = "Data Quality Check",
+      plus                                       = " ",
+      equal                                      = " ")
+}
+
+#####################################################################################
 # gt table for admissions
+#####################################################################################
+
 fnc_gt_adm_table <- function(df, state_name){
 
   # filter by state
@@ -628,39 +724,10 @@ fnc_gt_adm_table <- function(df, state_name){
     cols_hide(columns = c(check_2018_21_22, check_2019_21_22, check_2020_21_22)) %>%
 
     # appearance settings
-    tab_options(#table.width = px(760),
-      table.align = "left",
-      heading.align = "left",
-
-      # remove row at top
-      table.border.top.style = "hidden",
-      # table.border.bottom.style = "transparent",
-      heading.border.bottom.style = "hidden",
-      table.border.bottom.color = "gray",
-
-      # need to set this to transparent so that cells_borders of the cells can display properly
-      table_body.border.bottom.style = "transparent",
-      table_body.border.top.style = "transparent",
-      column_labels.border.bottom.width = px(2),
-      column_labels.border.bottom.color = "gray",
-
-      # font sizes
-      heading.title.font.size = px(14),
-      heading.subtitle.font.size = px(12),
-      column_labels.font.size = px(12),
-      table.font.size = px(12),
-      source_notes.font.size = px(12),
-      footnotes.font.size = px(12),
-
-      # row group label and border options
-      row_group.font.size = px(12),
-      row_group.border.top.style = "transparent",
-      row_group.border.bottom.style = "hidden",
-      stub.border.style = "dashed"
-    ) %>%
+    fnc_table_settings() %>%
 
     # specifications for column widths and labels
-    fnc_table_customizations() %>%
+    fnc_headers() %>%
 
     # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -690,7 +757,10 @@ fnc_gt_adm_table <- function(df, state_name){
  return(adm_table)
 }
 
+####################################################################
 # gt table for population
+####################################################################
+
 fnc_gt_pop_table <- function(df, state_name){
 
   # filter by state
@@ -728,39 +798,10 @@ fnc_gt_pop_table <- function(df, state_name){
     cols_hide(columns = c(check_2018_21_22, check_2019_21_22, check_2020_21_22)) %>%
 
     # appearance settings
-    tab_options(#table.width = px(760),
-      table.align = "left",
-      heading.align = "left",
-
-      # remove row at top
-      table.border.top.style = "hidden",
-      # table.border.bottom.style = "transparent",
-      heading.border.bottom.style = "hidden",
-      table.border.bottom.color = "gray",
-
-      # need to set this to transparent so that cells_borders of the cells can display properly
-      table_body.border.bottom.style = "transparent",
-      table_body.border.top.style = "transparent",
-      column_labels.border.bottom.width = px(2),
-      column_labels.border.bottom.color = "gray",
-
-      # font sizes
-      heading.title.font.size = px(14),
-      heading.subtitle.font.size = px(12),
-      column_labels.font.size = px(12),
-      table.font.size = px(12),
-      source_notes.font.size = px(12),
-      footnotes.font.size = px(12),
-
-      # row group label and border options
-      row_group.font.size = px(12),
-      row_group.border.top.style = "transparent",
-      row_group.border.bottom.style = "hidden",
-      stub.border.style = "dashed"
-    ) %>%
+    fnc_table_settings() %>%
 
     # specifications for column widths and labels
-    fnc_table_customizations() %>%
+    fnc_headers() %>%
 
     # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -790,7 +831,10 @@ fnc_gt_pop_table <- function(df, state_name){
   return(pop_table)
 }
 
+####################################################################
 # gt table for costs
+####################################################################
+
 fnc_gt_costs_table <- function(df, state_name){
 
   # filter by state
@@ -826,39 +870,10 @@ fnc_gt_costs_table <- function(df, state_name){
     cols_hide(columns = c(check_2019_21_22, check_2020_21_22)) %>%
 
     # appearance settings
-    tab_options(#table.width = px(760),
-      table.align = "left",
-      heading.align = "left",
-
-      # remove row at top
-      table.border.top.style = "hidden",
-      # table.border.bottom.style = "transparent",
-      heading.border.bottom.style = "hidden",
-      table.border.bottom.color = "gray",
-
-      # need to set this to transparent so that cells_borders of the cells can display properly
-      table_body.border.bottom.style = "transparent",
-      table_body.border.top.style = "transparent",
-      column_labels.border.bottom.width = px(2),
-      column_labels.border.bottom.color = "gray",
-
-      # font sizes
-      heading.title.font.size = px(14),
-      heading.subtitle.font.size = px(12),
-      column_labels.font.size = px(12),
-      table.font.size = px(12),
-      source_notes.font.size = px(12),
-      footnotes.font.size = px(12),
-
-      # row group label and border options
-      row_group.font.size = px(12),
-      row_group.border.top.style = "transparent",
-      row_group.border.bottom.style = "hidden",
-      stub.border.style = "dashed"
-    ) %>%
+    fnc_table_settings() %>%
 
     # specifications for column widths and labels
-    fnc_table_customizations_costs() %>%
+    fnc_headers_costs() %>%
 
     # change color to yellow if a field was left blank
     # change colors to green if data was changed between years
@@ -895,7 +910,10 @@ fnc_gt_costs_table <- function(df, state_name){
   return(costs_table)
 }
 
+####################################################################
 # gt table for notes and comments
+####################################################################
+
 fnc_gt_notes_comments_table <- function(df, state_name){
 
   # filter by state
@@ -917,35 +935,7 @@ fnc_gt_notes_comments_table <- function(df, state_name){
             locations = cells_body(columns = c(notes))) %>%
 
   # appearance settings
-  tab_options(#table.width = px(760),
-  table.align = "left",
-  heading.align = "left",
-
-  # remove row at top
-  table.border.top.style = "hidden",
-  # table.border.bottom.style = "transparent",
-  heading.border.bottom.style = "hidden",
-  table.border.bottom.color = "gray",
-
-  # need to set this to transparent so that cells_borders of the cells can display properly
-  table_body.border.bottom.style = "transparent",
-  table_body.border.top.style = "transparent",
-  column_labels.border.bottom.width = px(2),
-  column_labels.border.bottom.color = "gray",
-
-  # font sizes
-  heading.title.font.size = px(14),
-  heading.subtitle.font.size = px(12),
-  column_labels.font.size = px(12),
-  table.font.size = px(12),
-  source_notes.font.size = px(12),
-  footnotes.font.size = px(12),
-
-  # row group label and border options
-  row_group.font.size = px(12),
-  row_group.border.top.style = "transparent",
-  row_group.border.bottom.style = "hidden",
-  stub.border.style = "dashed") %>%
+  fnc_table_settings() %>%
 
   cols_width(
     "notes" ~ px(480),
@@ -960,4 +950,3 @@ fnc_gt_notes_comments_table <- function(df, state_name){
   return(notes_comments_table)
 
 }
-

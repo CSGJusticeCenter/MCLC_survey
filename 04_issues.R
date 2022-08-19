@@ -26,20 +26,6 @@ left_blank_pop <- any(state_pop=="Left Blank")
 state_costs <- costs_table_checklist %>% filter(state == "Pennsylvania")
 left_blank_costs <- any(state_costs=="Left Blank")
 
-submission_quality_sentence <- case_when(
-  left_blank_adm == TRUE & left_blank_pop == TRUE  & left_blank_costs == TRUE   ~ "We noticed that you left some fields blank in the Admisisons, Population, and Costs Previously Submitted sections. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
-  left_blank_adm == TRUE & left_blank_pop == FALSE & left_blank_costs == TRUE   ~ "We noticed that you left some fields blank in the Admisisons and Costs Previously Submitted sections. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
-  left_blank_adm == TRUE & left_blank_pop == FALSE & left_blank_costs == FALSE  ~ "We noticed that you left some fields blank in the Admisisons section. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
-
-  left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE ~ "Thank you for submitting your data. Please review your data submission in the following tables. You may also update your submission using the button below.",
-  left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  ~ "We noticed that you left some fields blank in the Population and Costs Previously Submitted sections. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
-  left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  ~ "We noticed that you left some fields blank in the Costs Previously Submitted section. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly."
-)
-
-##############
-# Data quality checks - data doesn't add up correctly
-##############
-
 # filter to state
 state_data_quality <- state_data_checklist %>% filter(state == "Pennsylvania")
 
@@ -56,18 +42,66 @@ check_parole_violation_population_22          <- any(state_data_quality$check_pa
 check_new_offense_violation_population_22     <- any(state_data_quality$check_new_offense_violation_population_22     =="Doesn't Add Up")
 check_total_technical_violation_population_22 <- any(state_data_quality$check_total_technical_violation_population_22 =="Doesn't Add Up")
 
+qa_issues <- any(state_data_quality=="Doesn't Add Up")
+
+submission_quality_sentence <- case_when(
+  left_blank_adm == TRUE & left_blank_pop == TRUE  & left_blank_costs == TRUE   & qa_issues == FALSE  ~ "We noticed that you left some fields blank in the Admisisons, Population, and Costs Previously Submitted sections. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
+  left_blank_adm == TRUE & left_blank_pop == FALSE & left_blank_costs == TRUE   & qa_issues == FALSE  ~ "We noticed that you left some fields blank in the Admisisons and Costs Previously Submitted sections. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
+  left_blank_adm == TRUE & left_blank_pop == FALSE & left_blank_costs == FALSE  & qa_issues == FALSE  ~ "We noticed that you left some fields blank in the Admisisons section. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
+
+  left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & qa_issues == FALSE  ~ "We noticed that you left some fields blank in the Population and Costs Previously Submitted sections. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
+  left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & qa_issues == FALSE  ~ "We noticed that you left some fields blank in the Costs Previously Submitted section. If you do not have data for these fields, please input NA in the fields in your data collection form. Please update your form accordingly.",
+  left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & qa_issues == FALSE  ~ "Thank you for submitting your data. Please review your data submission in the following tables. You may also update your submission using the button below.",
+  TRUE ~ "Thank you for submitting data!"
+)
+
+qa_supervision_violations <- case_when(
+  check_supervision_violation_admissions_22     == TRUE | check_supervision_violation_population_22 == TRUE ~
+    "Your data may be inaccurate. In most cases, the total number of supervision violations should equal the number of probation violations and parole violations. Please update your numbers if these are incorrect.",
+     TRUE ~ ""
+)
+
+qa_probation_violations <- case_when(
+  check_probation_violation_admissions_22     == TRUE | check_probation_violation_population_22 == TRUE ~
+    "Your data may be inaccurate. In most cases, the total number of probation violations should equal the number of technical probation violations and new offense violations. Please update your numbers if these are incorrect.",
+  TRUE ~ ""
+)
+
+qa_parole_violations <- case_when(
+  check_parole_violation_admissions_22     == TRUE | check_parole_violation_population_22 == TRUE ~
+    "Your data may be inaccurate. In most cases, the total number of probation violations should equal the number of technical parole violations and new offense parole violations. Please update your numbers if these are incorrect.",
+  TRUE ~ ""
+)
+
+qa_new_offense_violations <- case_when(
+  check_new_offense_violation_admissions_22     == TRUE | check_new_offense_violation_population_22 == TRUE ~
+    "Your data may be inaccurate. In most cases, the total number of new offense violations should equal the number of new offense probation violations and new offense parole violations. Please update your numbers if these are incorrect.",
+  TRUE ~ ""
+)
+
+qa_technical_violations <- case_when(
+  check_total_technical_violation_admissions_22     == TRUE | check_total_technical_violation_population_22 == TRUE ~
+    "Your data may be inaccurate. In most cases, the total number of technical violations should equal the number of technical probation violations and technical parole violations. Please update your numbers if these are incorrect.",
+  TRUE ~ ""
+)
+
+##############
+# Create data frames that show data quality checks - data doesn't add up correctly
+##############
+
+####
 # filter the data depending on data quality checks
 # if supervision violation admissions != probation violation admissions + parole violation admissions, then select these variables to present in a table
 
-####
 # supervision violation admissions
 ####
+
 {if(check_supervision_violation_admissions_22 == TRUE){
-  df_supervision_violation_admissions <- state_data_quality %>%
+  df_supervision_violation_admissions_22 <- state_data_quality %>%
     select(state, year, total_supervision_violation_admissions_22, probation_violation_admissions_22, parole_violation_admissions_22, check_supervision_violation_admissions_22)
 }
 else if(check_supervision_violation_admissions_22 == FALSE){
-  df_supervision_violation_admissions <- ""
+  df_supervision_violation_admissions_22 <- ""
 }}
 
 ####
@@ -142,6 +176,10 @@ else if(check_total_technical_violation_admissions_22 == FALSE){
 {if(check_parole_violation_population_22 == TRUE){
   df_parole_violation_population_22 <- state_data_quality %>%
     select(state, year, parole_violation_population_22, new_offense_parole_violation_population_22, technical_parole_violation_population_22, check_parole_violation_population_22)
+  variable_name_1 <- "parole_violation_population_22"
+  variable_name_2 <- "new_offense_parole_violation_population_22"
+  variable_name_3 <- "technical_parole_violation_population_22"
+  variable_name_4 <- "check_parole_violation_population_22"
 }
   else if(check_parole_violation_population_22 == FALSE){
     df_parole_violation_population_22 <- ""

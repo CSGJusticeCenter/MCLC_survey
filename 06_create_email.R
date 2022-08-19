@@ -53,6 +53,10 @@ mclc_email <- compose_email(
 
     submission_quality_sentence,
     "<br>",
+    "",
+    qa_parole_violations,
+    "",
+    qa_parole_population_22,
     "<br>",
 
     " ",
@@ -74,6 +78,10 @@ mclc_email <- compose_email(
     notes_comments_table,
     "<br>",
 
+    "If you have any questions or concerns. Please reply to this email.",
+    "",
+    "<br>",
+    "<br>",
     "Best,",
     "<br>",
     "Mari Roberts",
