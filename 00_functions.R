@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: functions.r
-# Last updated: August 18, 2022
+# Last updated: August 19, 2022
 # Author: Mari Roberts
 
 # Custom functions
@@ -39,7 +39,7 @@ fnc_notes_comments <- function(df, state_name){
   comments <- df[49,10]
   df1 <- as.data.frame(c(notes, comments))
   df1 <- df1 %>%
-    mutate(state_name = state_name) %>%
+    mutate(state = state_name) %>%
     rename(notes = 1,
            comments = 2)
 }
@@ -201,32 +201,23 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # parole violations = technical parole + new offense parole
   df_final <- df_transposed %>%
     mutate(check_other_prison_admissions_22 = as.numeric(total_prison_admissions_22) - as.numeric(total_supervision_violation_admissions_22),
-           check_other_prison_population_22 = as.numeric(total_prison_population_22) - as.numeric(total_supervision_violation_population_22),
 
            check_supervision_violation_admissions_22 = case_when(as.numeric(total_supervision_violation_admissions_22) == as.numeric(probation_violation_admissions_22) + as.numeric(parole_violation_admissions_22) ~ "Correct",
                                                                  as.numeric(total_supervision_violation_admissions_22) != as.numeric(probation_violation_admissions_22) + as.numeric(parole_violation_admissions_22) ~ "Doesn't Add Up",
                                                                  total_supervision_violation_admissions_22 == "No Data" ~ "No Data",
                                                                  total_supervision_violation_admissions_22 == "Left Blank" ~ "Left Blank",
                                                                  TRUE ~ "No Data"),
+
            check_probation_violation_admissions_22   = case_when(as.numeric(probation_violation_admissions_22) == as.numeric(technical_probation_violation_admissions_22) + as.numeric(new_offense_probation_violation_admissions_22) ~ "Correct",
                                                                  as.numeric(probation_violation_admissions_22) != as.numeric(technical_probation_violation_admissions_22) + as.numeric(new_offense_probation_violation_admissions_22) ~ "Doesn't Add Up",
                                                                  probation_violation_admissions_22 == "No Data" ~ "No Data",
                                                                  probation_violation_admissions_22 == "Left Blank" ~ "Left Blank",
                                                                  TRUE ~ "No Data"),
+
            check_parole_violation_admissions_22      = case_when(as.numeric(parole_violation_admissions_22) == as.numeric(technical_parole_violation_admissions_22) + as.numeric(new_offense_parole_violation_admissions_22) ~ "Correct",
                                                                  as.numeric(parole_violation_admissions_22) != as.numeric(technical_parole_violation_admissions_22) + as.numeric(new_offense_parole_violation_admissions_22) ~ "Doesn't Add Up",
                                                                  parole_violation_admissions_22 == "No Data" ~ "No Data",
                                                                  parole_violation_admissions_22 == "Left Blank" ~ "Left Blank",
-                                                                 TRUE ~ "No Data"),
-           check_probation_violation_population_22   = case_when(as.numeric(probation_violation_population_22) == as.numeric(technical_probation_violation_population_22) + as.numeric(new_offense_probation_violation_population_22) ~ "Correct",
-                                                                 as.numeric(probation_violation_population_22) != as.numeric(technical_probation_violation_population_22) + as.numeric(new_offense_probation_violation_population_22) ~ "Doesn't Add Up",
-                                                                 probation_violation_population_22 == "No Data" ~ "No Data",
-                                                                 probation_violation_population_22 == "Left Blank" ~ "Left Blank",
-                                                                 TRUE ~ "No Data"),
-           check_parole_violation_population_22      = case_when(as.numeric(parole_violation_population_22) == as.numeric(technical_parole_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Correct",
-                                                                 as.numeric(parole_violation_population_22) != as.numeric(technical_parole_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Doesn't Add Up",
-                                                                 parole_violation_population_22 == "No Data" ~ "No Data",
-                                                                 parole_violation_population_22 == "Left Blank" ~ "Left Blank",
                                                                  TRUE ~ "No Data"),
 
            check_new_offense_violation_admissions_22 = case_when(as.numeric(total_new_offense_admissions_22) == as.numeric(new_offense_probation_violation_admissions_22) + as.numeric(new_offense_parole_violation_admissions_22) ~ "Correct",
@@ -241,18 +232,37 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                                                      total_technical_violation_admissions_22 == "Left Blank" ~ "Left Blank",
                                                                      TRUE ~ "No Data"),
 
-           check_new_offense_violation_population_22     = case_when(as.numeric(total_new_offense_population_22) == as.numeric(new_offense_probation_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Correct",
-                                                                     as.numeric(total_new_offense_population_22) != as.numeric(new_offense_probation_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Doesn't Add Up",
-                                                                     total_new_offense_population_22 == "No Data" ~ "No Data",
-                                                                     total_new_offense_population_22 == "Left Blank" ~ "Left Blank",
-                                                                     TRUE ~ "No Data"),
+           check_other_prison_population_22 = as.numeric(total_prison_population_22) - as.numeric(total_supervision_violation_population_22),
+
+           check_supervision_violation_population_22 = case_when(as.numeric(total_supervision_violation_population_22) == as.numeric(probation_violation_population_22) + as.numeric(parole_violation_population_22) ~ "Correct",
+                                                                 as.numeric(total_supervision_violation_population_22) != as.numeric(probation_violation_population_22) + as.numeric(parole_violation_population_22) ~ "Doesn't Add Up",
+                                                                 total_supervision_violation_population_22 == "No Data" ~ "No Data",
+                                                                 total_supervision_violation_population_22 == "Left Blank" ~ "Left Blank",
+                                                                 TRUE ~ "No Data"),
+
+           check_probation_violation_population_22   = case_when(as.numeric(probation_violation_population_22) == as.numeric(technical_probation_violation_population_22) + as.numeric(new_offense_probation_violation_population_22) ~ "Correct",
+                                                                 as.numeric(probation_violation_population_22) != as.numeric(technical_probation_violation_population_22) + as.numeric(new_offense_probation_violation_population_22) ~ "Doesn't Add Up",
+                                                                 probation_violation_population_22 == "No Data" ~ "No Data",
+                                                                 probation_violation_population_22 == "Left Blank" ~ "Left Blank",
+                                                                 TRUE ~ "No Data"),
+
+           check_parole_violation_population_22      = case_when(as.numeric(parole_violation_population_22) == as.numeric(technical_parole_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Correct",
+                                                                 as.numeric(parole_violation_population_22) != as.numeric(technical_parole_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Doesn't Add Up",
+                                                                 parole_violation_population_22 == "No Data" ~ "No Data",
+                                                                 parole_violation_population_22 == "Left Blank" ~ "Left Blank",
+                                                                 TRUE ~ "No Data"),
+
+           check_new_offense_violation_population_22 = case_when(as.numeric(total_new_offense_population_22) == as.numeric(new_offense_probation_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Correct",
+                                                                 as.numeric(total_new_offense_population_22) != as.numeric(new_offense_probation_violation_population_22) + as.numeric(new_offense_parole_violation_population_22) ~ "Doesn't Add Up",
+                                                                 total_new_offense_population_22 == "No Data" ~ "No Data",
+                                                                 total_new_offense_population_22 == "Left Blank" ~ "Left Blank",
+                                                                 TRUE ~ "No Data"),
 
            check_total_technical_violation_population_22 = case_when(as.numeric(total_technical_violation_population_22) == as.numeric(technical_probation_violation_population_22) + as.numeric(technical_parole_violation_population_22) ~ "Correct",
                                                                      as.numeric(total_technical_violation_population_22) != as.numeric(technical_probation_violation_population_22) + as.numeric(technical_parole_violation_population_22) ~ "Doesn't Add Up",
                                                                      total_technical_violation_population_22 == "No Data" ~ "No Data",
                                                                      total_technical_violation_population_22 == "Left Blank" ~ "Left Blank",
                                                                      TRUE ~ "No Data"),
-
            state = state_name)
 
   # transpose data
@@ -654,13 +664,21 @@ fnc_gt_adm_table <- function(df, state_name){
 
     # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2018, current_2018), rows = previous_2018 != current_2018)) %>%
+              locations = cells_body(columns = c(current_2018), rows = previous_2018 != current_2018)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2019, current_2019), rows = previous_2019 != current_2019)) %>%
+              locations = cells_body(columns = c(current_2019), rows = previous_2019 != current_2019)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2020, current_2020), rows = previous_2020 != current_2020)) %>%
+              locations = cells_body(columns = c(current_2020), rows = previous_2020 != current_2020)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
+
+    # # change color of old survey data to gray if changed in new survey
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2018), rows = previous_2018 != current_2018)) %>%
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2019), rows = previous_2019 != current_2019)) %>%
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2020=), rows = previous_2020 != current_2020)) %>%
 
     # change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
@@ -746,13 +764,21 @@ fnc_gt_pop_table <- function(df, state_name){
 
     # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2018, current_2018), rows = previous_2018 != current_2018)) %>%
+              locations = cells_body(columns = c(current_2018), rows = previous_2018 != current_2018)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2019, current_2019), rows = previous_2019 != current_2019)) %>%
+              locations = cells_body(columns = c(current_2019), rows = previous_2019 != current_2019)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2020, current_2020), rows = previous_2020 != current_2020)) %>%
+              locations = cells_body(columns = c(current_2020), rows = previous_2020 != current_2020)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
+
+    # # change color of old survey data to gray if changed in new survey
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2018), rows = previous_2018 != current_2018)) %>%
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2019), rows = previous_2019 != current_2019)) %>%
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2020=), rows = previous_2020 != current_2020)) %>%
 
     # change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
@@ -764,6 +790,7 @@ fnc_gt_pop_table <- function(df, state_name){
   return(pop_table)
 }
 
+# gt table for costs
 fnc_gt_costs_table <- function(df, state_name){
 
   # filter by state
@@ -772,7 +799,7 @@ fnc_gt_costs_table <- function(df, state_name){
     select(-c(state))
   df <- tibble(df)
 
-  gt(df) %>%
+  costs_table <- gt(df) %>%
 
     # spanner for 2021 Survey
     tab_spanner(label = "Survey 2021", columns = c(previous_2019, previous_2020)) %>%
@@ -792,8 +819,6 @@ fnc_gt_costs_table <- function(df, state_name){
               locations = cells_title("subtitle")) %>%
 
     # border lines around 2021 survey
-    tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
-              locations = cells_body(columns = c(previous_2019))) %>%
     tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(current_2019))) %>%
 
@@ -838,14 +863,23 @@ fnc_gt_costs_table <- function(df, state_name){
     # change color to yellow if a field was left blank
     # change colors to green if data was changed between years
     # change colors to green if the data is new (2021)
+    # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2019, current_2019), rows = current_2019 != "Left Blank" &
-                                       previous_2019 != current_2019)) %>%
-
+              locations = cells_body(columns = c(current_2019), rows = previous_2019 != current_2019)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = c(previous_2020, current_2020), rows = current_2020 != "Left Blank" &
-                                       previous_2020 != current_2020)) %>%
+              locations = cells_body(columns = c(current_2020), rows = previous_2020 != current_2020)) %>%
+    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
+              locations = cells_body(columns = c(current_2020), rows = current_2020 != "Left Blank" & previous_2020 != current_2020)) %>%
+    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
+              locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
 
+    # # change color of old survey data to gray if changed in new survey
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2019), rows = previous_2019 != current_2019)) %>%
+    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
+    #           locations = cells_body(columns = c(previous_2020=), rows = previous_2020 != current_2020)) %>%
+
+    # change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2019, rows = current_2019 == "Left Blank")) %>%
 
@@ -855,6 +889,75 @@ fnc_gt_costs_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 == "Left Blank")) %>%
 
-    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
-              locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank"))
+    # change to raw html for email
+    as_raw_html()
+
+  return(costs_table)
 }
+
+# gt table for notes and comments
+fnc_gt_notes_comments_table <- function(df, state_name){
+
+  # filter by state
+  df <- notes_comments_list %>%
+    clean_names() %>%
+    filter(state == state_name) %>%
+    select(-c(state))
+  df <- tibble(df)
+
+  notes_comments_table <- gt(df) %>%
+
+  # table title and subtitle
+  tab_header(title = "Notes and Comments") %>%
+  tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
+            locations = cells_title("title")) %>%
+
+  # border lines around 2021 survey
+  tab_style(style = list(cell_borders(side = c("right"), color = "gray", weight = px(1))),
+            locations = cells_body(columns = c(notes))) %>%
+
+  # appearance settings
+  tab_options(#table.width = px(760),
+  table.align = "left",
+  heading.align = "left",
+
+  # remove row at top
+  table.border.top.style = "hidden",
+  # table.border.bottom.style = "transparent",
+  heading.border.bottom.style = "hidden",
+  table.border.bottom.color = "gray",
+
+  # need to set this to transparent so that cells_borders of the cells can display properly
+  table_body.border.bottom.style = "transparent",
+  table_body.border.top.style = "transparent",
+  column_labels.border.bottom.width = px(2),
+  column_labels.border.bottom.color = "gray",
+
+  # font sizes
+  heading.title.font.size = px(14),
+  heading.subtitle.font.size = px(12),
+  column_labels.font.size = px(12),
+  table.font.size = px(12),
+  source_notes.font.size = px(12),
+  footnotes.font.size = px(12),
+
+  # row group label and border options
+  row_group.font.size = px(12),
+  row_group.border.top.style = "transparent",
+  row_group.border.bottom.style = "hidden",
+  stub.border.style = "dashed") %>%
+
+  cols_width(
+    "notes" ~ px(480),
+    "comments" ~ px(280)) %>%
+  cols_label(
+    notes = "State Notes",
+    comments = "Additional Comments") %>%
+
+  # change to raw html for email
+  as_raw_html()
+
+  return(notes_comments_table)
+
+}
+

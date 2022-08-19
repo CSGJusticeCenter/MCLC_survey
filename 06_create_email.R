@@ -28,28 +28,22 @@ subject_line_text <- "More Community, Less Confinement Project (2022)"
 form_button <-
   HTML('<table align="center">
        <tr>
-           <td style="background-color:#446e9b; border-radius:10px; padding:10px; border: 1px solid #36587c;
+           <td style="background-color:#355DA1; border-radius:5px; padding:10px; border: 1px solid #355DA1;
                       transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
                       margin:0.5rem; text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box">
-              <a style="color:white; text-decoration:none; font-family:tahoma; font-size:1rem; font-weight:400; line-height:1.5" href="https://csgjusticecenter.org/"><strong>Test Button</strong></a>
+              <a style="color:white; text-decoration:none; font-size:1rem; font-weight:400; line-height:1.5" href="https://csgjusticecenter.org/"><strong>Your State Form</strong></a>
            </td>
        </tr>
        </table>')
-
-###################################################################################################################
-# Create email
-####################################################################################################################
 
 # set survey depenging on state
 # Alabama for now
 form <- "[here](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
 mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
 
-
-
 # email
 # md uses markdown text
-email <- compose_email(
+mclc_email <- compose_email(
   body = md(c(
 
     "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project.",
@@ -57,24 +51,35 @@ email <- compose_email(
     "<br>",
     "### Data Quality Check",
 
-    state_submission_sentence,
-    "<br>",
+    submission_quality_sentence,
     "<br>",
     "<br>",
 
+    " ",
+    form_button,
+    " ",
 
     "### Your Submission",
-    "Legend: Green = data is new; Yellow = left blank",
-
-
+    "Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank and requires attention.",
+    "<br>",
     adm_table,
     "<br>",
 
     pop_table,
-    "<br>"
+    "<br>",
 
+    costs_table,
+    "<br>",
+
+    notes_comments_table,
+    "<br>",
+
+    "Best,",
+    "<br>",
+    "Mari Roberts",
+    "<br>"
   )),
-  footer = glue::glue("The Council of State Governments Justice Center")
+  footer = ("The Council of State Governments Justice Center")
 )
-email
+mclc_email
 

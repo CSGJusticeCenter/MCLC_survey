@@ -34,6 +34,7 @@ state_data_checklist <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 state_data_checklist <- bind_rows(state_data_checklist)
+state_data_checklist <- state_data_checklist %>% select(state, year, everything())
 
 # merge with previous survey data to check for data changes for 2018-2020
 # remove 2021 since we're comparing 2018-2020 between both 2021 and 2022 data collection
@@ -82,6 +83,7 @@ adm_table_checklist <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 adm_table_checklist <- bind_rows(adm_table_checklist)
+adm_table_checklist <- adm_table_checklist %>% select(state, everything())
 
 # run custom function that creates an population table for email with data quality checks
 # these final tables will include previously submitted data, new data
@@ -94,6 +96,7 @@ pop_table_checklist <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 pop_table_checklist <- bind_rows(pop_table_checklist)
+pop_table_checklist <- pop_table_checklist %>% select(state, everything())
 
 # run custom function that creates an cost table for email with data quality checks
 # ignore the warning message, it's about changing some values to NA
@@ -138,4 +141,3 @@ contact_list <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 contact_list <- bind_rows(contact_list)
-

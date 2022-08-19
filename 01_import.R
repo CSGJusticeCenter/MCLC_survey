@@ -24,6 +24,15 @@ library(purrr)
 library(stringr)
 library(formattable)
 library(data.table)
+library(blastula)      #for creating emails with HTML
+library(Microsoft365R) #for sending emails
+library(webshot)       #for converting html output (markdown) to a picture format (png)
+library(shiny)         #to write HTML code for custom buttons (blastula package is limited to a single html format)
+library(tidyverse)
+library(reactable)
+library(glue)
+library(gt)
+library(gtExtras)
 
 # get sharepoint path with data from 2021
 sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2021)", "Data"))
