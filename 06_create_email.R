@@ -64,12 +64,30 @@ mclc_email <- compose_email(
     "## Data Quality Check",
     data_quality_sentence,
 
+    qa_supervision_violations,
+    qa_supervision_violation_admissions_22,
+    qa_supervision_violation_population_22,
+
     qa_probation_violations,
+    qa_probation_admissions_22,
     qa_probation_population_22,
+
     qa_parole_violations,
+    qa_parole_admissions_22,
     qa_parole_population_22,
 
+    qa_technical_violations,
+    qa_technical_violation_admissions_22,
+    qa_technical_violation_population_22,
+
+    qa_new_offense_violations,
+    qa_new_offense_violation_admissions_22,
+    qa_new_offense_violation_population_22,
+
     "<br>",
+    "<br>",
+    "",
+    "## Definitions",
     confirmed_definitions_sentence,
     definitions_table,
     "<br>",

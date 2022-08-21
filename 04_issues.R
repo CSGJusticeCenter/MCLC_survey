@@ -69,7 +69,7 @@ data_quality_sentence <- case_when(
 
 # if definitions were not confirmed
 confirmed_definitions_sentence <- case_when(
-  left_blank_definitions == TRUE ~ "<br>You did not confirm the following definitions. Please go to your state form and confirm that these definitions are correct.<br>",
+  left_blank_definitions == TRUE ~ "You did not confirm the following definitions. Please go to your state form and confirm that these definitions are correct.<br><br>",
   TRUE ~ ""
 )
 
@@ -83,7 +83,7 @@ qa_supervision_violations <- case_when(
 # qa issues with the total number of probation violations
 qa_probation_violations <- case_when(
   check_probation_violation_admissions_22 == TRUE | check_probation_violation_population_22 == TRUE ~
-    "<br>Your data may be inaccurate. In most cases, the total number of probation violations should equal the number of technical probation violations and new offense violations. Please update your numbers if these are incorrect.<br>",
+    "<br>Your data may be inaccurate. In most cases, the total number of probation violations should equal the number of technical probation violations and new offense violations. Please update your numbers if these are incorrect.<br><br>",
     TRUE ~ ""
 )
 
@@ -97,14 +97,14 @@ qa_parole_violations <- case_when(
 # qa issues with the total number of new offense violations
 qa_new_offense_violations <- case_when(
   check_new_offense_violation_admissions_22 == TRUE | check_new_offense_violation_population_22 == TRUE ~
-    "<br>Your data may be inaccurate. In most cases, the total number of new offense violations should equal the number of new offense probation violations and new offense parole violations. Please update your numbers if these are incorrect.<br>",
+    "<br>Your data may be inaccurate. In most cases, the total number of new offense violations should equal the number of new offense probation violations and new offense parole violations. Please update your numbers if these are incorrect.<br><br>",
     TRUE ~ ""
 )
 
 # qa issues with the total number of technical violations
 qa_technical_violations <- case_when(
   check_total_technical_violation_admissions_22 == TRUE | check_total_technical_violation_population_22 == TRUE ~
-    "<br>Your data may be inaccurate. In most cases, the total number of technical violations should equal the number of technical probation violations and technical parole violations. Please update your numbers if these are incorrect.<br>",
+    "<br>Your data may be inaccurate. In most cases, the total number of technical violations should equal the number of technical probation violations and technical parole violations. Please update your numbers if these are incorrect.<br><br>",
     TRUE ~ ""
 )
 

@@ -141,19 +141,19 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # select admissions and population data in spreadsheet
   # rename variables
   # remove white space and instructions that imported from Google Sheets
-  df_numbers <- df1 %>% select(metric,
-                               year_2018 = x5,
-                               year_2019 = x6,
-                               year_2020 = x7,
-                               year_2021 = x8)
-  df_numbers <- df_numbers[c(22:31, 34:43),]
+  df1 <- df1 %>% select(metric,
+                        year_2018 = x5,
+                        year_2019 = x6,
+                        year_2020 = x7,
+                        year_2021 = x8)
+  df1 <- df1[c(22:31, 34:43),]
 
   # indicate when data was left blank, NA was entered
   # format numbers
   # a lot of code because one column can have a number and character data type
   # if "null" then the respondent left the field blank
   # if "NA" (or variations of the spelling of NA) then the respondent inputed this and we label it as "No Data"
-  df_numbers <- df_numbers %>%
+  df1 <- df1 %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
     mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
@@ -172,7 +172,7 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # need to add commas to numbers but the column is character because of Left Blank and No Data
   # which is info we want
   # create temporary columns that capture this info
-  df_numbers <- df_numbers %>%
+  df1 <- df1 %>%
     mutate(check_year_2018 = case_when(year_2018 == "No Data" ~ "No Data",
                                        year_2018 == "Left Blank" ~ "Left Blank",
                                        TRUE ~ "Complete"),
@@ -187,7 +187,7 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                        TRUE ~ "Complete"))
 
   # identify which NAs were "No Data" or "Left Blank"
-  df_checks <- df_numbers %>%
+  df_checks <- df1 %>%
     mutate(across(everything(), as.character)) %>%
     mutate(year_2018 = case_when(check_year_2018 == "No Data" ~ "No Data",
                                  check_year_2018 == "Left Blank" ~ "Left Blank",
@@ -204,10 +204,10 @@ fnc_create_state_data_checklist <- function(df, state_name){
     select(c(metric, check_year_2018, check_year_2019, check_year_2020, check_year_2021))
 
   # select variables
-  df_numbers <- df_numbers %>% select(-c(check_year_2018, check_year_2019, check_year_2020, check_year_2021))
+  df1 <- df1 %>% select(-c(check_year_2018, check_year_2019, check_year_2020, check_year_2021))
 
   # transpose data
-  df_transposed <- as.data.frame(t(df_numbers))
+  df_transposed <- as.data.frame(t(df1))
 
   # make first row header and get year
   df_transposed <- df_transposed %>%
@@ -690,6 +690,101 @@ fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, 
   }
 }
 
+# table headers for QA supervision violation admissions
+fnc_qa_supervision_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "total_supervision_violation_admissions_22" ~ px(80),
+      "probation_violation_admissions_22" ~ px(80),
+      "parole_violation_admissions_22" ~ px(80),
+      "check_supervision_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      total_supervision_violation_admissions_22  = "Total Supervision Violation admissions",
+      probation_violation_admissions_22          = "Probation Violation admissions",
+      parole_violation_admissions_22             = "Parole Violation admissions",
+      check_supervision_violation_admissions_22  = "Data Quality Check",
+      plus                                       = " ",
+      equal                                      = " ")
+}
+
+# table headers for QA probation admissions
+fnc_qa_probation_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "probation_violation_admissions_22" ~ px(80),
+      "new_offense_probation_violation_admissions_22" ~ px(80),
+      "technical_probation_violation_admissions_22" ~ px(80),
+      "check_probation_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      probation_violation_admissions_22             = "Probation Violation Admissions",
+      new_offense_probation_violation_admissions_22 = "New Offense Probation Violation Admissions",
+      technical_probation_violation_admissions_22   = "Technical Probation Violation Admissions",
+      check_probation_violation_admissions_22       = "Data Quality Check",
+      plus                                          = " ",
+      equal                                         = " ")
+}
+
+# table headers for QA parole admissions
+fnc_qa_parole_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "parole_violation_admissions_22" ~ px(80),
+      "new_offense_parole_violation_admissions_22" ~ px(80),
+      "technical_parole_violation_admissions_22" ~ px(80),
+      "check_parole_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      parole_violation_admissions_22             = "Parole Violation admissions",
+      new_offense_parole_violation_admissions_22 = "New Offense Parole Violation admissions",
+      technical_parole_violation_admissions_22   = "Technical Parole Violation admissions",
+      check_parole_violation_admissions_22       = "Data Quality Check",
+      plus                                       = " ",
+      equal                                      = " ")
+}
+
+# table headers for QA technical violation admissions
+fnc_qa_technical_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "total_technical_violation_admissions_22" ~ px(80),
+      "technical_probation_violation_admissions_22" ~ px(80),
+      "technical_parole_violation_admissions_22" ~ px(80),
+      "check_total_technical_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      total_technical_violation_admissions_22       = "Total Technical Violation Admissions",
+      technical_probation_violation_admissions_22   = "Technical Probation Violation Admissions",
+      technical_parole_violation_admissions_22      = "Technical Parole Violation Admissions",
+      check_total_technical_violation_admissions_22 = "Data Quality Check",
+      plus                                          = " ",
+      equal                                         = " ")
+}
+
+# table headers for QA new offense violation admissions
+fnc_qa_new_offense_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "total_new_offense_admissions_22" ~ px(80),
+      "new_offense_probation_violation_admissions_22" ~ px(80),
+      "new_offense_parole_violation_admissions_22" ~ px(80),
+      "check_new_offense_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      total_new_offense_admissions_22                 = "Total New Offense Violation admissions",
+      new_offense_probation_violation_admissions_22   = "New Offense Probation Violation admissions",
+      new_offense_parole_violation_admissions_22      = "New Offense Parole Violation admissions",
+      check_new_offense_violation_admissions_22       = "Data Quality Check",
+      plus                                            = " ",
+      equal                                           = " ")
+}
+
 # table headers for QA supervision violation population
 fnc_qa_supervision_pop_headers <- function(gt_object){
   gt_object %>%
@@ -747,61 +842,42 @@ fnc_qa_parole_pop_headers <- function(gt_object){
       equal                                      = " ")
 }
 
-# table headers for QA supervision violation admissions
-fnc_qa_supervision_adm_headers <- function(gt_object){
+# table headers for QA technical violation population
+fnc_qa_technical_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
       year ~ px(50),
-      "total_supervision_violation_admissions_22" ~ px(80),
-      "probation_violation_admissions_22" ~ px(80),
-      "parole_violation_admissions_22" ~ px(80),
-      "check_supervision_violation_admissions_22" ~ px(100)) %>%
+      "total_technical_violation_population_22" ~ px(80),
+      "technical_probation_violation_population_22" ~ px(80),
+      "technical_parole_violation_population_22" ~ px(80),
+      "check_total_technical_violation_population_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
-      total_supervision_violation_admissions_22  = "Total Supervision Violation admissions",
-      probation_violation_admissions_22          = "Probation Violation admissions",
-      parole_violation_admissions_22             = "Parole Violation admissions",
-      check_supervision_violation_admissions_22  = "Data Quality Check",
-      plus                                       = " ",
-      equal                                      = " ")
-}
-
-# table headers for QA probation admissions
-fnc_qa_probation_adm_headers <- function(gt_object){
-  gt_object %>%
-    cols_width(
-      year ~ px(50),
-      "probation_violation_admissions_22" ~ px(80),
-      "new_offense_probation_violation_admissions_22" ~ px(80),
-      "technical_probation_violation_admissions_22" ~ px(80),
-      "check_probation_violation_admissions_22" ~ px(100)) %>%
-    cols_label(
-      year = "Year",
-      probation_violation_admissions_22             = "Probation Violation Admissions",
-      new_offense_probation_violation_admissions_22 = "New Offense Probation Violation Admissions",
-      technical_probation_violation_admissions_22   = "Technical Probation Violation Admissions",
-      check_probation_violation_admissions_22       = "Data Quality Check",
+      total_technical_violation_population_22       = "Total Technical Violation Population",
+      technical_probation_violation_population_22   = "Technical Probation Violation Population",
+      technical_parole_violation_population_22      = "Technical Parole Violation Population",
+      check_total_technical_violation_population_22 = "Data Quality Check",
       plus                                          = " ",
       equal                                         = " ")
 }
 
-# table headers for QA parole admissions
-fnc_qa_parole_adm_headers <- function(gt_object){
+# table headers for QA new offense violation population
+fnc_qa_new_offense_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
       year ~ px(50),
-      "parole_violation_admissions_22" ~ px(80),
-      "new_offense_parole_violation_admissions_22" ~ px(80),
-      "technical_parole_violation_admissions_22" ~ px(80),
-      "check_parole_violation_admissions_22" ~ px(100)) %>%
+      "total_new_offense_population_22" ~ px(80),
+      "new_offense_probation_violation_population_22" ~ px(80),
+      "new_offense_parole_violation_population_22" ~ px(80),
+      "check_new_offense_violation_population_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
-      parole_violation_admissions_22             = "Parole Violation admissions",
-      new_offense_parole_violation_admissions_22 = "New Offense Parole Violation admissions",
-      technical_parole_violation_admissions_22   = "Technical Parole Violation admissions",
-      check_parole_violation_admissions_22       = "Data Quality Check",
-      plus                                       = " ",
-      equal                                      = " ")
+      total_new_offense_population_22                 = "Total New Offense Violation Population",
+      new_offense_probation_violation_population_22   = "New Offense Probation Violation Population",
+      new_offense_parole_violation_population_22      = "New Offense Parole Violation Population",
+      check_new_offense_violation_population_22       = "Data Quality Check",
+      plus                                            = " ",
+      equal                                           = " ")
 }
 
 #####################################################################################
