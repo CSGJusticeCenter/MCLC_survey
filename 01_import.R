@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: import.R
-# Last updated: August 18, 2022
+# Last updated: August 21, 2022
 # Author: Mari Roberts
 
 # Load data directly from google sheets
@@ -24,10 +24,10 @@ library(purrr)
 library(stringr)
 library(formattable)
 library(data.table)
-library(blastula)      #for creating emails with HTML
-library(Microsoft365R) #for sending emails
-library(webshot)       #for converting html output (markdown) to a picture format (png)
-library(shiny)         #to write HTML code for custom buttons (blastula package is limited to a single html format)
+library(blastula)
+library(Microsoft365R)
+library(webshot)
+library(shiny)
 library(tidyverse)
 library(reactable)
 library(glue)
@@ -42,7 +42,7 @@ sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocation
 # googlesheets4::gs4_deauth()
 # googlesheets4::gs4_auth()
 
-# get data submitted in 2021 to compare with new submissions
+# get data submitted in 2021 to compare with new submissions in 2022
 # this way we will know who changed their data for 2018, 2019, and 2020
 # load admissions and population data
 adm18 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Admissions 2018")
@@ -52,17 +52,16 @@ pop18 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep
 pop19 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Population 2019")
 pop20 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Population 2020")
 
-# costs
+# load costs
 costs <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Costs")
 
 # test sheets for developing this code
 # some of these will have accurate data and some will have issues
 # Alabama <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
 # Idaho   <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
-Iowa    <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
+Iowa    <- read_sheet('https://docs.google.com/spreadsheets/d/1IOQgFXYGu0n5CdhNK7ZUmUpCEn4M0RPk7us0jP9xoTs/edit?usp=sharing')
 
 # read google sheets data into r
-# each sheet is a state
 Alabama        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMloM9Y5W4mkZeGIi020Ycvbvxbw9TS-mbI_H0c3cY/edit?usp=sharing')
 # Alaska         <- read_sheet('https://docs.google.com/spreadsheets/d/1UY-tXd3E8zLWyh5H5T9vYW1YHiFIkM2PQDvlp_qVSjA/edit?usp=sharing')
 # Arizona        <- read_sheet('https://docs.google.com/spreadsheets/d/1HWxROOEmdYROs-V6bdMXt04OyG8NddRBfvx50QhZ-P0/edit?usp=sharing')

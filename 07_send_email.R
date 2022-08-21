@@ -7,5 +7,4 @@ mclc_email <- outlb$create_email(mclc_email, content_type = "html")$set_subject(
 # send emails
 ###############################################################################################################################
 
-
 mclc_email$send()

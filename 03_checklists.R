@@ -1,11 +1,10 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: checklists.R
-# Last updated: August 18, 2022
+# Last updated: August 21, 2022
 # Author: Mari Roberts
 
 # Save state contact info
-# Generate state checklists
 # Checklist for data, definitions, costs, notes
 
 # Checklists created:
@@ -22,23 +21,26 @@ dfs <- setNames(dfs,c("Alabama", "Idaho", "Iowa", "Pennsylvania"))
 # create a vector state names
 states <- c("Alabama", "Idaho", "Iowa", "Pennsylvania")
 
+###########
+# state_data_checklist
+###########
+
 # run custom function that creates a list of data checklists for each state
-# for example, if data doesn't add up correctly or they didn't input data
-# accounts for misspellings of "na"
+# for example, if data doesn't add up correctly or they left something blank
+# accounts for misspellings of "na" but these should be checked since states will likely have more variations of NA
 # ignore the warning message, it's about changing some values to NA when-
-# it's not possible to calculate something because of a missing data value
+# it's not possible to calculate something because of a missing value
 state_data_checklist <- map(.x = states,  .f = function(x) {
   df_state <- dfs[[x]]
   df_final[x] <- fnc_create_state_data_checklist(df_state, x)
 })
 
-# change list into a data frame
+# change list into a data frame and arrange columns
 state_data_checklist <- bind_rows(state_data_checklist)
 state_data_checklist <- state_data_checklist %>% select(state, year, everything())
 
-# merge with previous survey data to check for data changes for 2018-2020
-# remove 2021 since we're comparing 2018-2020 between both 2021 and 2022 data collection
-# remove variables not needed
+# merge state_data_checklist with previous survey data to check for data changes for 2018-2020
+# remove 2021 since we're comparing 2018-2020 between both 2021 and 2022 surveys
 survey_checklist <- state_data_checklist %>%
   left_join(previous_survey, by = c("state", "year")) %>%
   filter(year != 2021) %>%
@@ -72,8 +74,12 @@ survey_checklist <- survey_checklist %>%
          check_new_offense_parole_violation_population_21_22    = case_when(new_offense_parole_violation_population_21    == new_offense_parole_violation_population_22 ~ "Same", TRUE ~ "Different")
          )
 
-# run custom function that creates an admissions table for email with data quality checks
-# these final tables will include previously submitted data, new data
+###########
+# adm_table_checklist
+###########
+
+# run custom function that creates an admissions list (one df for each state) with data quality checks
+# these final tables will include previously submitted data and new data
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing data value
 adm_table_checklist <- map(.x = states,  .f = function(x) {
@@ -81,12 +87,16 @@ adm_table_checklist <- map(.x = states,  .f = function(x) {
   df_final[x] <- fnc_adm_table_checklist(df_state, x)
 })
 
-# change list into a data frame
+# change list into a data frame and arrange columns
 adm_table_checklist <- bind_rows(adm_table_checklist)
 adm_table_checklist <- adm_table_checklist %>% select(state, everything())
 
-# run custom function that creates an population table for email with data quality checks
-# these final tables will include previously submitted data, new data
+###########
+# pop_table_checklist
+###########
+
+# run custom function that creates an population list (one df for each state) with data quality checks
+# these final tables will include previously submitted data and new data
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing data value
 pop_table_checklist <- map(.x = states,  .f = function(x) {
@@ -94,11 +104,15 @@ pop_table_checklist <- map(.x = states,  .f = function(x) {
   df_final[x] <- fnc_pop_table_checklist(df_state, x)
 })
 
-# change list into a data frame
+# change list into a data frame and arrange columns
 pop_table_checklist <- bind_rows(pop_table_checklist)
 pop_table_checklist <- pop_table_checklist %>% select(state, everything())
 
-# run custom function that creates an cost table for email with data quality checks
+###########
+# costs_table_checklist
+###########
+
+# run custom function that creates a cost list (one df for each state) with data quality checks
 # ignore the warning message, it's about changing some values to NA
 costs_table_checklist <- map(.x = states,  .f = function(x) {
   df_state <- dfs[[x]]
@@ -122,7 +136,12 @@ costs_table_checklist <- costs_table_checklist %>%
   mutate(check_2019_21_22 = case_when(current_2019 == previous_2019 ~ "Same", TRUE ~ "Different"),
          check_2020_21_22 = case_when(current_2020 == previous_2020 ~ "Same", TRUE ~ "Different"))
 
-# run custom function that extracts notes and additional comments for each state
+###########
+# notes_comments_list
+###########
+
+# run custom function that creates a notes and comments list (one df for each state)
+# no qa check for notes. they can see what was submitted and change it if they want to
 # ignore warning message
 notes_comments_list <- map(.x = states,  .f = function(x) {
   df_state <- dfs[[x]]
@@ -132,7 +151,11 @@ notes_comments_list <- map(.x = states,  .f = function(x) {
 # change list into a data frame
 notes_comments_list <- bind_rows(notes_comments_list)
 
-# run custom function that extracts contact info for each state
+###########
+# contact_list
+###########
+
+# run custom function that creates a contact list (one df for each state)
 # ignore error message
 contact_list <- map(.x = states,  .f = function(x) {
   df_state <- dfs[[x]]
@@ -141,3 +164,18 @@ contact_list <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 contact_list <- bind_rows(contact_list)
+
+###########
+# definitions_table_checklist
+###########
+
+# run custom function that creates a definitions checklist (one df for each state)
+# checks to make sure the respondent checked the box next to the definitions
+# ignore error message
+definitions_table_checklist <- map(.x = states,  .f = function(x) {
+  df_state <- dfs[[x]]
+  df_final[x] <- fnc_definitions(df_state, x)
+})
+
+# change list into a data frame
+definitions_table_checklist <- bind_rows(definitions_table_checklist)

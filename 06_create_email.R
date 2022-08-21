@@ -6,17 +6,24 @@
 
 # Generate email depending on checklists created in generate.R
 # Send emails
-############################################
 
-library(blastula)      #for creating emails with HTML
-library(Microsoft365R) #for sending emails
-library(webshot)       #for converting html output (markdown) to a picture format (png)
-library(shiny)         #to write HTML code for custom buttons (blastula package is limited to a single html format)
-library(tidyverse)
-library(reactable)
-library(glue)
-library(gt)
-library(gtExtras)
+# Email structure
+
+    # Thank you sentence
+    # Button link to form
+
+    # Data Quality Checks
+
+        # If data doesn't add up
+        # If definitions weren't confirmed
+
+    # Your submission
+
+        # Admissions
+        # Population
+        # Costs
+        # Notes/Comments
+############################################
 
 # connect to outlook
 outlb <- get_business_outlook()
@@ -46,24 +53,30 @@ mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
 mclc_email <- compose_email(
   body = md(c(
 
-    "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project.",
+    "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
     "<br>",
-    "<br>",
-    "### Data Quality Check",
-
-    submission_quality_sentence,
-    "<br>",
-    "",
-    qa_parole_violations,
-    "",
-    qa_parole_population_22,
-    "<br>",
-
     " ",
     form_button,
     " ",
 
-    "### Your Submission",
+
+
+    "## Data Quality Check",
+    data_quality_sentence,
+
+    qa_probation_violations,
+    qa_probation_population_22,
+    qa_parole_violations,
+    qa_parole_population_22,
+
+    "<br>",
+    confirmed_definitions_sentence,
+    definitions_table,
+    "<br>",
+    "<br>",
+    "",
+
+    "## Your Submission",
     "Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank and requires attention.",
     "<br>",
     adm_table,
@@ -78,6 +91,9 @@ mclc_email <- compose_email(
     notes_comments_table,
     "<br>",
 
+
+
+
     "If you have any questions or concerns. Please reply to this email.",
     "",
     "<br>",
@@ -89,5 +105,6 @@ mclc_email <- compose_email(
   )),
   footer = ("The Council of State Governments Justice Center")
 )
+
 mclc_email
 

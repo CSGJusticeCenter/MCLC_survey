@@ -1,12 +1,11 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: previous_survey.R
-# Last updated: August 18, 2022
+# Last updated: August 21, 2022
 # Author: Mari Roberts
 
-# Format data from previous MCLC survey to check for data submission changes
-# in the new form submitted through google sheet
-# File: Data for web team 2021 v13.xlsx
+# Format data from previous MCLC survey to check for data submission changes from 2018-2020
+# Previous survey file: Data for web team 2021 v13.xlsx
 ############################################
 
 # get costs for 2019 and 2020 from the 2021 survey
@@ -20,7 +19,7 @@ previous_costs <- clean_names(costs) %>%
          previous_2020 = paste("$", previous_2020, sep = "")) %>%
   mutate(across(everything(), ~replace(., . ==  "$ NA", "No Data")))
 
-# add year variable
+# add year to admissions and population dfs
 adm18$year <- "2018"
 adm19$year <- "2019"
 adm20$year <- "2020"
@@ -28,12 +27,12 @@ pop18$year <- "2018"
 pop19$year <- "2019"
 pop20$year <- "2020"
 
-# add data together
+# add 2018-2020 dfs together
 adm <- rbind(adm18, adm19, adm20)
 pop <- rbind(pop18, pop19, pop20)
 
 # clean names
-# rename variable
+# rename state variable
 adm <- clean_names(adm) %>% rename(state = states)
 pop <- clean_names(pop) %>% rename(state = states)
 
@@ -54,12 +53,8 @@ adm_pop <- adm_pop %>%
          total_technical_violation_admissions = technical_parole_violation_admissions + technical_probation_violation_admissions,
          total_technical_violation_population = technical_parole_violation_population + technical_probation_violation_population)
 
-# rename variables so they're consistent with new survey
-# change all data to characters
-# if data left blank or NA, indicate with "No Data"
-# add "previous survey" indicator to metrics
-# this way we can compare what was submitted last year, e.g. if they changed any numbers from 2018-2020
-# append "21" to variables so we know these metrics are from the 2021 survey
+# rename variables so they're consistent with new survey in 2022
+# add commas to numbers
 previous_survey <- adm_pop %>%
 
   select(state,
@@ -108,7 +103,9 @@ previous_survey <- adm_pop %>%
          new_offense_probation_violation_population  = comma(new_offense_probation_violation_population, digits = 0),
          new_offense_parole_violation_population     = comma(new_offense_parole_violation_population, digits = 0))
 
-# Replace NAs with "No Data"
+# append "21" to variables so we know these metrics are from the 2021 survey
+# change all data to characters
+# replace NAs with "No Data"
 previous_survey <- previous_survey %>%
   mutate(across(everything(), as.character)) %>%
   rename_with(~ paste0(., "_21"), -c(state, year)) %>%

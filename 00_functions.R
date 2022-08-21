@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: functions.r
-# Last updated: August 19, 2022
+# Last updated: August 21, 2022
 # Author: Mari Roberts
 
 # Custom functions
@@ -11,7 +11,7 @@
 # Custom function to extract name and email
 #############################################
 
-# custom function to extract name and email
+# custom function to extract name and email from google sheets used in checklists.R
 fnc_contact_info <- function(df, state_name){
   name  <- df[18,2]
   email <- df[18,4]
@@ -30,10 +30,10 @@ clean_titles <- function(x) {
 }
 
 #############################################
-# Custom function to extract notes and additional comments
+# NOTES AND COMMENTS
 #############################################
 
-# custom function to extract notes and additional comments
+# custom function to extract notes and additional comments used in checklists.R
 fnc_notes_comments <- function(df, state_name){
   notes    <- df[49,2]
   comments <- df[49,10]
@@ -45,14 +45,15 @@ fnc_notes_comments <- function(df, state_name){
 }
 
 #############################################
-# Custom function to extract costs
+# COSTS
 #############################################
 
+# Custom function to extract costs used in checklists.R
 fnc_costs <- function(df, state_name){
   # clean variable names
   df1 <- janitor::clean_names(df)
 
-  # cost data in spreadsheet
+  # extract cost data in spreadsheet
   df_costs <- df1 %>% select(year_2019 = x6,
                              year_2020 = x7,
                              year_2021 = x8)
@@ -60,8 +61,11 @@ fnc_costs <- function(df, state_name){
   df_costs <- as.data.frame(df_costs)
 
   # indicate when data was left blank, NA was entered
-  # format numbers to currency
-  # a lot of code because one column can have number and character data type
+  # format numbers
+  # a lot of code because one column can have a number and character data type
+  # if "null" then the respondent left the field blank
+  # if "NA" (or variations of the spelling of NA) then the respondent inputed this and we label it as "No Data"
+  # add $ sign to dollar amounts
   df_costs <- df_costs %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
@@ -100,10 +104,32 @@ fnc_costs <- function(df, state_name){
 }
 
 #############################################
-# Custom function to generate state data checklist
-# If numbers don't add up, what was left blank, no data
+# DEFINITIONS CHECKLIST
 #############################################
 
+# custom function to extract definition confirmations used in checklists.R
+fnc_definitions <- function(df, state_name){
+  df1 <- janitor::clean_names(df)
+  df1$metric <- apply(df1[,1:3], 1, function(x) x[!is.na(x)][1])
+  df1 <- df1[c(22:31),]
+  df1 <- df1 %>%
+    select(metric, include = x19, dontinclude = x20, definition_confirmation = x14) %>%
+    mutate(include = gsub("CONFIRMED - ", "", include),
+           dontinclude = gsub("CONFIRMED - ", "", dontinclude)) %>%
+    mutate(state = state_name,
+           definition_confirmation = case_when(
+           definition_confirmation == "TRUE"  ~ "Confirmed",
+           definition_confirmation == "FALSE" ~ "Not Confirmed"
+           )) %>%
+    filter(definition_confirmation != "Confirmed")
+}
+
+#############################################
+# STATE DATA CHECKLIST
+#############################################
+
+# custom function to generate state data checklist used in checklists.R
+# if numbers don't add up, what was left blank, no data
 fnc_create_state_data_checklist <- function(df, state_name){
 
   # clean variable names
@@ -115,7 +141,6 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # select admissions and population data in spreadsheet
   # rename variables
   # remove white space and instructions that imported from Google Sheets
-  # add commas to numbers
   df_numbers <- df1 %>% select(metric,
                                year_2018 = x5,
                                year_2019 = x6,
@@ -123,10 +148,11 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                year_2021 = x8)
   df_numbers <- df_numbers[c(22:31, 34:43),]
 
-  # make all data lowercase
-  # if data Left Blank or says NULL, indicate with "Left Blank"
-  # change all data to characters
-  # indicate various ways to spell NA as "No Data"
+  # indicate when data was left blank, NA was entered
+  # format numbers
+  # a lot of code because one column can have a number and character data type
+  # if "null" then the respondent left the field blank
+  # if "NA" (or variations of the spelling of NA) then the respondent inputed this and we label it as "No Data"
   df_numbers <- df_numbers %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
@@ -199,6 +225,8 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # supervision violations = probation + parole violations
   # probation violations = technical probation + new offense probation
   # parole violations = technical parole + new offense parole
+  # new offense violations = new offense probation + new offense parole
+  # technical violations = technical probation + technical parole
   df_final <- df_transposed %>%
     mutate(check_other_prison_admissions_22 = as.numeric(total_prison_admissions_22) - as.numeric(total_supervision_violation_admissions_22),
 
@@ -282,7 +310,6 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # merge with final data
   df_final <- merge(df_final, df_transposed_checks, by = "year")
 
-  # identify NA vs Left Blank
   # add commas to numbers
   df_final <- df_final %>%
     mutate(total_prison_admissions_22                    = comma(total_prison_admissions_22, digits = 0),
@@ -308,9 +335,9 @@ fnc_create_state_data_checklist <- function(df, state_name){
            new_offense_parole_violation_population_22    = comma(new_offense_parole_violation_population_22, digits = 0),
 
            check_other_prison_admissions_22              = comma(check_other_prison_admissions_22, digits = 0),
-           check_other_prison_population_22              = comma(check_other_prison_population_22, digits = 0)
-           )
+           check_other_prison_population_22              = comma(check_other_prison_population_22, digits = 0))
 
+  # identify NA vs Left Blank
   df_final <- df_final %>%
     mutate(across(everything(), as.character))  %>%
 
@@ -356,18 +383,16 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                                                       TRUE ~ new_offense_parole_violation_population_22)) %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, funs(ifelse(is.na(.), "No Data", .)))
+
   return(df_final)
 }
 
 #############################################
-# Custom function to generate previous survey checklist
-# If data is different from what was submitted before
+# ADMISSIONS TABLE
 #############################################
 
-# admissions table
+# custom function to generate an admissions table that shows survey 2021, survey 2022, and qa check "left blank"
 fnc_adm_table_checklist <- function(df, state_name){
-
-  ##############
 
   # filter data to state and select 2021 data
   df_adm_21 <- survey_checklist %>% filter(state == state_name) %>%
@@ -377,13 +402,11 @@ fnc_adm_table_checklist <- function(df, state_name){
   df_adm_22 <- state_data_checklist %>% filter(state == state_name) %>%
     select(year, total_prison_admissions_22:new_offense_parole_violation_admissions_22)
 
-  # filter data to state and select data quality checks in previous survey checklist
+  # filter data to state and select data quality checks in previous survey checklist (where 2018-2022 numbers changed?)
   df_adm_check_21_22 <- survey_checklist %>% filter(state == state_name) %>%
     select(year, check_total_prison_admissions_21_22:check_new_offense_parole_violation_admissions_21_22)
 
-  ##############
-
-  # reshape data
+  # reshape data so years are columns and metrics are rows
   df_adm_21 <- reshape2::dcast(reshape2::melt(df_adm_21, id.vars = "year"), variable ~ year)
 
   # rename variables and rename metrics for table format
@@ -429,9 +452,7 @@ fnc_adm_table_checklist <- function(df, state_name){
     mutate(metric = gsub("_", " ", metric, fixed=TRUE)) %>%
     mutate(metric = str_to_title(metric))
 
-  ##############
-
-  # add data together and order metrics
+  # add data together and order metrics in table
   # change data types
   df_adm <- merge(df_adm_21, df_adm_22, by = "metric", all.x = TRUE, all.y = TRUE)
   df_adm <- merge(df_adm, df_adm_check_21_22, by = "metric", all.x = TRUE, all.y = TRUE)
@@ -453,10 +474,12 @@ fnc_adm_table_checklist <- function(df, state_name){
     select(-order)
 }
 
+#############################################
+# POPULATION TABLE
+#############################################
+
 # population table
 fnc_pop_table_checklist <- function(df, state_name){
-
-  ##############
 
   # filter data to state and select 2021 data
   df_pop_21 <- survey_checklist %>% filter(state == state_name) %>%
@@ -466,11 +489,9 @@ fnc_pop_table_checklist <- function(df, state_name){
   df_pop_22 <- state_data_checklist %>% filter(state == state_name) %>%
     select(year, total_prison_population_22:new_offense_parole_violation_population_22)
 
-  # filter data to state and select data quality checks in previous survey checklist
+  # filter data to state and select data quality checks in previous survey checklist (where 2018-2022 numbers changed?)
   df_pop_check_21_22 <- survey_checklist %>% filter(state == state_name) %>%
     select(year, check_total_prison_population_21_22:check_new_offense_parole_violation_population_21_22)
-
-  ##############
 
   # reshape data
   df_pop_21 <- reshape2::dcast(reshape2::melt(df_pop_21, id.vars = "year"), variable ~ year)
@@ -518,10 +539,7 @@ fnc_pop_table_checklist <- function(df, state_name){
     mutate(metric = gsub("_", " ", metric, fixed=TRUE)) %>%
     mutate(metric = str_to_title(metric))
 
-  ##############
-
-  # add data together and order metrics
-  # change data types
+  # add data together and order metrics in table
   df_pop <- merge(df_pop_21, df_pop_22, by = "metric", all.x = TRUE, all.y = TRUE)
   df_pop <- merge(df_pop, df_pop_check_21_22, by = "metric", all.x = TRUE, all.y = TRUE)
   df_pop <- df_pop %>%
@@ -546,7 +564,7 @@ fnc_pop_table_checklist <- function(df, state_name){
 # GT Tables for Email
 #############################################
 
-# table headers for admissions and population tables
+# custom function to format table headers for admissions and population tables
 fnc_headers <- function(gt_object){
   gt_object %>%
     cols_width(
@@ -571,7 +589,7 @@ fnc_headers <- function(gt_object){
     )
 }
 
-# table headers for costs table
+# custom function to format table headers for costs table
 fnc_headers_costs <- function(gt_object){
   gt_object %>%
     cols_width(
@@ -590,7 +608,7 @@ fnc_headers_costs <- function(gt_object){
     )
 }
 
-# table appearance settings for all gt tables
+# custom function to format table for for all gt tables (spacing, font size, colors, etc.)
 fnc_table_settings <- function(gt_object){
   gt_object %>%
       tab_options(#table.width = px(760),
@@ -632,36 +650,82 @@ fnc_table_settings <- function(gt_object){
 
 # QA table for state and metric with data quality issues - if data doesn't add up
 fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, variable_4, header){
-
   # filter by state and metrics selected
-  df1 <- df %>%
+  df1 <- state_data_checklist %>%
     dplyr::filter(state == state_name) %>%
     dplyr::select(-c(state)) %>%
     dplyr::mutate(plus = "+",
                   equal = "=") %>%
-    dplyr::select(year, variable_1, plus, variable_2, equal, variable_3, variable_4)
-  df1 <- tibble(df1)
+    dplyr::select(year,
+                  variable_1,
+                  plus,
+                  variable_2,
+                  equal,
+                  variable_3,
+                  variable_4)
 
-  qa_table <- gt(df1) %>%
+  # if the data doesn't add up, output a table, otherwise, leave blank
+  test <- any(df1=="Doesn't Add Up")
 
-    # table title and subtitle
-    tab_header(title = "Data may not be accurate") %>%
-    tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
-              locations = cells_title("title")) %>%
+  { if(test == TRUE){
+    qa_table <- gt(df1) %>%
 
-    # bold headers and year column
-    tab_style(style = cell_text(weight = 'bold'), locations = cells_body(columns = c(year))) %>%
-    tab_style(locations = cells_column_labels(columns = everything()),
-              style = list(cell_text(weight = "bold"))) %>%
+      # table title and subtitle
+      tab_header(title = "Data may not be accurate") %>%
+      tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
+                locations = cells_title("title")) %>%
 
-    # add custom table settings and unique header (functions below) depending on metric
-    fnc_table_settings() %>%
-    header
-    # %>%
-    # # change to raw html for email
-    # as_raw_html()
+      # bold headers and year column
+      tab_style(style = cell_text(weight = 'bold'), locations = cells_body(columns = c(year))) %>%
+      tab_style(locations = cells_column_labels(columns = everything()),
+                style = list(cell_text(weight = "bold"))) %>%
 
-  return(qa_table)
+      # add custom table settings and unique header (functions below) depending on metric
+      fnc_table_settings() %>%
+      header
+
+  } else if(test == FALSE){
+    qa_table <- ""
+  }
+  }
+}
+
+# table headers for QA supervision violation population
+fnc_qa_supervision_pop_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "total_supervision_violation_population_22" ~ px(80),
+      "probation_violation_population_22" ~ px(80),
+      "parole_violation_population_22" ~ px(80),
+      "check_supervision_violation_population_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      total_supervision_violation_population_22  = "Total Supervision Violation Population",
+      probation_violation_population_22          = "Probation Violation Population",
+      parole_violation_population_22             = "Parole Violation Population",
+      check_supervision_violation_population_22  = "Data Quality Check",
+      plus                                       = " ",
+      equal                                      = " ")
+}
+
+# table headers for QA probation population
+fnc_qa_probation_pop_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "probation_violation_population_22" ~ px(80),
+      "new_offense_probation_violation_population_22" ~ px(80),
+      "technical_probation_violation_population_22" ~ px(80),
+      "check_probation_violation_population_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      probation_violation_population_22             = "Probation Violation Population",
+      new_offense_probation_violation_population_22 = "New Offense Probation Violation Population",
+      technical_probation_violation_population_22   = "Technical Probation Violation Population",
+      check_probation_violation_population_22       = "Data Quality Check",
+      plus                                          = " ",
+      equal                                         = " ")
 }
 
 # table headers for QA parole population
@@ -682,6 +746,112 @@ fnc_qa_parole_pop_headers <- function(gt_object){
       plus                                       = " ",
       equal                                      = " ")
 }
+
+# table headers for QA supervision violation admissions
+fnc_qa_supervision_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "total_supervision_violation_admissions_22" ~ px(80),
+      "probation_violation_admissions_22" ~ px(80),
+      "parole_violation_admissions_22" ~ px(80),
+      "check_supervision_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      total_supervision_violation_admissions_22  = "Total Supervision Violation admissions",
+      probation_violation_admissions_22          = "Probation Violation admissions",
+      parole_violation_admissions_22             = "Parole Violation admissions",
+      check_supervision_violation_admissions_22  = "Data Quality Check",
+      plus                                       = " ",
+      equal                                      = " ")
+}
+
+# table headers for QA probation admissions
+fnc_qa_probation_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "probation_violation_admissions_22" ~ px(80),
+      "new_offense_probation_violation_admissions_22" ~ px(80),
+      "technical_probation_violation_admissions_22" ~ px(80),
+      "check_probation_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      probation_violation_admissions_22             = "Probation Violation Admissions",
+      new_offense_probation_violation_admissions_22 = "New Offense Probation Violation Admissions",
+      technical_probation_violation_admissions_22   = "Technical Probation Violation Admissions",
+      check_probation_violation_admissions_22       = "Data Quality Check",
+      plus                                          = " ",
+      equal                                         = " ")
+}
+
+# table headers for QA parole admissions
+fnc_qa_parole_adm_headers <- function(gt_object){
+  gt_object %>%
+    cols_width(
+      year ~ px(50),
+      "parole_violation_admissions_22" ~ px(80),
+      "new_offense_parole_violation_admissions_22" ~ px(80),
+      "technical_parole_violation_admissions_22" ~ px(80),
+      "check_parole_violation_admissions_22" ~ px(100)) %>%
+    cols_label(
+      year = "Year",
+      parole_violation_admissions_22             = "Parole Violation admissions",
+      new_offense_parole_violation_admissions_22 = "New Offense Parole Violation admissions",
+      technical_parole_violation_admissions_22   = "Technical Parole Violation admissions",
+      check_parole_violation_admissions_22       = "Data Quality Check",
+      plus                                       = " ",
+      equal                                      = " ")
+}
+
+#####################################################################################
+# gt table for definition confirmations
+#####################################################################################
+
+fnc_gt_definitions_table <- function(df, state_name){
+
+  # filter by state and metrics selected
+  df1 <- definitions_table_checklist %>%
+    dplyr::filter(state == state_name) %>%
+    dplyr::select(-c(state))
+
+  definitions_table <- gt(df1) %>%
+
+    # table title and subtitle
+    tab_header(title = "Definitions") %>%
+    tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
+              locations = cells_title("title")) %>%
+
+    # Set missing value defaults
+    fmt_missing(columns = gt::everything(), missing_text = "") %>%
+
+    # add custom table settings and unique header (functions below) depending on metric
+    fnc_table_settings() %>%
+
+    cols_width(
+      "metric" ~ px(250),
+      "include" ~ px(400),
+      "dontinclude" ~ px(200),
+      "definition_confirmation" ~  px(100)) %>%
+    cols_label(
+      metric = "Data",
+      include = "Definitions",
+      dontinclude = " ",
+      definition_confirmation = "Confirm Definition") %>%
+
+    # change color to yellow if a field was left blank
+    tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+              locations = cells_body(columns = definition_confirmation, rows = definition_confirmation == "Not Confirmed")) %>%
+
+    tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
+              locations = cells_body(columns = definition_confirmation, rows = definition_confirmation != "Not Confirmed")) %>%
+
+    # change to raw html for email
+    as_raw_html()
+
+  return(definitions_table)
+}
+
 
 #####################################################################################
 # gt table for admissions
@@ -738,14 +908,6 @@ fnc_gt_adm_table <- function(df, state_name){
               locations = cells_body(columns = c(current_2020), rows = previous_2020 != current_2020)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
-
-    # # change color of old survey data to gray if changed in new survey
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2018), rows = previous_2018 != current_2018)) %>%
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2019), rows = previous_2019 != current_2019)) %>%
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2020=), rows = previous_2020 != current_2020)) %>%
 
     # change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
@@ -813,14 +975,6 @@ fnc_gt_pop_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
 
-    # # change color of old survey data to gray if changed in new survey
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2018), rows = previous_2018 != current_2018)) %>%
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2019), rows = previous_2019 != current_2019)) %>%
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2020=), rows = previous_2020 != current_2020)) %>%
-
     # change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 == "Left Blank")) %>%
@@ -887,12 +1041,6 @@ fnc_gt_costs_table <- function(df, state_name){
               locations = cells_body(columns = c(current_2020), rows = current_2020 != "Left Blank" & previous_2020 != current_2020)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
-
-    # # change color of old survey data to gray if changed in new survey
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2019), rows = previous_2019 != current_2019)) %>%
-    # tab_style(style = list(cell_fill(color = "#ededed"), cell_text(weight = "bold")),
-    #           locations = cells_body(columns = c(previous_2020=), rows = previous_2020 != current_2020)) %>%
 
     # change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
