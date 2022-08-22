@@ -34,15 +34,13 @@ library(glue)
 library(gt)
 library(gtExtras)
 
-# get sharepoint path with data from 2022 to get form links
+# get sharepoint path to get form links in 2022 folder
 sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2022)"))
 form_links <- read_excel(paste0(sp_data_path, "/MCLC 2022 Progress Tracking.xlsx", sep = ""))
 form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>%
   select(state, form_link = google_sheet_link_folder_https_drive_google_com_drive_folders_1i_tbzusu_cd9y_t_dk_rz_kuc_popp_q2on_kr_cv_usp_sharing)
-  # %>%
-  # mutate(form_link = paste0("'", form_link, "'", sep = ""))
 
-# get sharepoint path with data from 2021
+# get sharepoint path to get data in 2021 folder
 sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2021)", "Data"))
 
 # # Use this code to connect to google drive, fetch new token, and authorize tidyverse api
@@ -63,7 +61,7 @@ pop20 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep
 # load costs
 costs <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Costs")
 
-# test sheets for developing this code
+# FAKE DATA - test sheets for developing this code
 # some of these will have accurate data and some will have issues
 Alabama      <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
 Idaho        <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')

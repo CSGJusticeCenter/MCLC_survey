@@ -25,6 +25,9 @@ states <- c("Alabama", "Idaho", "Iowa", "Pennsylvania")
 # state_data_checklist
 ###########
 
+# create empty list
+df_final <- list()
+
 # run custom function that creates a list of data checklists for each state
 # for example, if data doesn't add up correctly or they left something blank
 # accounts for misspellings of "na" but these should be checked periodically since-

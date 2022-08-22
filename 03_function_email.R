@@ -308,18 +308,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   form_button <- HTML(paste0('<table align="center"><tr><td style="background-color:#355DA1; border-radius:5px; padding:10px; border: 1px solid #355DA1;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;margin:0.5rem; text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box">
               <a style="color:white; text-decoration:none; font-size:1rem; font-weight:400; line-height:1.5" href="', LINK, '"><strong>Your State Form</strong></a></td></tr></table>'))
 
-  # #create button to link to form
-  # form_button <-
-  #   HTML('<table align="center">
-  #      <tr>
-  #          <td style="background-color:#355DA1; border-radius:5px; padding:10px; border: 1px solid #355DA1;
-  #                     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  #                     margin:0.5rem; text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box">
-  #             <a style="color:white; text-decoration:none; font-size:1rem; font-weight:400; line-height:1.5" href="https://csgjusticecenter.org/"><strong>Your State Form</strong></a>
-  #          </td>
-  #      </tr>
-  #      </table>')
-
   # md uses markdown text
   mclc_email <- compose_email(
     body = md(c(

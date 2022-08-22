@@ -119,7 +119,7 @@ fnc_definitions <- function(df, state_name){
 #############################################
 
 # custom function that generates a sentence depending on data issue
-# for example, supervision violation admissions should equal the number of probation and parole violation admissions
+# for example, supervision violation admissions should equal the number of probation and parole violation admissions, otherwise leave blank in email
 fnc_qa_sentence_adm <- function(check, variable_1, variable_2, variable_3){
   variable_1<-eval(parse(text = "variable_1"))
   variable_2<-eval(parse(text = "variable_2"))
@@ -145,7 +145,7 @@ fnc_qa_sentence_pop <- function(check, variable_1, variable_2, variable_3){
 #############################################
 
 # custom function to generate state data checklist used in checklists.R
-# if numbers don't add up, what was left blank, no data
+# if numbers don't add up, what was left blank, or no data
 # there's a lot of code because one column can have a number and character data type
 # and we want to add commas to the numbers while also retaining whether an NA is an actual NA or if it was left blank
 fnc_create_state_data_checklist <- function(df, state_name){
