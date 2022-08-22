@@ -34,6 +34,14 @@ library(glue)
 library(gt)
 library(gtExtras)
 
+# get sharepoint path with data from 2022 to get form links
+sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2022)"))
+form_links <- read_excel(paste0(sp_data_path, "/MCLC 2022 Progress Tracking.xlsx", sep = ""))
+form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>%
+  select(state, form_link = google_sheet_link_folder_https_drive_google_com_drive_folders_1i_tbzusu_cd9y_t_dk_rz_kuc_popp_q2on_kr_cv_usp_sharing)
+  # %>%
+  # mutate(form_link = paste0("'", form_link, "'", sep = ""))
+
 # get sharepoint path with data from 2021
 sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2021)", "Data"))
 
@@ -57,12 +65,13 @@ costs <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep
 
 # test sheets for developing this code
 # some of these will have accurate data and some will have issues
-# Alabama <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
-# Idaho   <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
-Iowa    <- read_sheet('https://docs.google.com/spreadsheets/d/1IOQgFXYGu0n5CdhNK7ZUmUpCEn4M0RPk7us0jP9xoTs/edit?usp=sharing')
+Alabama      <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
+Idaho        <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
+Iowa         <- read_sheet('https://docs.google.com/spreadsheets/d/1IOQgFXYGu0n5CdhNK7ZUmUpCEn4M0RPk7us0jP9xoTs/edit?usp=sharing')
+Pennsylvania <- read_sheet('https://docs.google.com/spreadsheets/d/1FLrh75tRW-qALtJzbcNWVyVdSNuc5cQw483pocy9h1U/edit?usp=sharing')
 
 # read google sheets data into r
-Alabama        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMloM9Y5W4mkZeGIi020Ycvbvxbw9TS-mbI_H0c3cY/edit?usp=sharing')
+# Alabama        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMloM9Y5W4mkZeGIi020Ycvbvxbw9TS-mbI_H0c3cY/edit?usp=sharing')
 # Alaska         <- read_sheet('https://docs.google.com/spreadsheets/d/1UY-tXd3E8zLWyh5H5T9vYW1YHiFIkM2PQDvlp_qVSjA/edit?usp=sharing')
 # Arizona        <- read_sheet('https://docs.google.com/spreadsheets/d/1HWxROOEmdYROs-V6bdMXt04OyG8NddRBfvx50QhZ-P0/edit?usp=sharing')
 # Arkansas       <- read_sheet('https://docs.google.com/spreadsheets/d/16e0WRzAWW7kh_Na_tf_8jbcdjM_do_7lpzI_P-eP8hU/edit?usp=sharing')
@@ -73,7 +82,7 @@ Alabama        <- read_sheet('https://docs.google.com/spreadsheets/d/1ggMloM9Y5W
 # Florida        <- read_sheet('https://docs.google.com/spreadsheets/d/14_fE47eIhGXDzXm52B8UnrFMY4JWlhqMhmO13zQqlCk/edit?usp=sharing')
 # Georgia        <- read_sheet('https://docs.google.com/spreadsheets/d/19xGMo2hiajuiQ9IJcPPItI4Md9ZKWTzI1hA3DH18Vqk/edit?usp=sharing')
 # Hawaii         <- read_sheet('https://docs.google.com/spreadsheets/d/1BKT-slHFfFq_Dat-zePTjh-t_8xZwwCfusNv61m0VTk/edit?usp=sharing')
-Idaho          <- read_sheet('https://docs.google.com/spreadsheets/d/1KpmE0WJIbrBs9Uuc-CyF77cJ8nETWHM4k0LYW0VPlPk/edit?usp=sharing')
+# Idaho          <- read_sheet('https://docs.google.com/spreadsheets/d/1KpmE0WJIbrBs9Uuc-CyF77cJ8nETWHM4k0LYW0VPlPk/edit?usp=sharing')
 # Illinois       <- read_sheet('https://docs.google.com/spreadsheets/d/1DXVve69iDWCZqqKvJ8MEzTiy2QMeQP62u9s1TykPtTU/edit?usp=sharing')
 # Indiana        <- read_sheet('https://docs.google.com/spreadsheets/d/1KGzRj3yM3UsAWfdLlJ50y0C-F0Me53HG2Epf0MWJEbM/edit?usp=sharing')
 # Iowa           <- read_sheet('https://docs.google.com/spreadsheets/d/1AxedM8YOYems1YslCHQncHPiv8ENvIZnr3-dXJ6FzNY/edit?usp=sharing')
@@ -99,7 +108,7 @@ Idaho          <- read_sheet('https://docs.google.com/spreadsheets/d/1KpmE0WJIbr
 # Ohio           <- read_sheet('https://docs.google.com/spreadsheets/d/1MylXsxfWaSVYefUJOdUTiFmH1g51xxS17moCCOxOiR8/edit?usp=sharing')
 # Oklahoma       <- read_sheet('https://docs.google.com/spreadsheets/d/1OpT0xpTYDgBpbmvoJXvQWGSg98NrUdgxBr8mql2hgu8/edit?usp=sharing')
 # Oregon         <- read_sheet('https://docs.google.com/spreadsheets/d/1Weg_lWBD8nl-89lKSwf9ZDa3Tr5IcYfJC__wpXG8m-A/edit?usp=sharing')
-Pennsylvania   <- read_sheet('https://docs.google.com/spreadsheets/d/1FcMVgowc4fdYL-L_btFzUi-SgaA0Z3QTG2kxJncKOZo/edit?usp=sharing')
+# Pennsylvania   <- read_sheet('https://docs.google.com/spreadsheets/d/1FcMVgowc4fdYL-L_btFzUi-SgaA0Z3QTG2kxJncKOZo/edit?usp=sharing')
 # Rhode_Island   <- read_sheet('https://docs.google.com/spreadsheets/d/1fgA_0rdmEZW4MFIM02G7D_T_KwWFAB2y42qjlX7XlG4/edit?usp=sharing')
 # South_Carolina <- read_sheet('https://docs.google.com/spreadsheets/d/1gTBKIkbGBck8zbVMJ6-J2h6sNyWMs-t_fBg0At-uIZo/edit?usp=sharing')
 # South_Dakota   <- read_sheet('https://docs.google.com/spreadsheets/d/1hB1o7eY5kDl7XVZD7cjALxHMuzTnYEHwQC6wIEeN37g/edit?usp=sharing')

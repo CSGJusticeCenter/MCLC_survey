@@ -9,6 +9,7 @@
 ############################################
 
 # get costs for 2019 and 2020 from the 2021 survey
+# format numbers
 previous_costs <- clean_names(costs) %>%
   rename(previous_2019 = cost_in_2019,
          previous_2020 = cost_in_2020,

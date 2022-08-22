@@ -10,8 +10,8 @@
 # Checklists created:
 # state_data_checklist = checks for no data and if data doesn't add up
 # previous_survey_checklist = check for changes in data between the two surveys
-# adm_table_checklist = final admissions table that will be formatted in an email
-# pop_table_checklist = final population table that will be formatted in an email
+# adm_table_checklist = final admissions table (filter by state) that will be formatted in an email
+# pop_table_checklist = final population table (filter by state) that will be formatted in an email
 ############################################
 
 # create list containing each state's submission in google sheets
@@ -27,7 +27,8 @@ states <- c("Alabama", "Idaho", "Iowa", "Pennsylvania")
 
 # run custom function that creates a list of data checklists for each state
 # for example, if data doesn't add up correctly or they left something blank
-# accounts for misspellings of "na" but these should be checked since states will likely have more variations of NA
+# accounts for misspellings of "na" but these should be checked periodically since-
+# states will likely have more spelling variations of NA
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing value
 state_data_checklist <- map(.x = states,  .f = function(x) {
@@ -47,6 +48,7 @@ survey_checklist <- state_data_checklist %>%
   select(state, year, everything())
 
 # perform checks by seeing if what was submitted last year is different from what was submitted this year for 2018-2020
+# for example, if total prison admissions in 2021 was different in 2022, then label total prison admissions as "different"
 # append 21_22 to variables so we know we are comparing 2021 survey to 2022 survey
 survey_checklist <- survey_checklist %>%
   mutate(check_total_prison_admissions_21_22                    = case_when(total_prison_admissions_21                    == total_prison_admissions_22 ~ "Same", TRUE ~ "Different"),
@@ -80,8 +82,7 @@ survey_checklist <- survey_checklist %>%
 
 # run custom function that creates an admissions list (one df for each state) with data quality checks
 # these final tables will include previously submitted data and new data
-# ignore the warning message, it's about changing some values to NA when-
-# it's not possible to calculate something because of a missing data value
+# ignore the warning message
 adm_table_checklist <- map(.x = states,  .f = function(x) {
   df_state <- dfs[[x]]
   df_final[x] <- fnc_adm_table_checklist(df_state, x)
@@ -179,3 +180,4 @@ definitions_table_checklist <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame
 definitions_table_checklist <- bind_rows(definitions_table_checklist)
+# definitions_table_checklist <- definitions_table_checklist %>% filter(definition_confirmation == "Not Confirmed")

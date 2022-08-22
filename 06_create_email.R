@@ -1,15 +1,15 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: email.R
-# Last updated: July 25, 2022
+# Last updated: August 22, 2022
 # Author: Mari Roberts
 
-# Generate email depending on checklists created in generate.R
-# Send emails
+# Generate email
 
 # Email structure
 
     # Thank you sentence
+    # Data quality sentence
     # Button link to form
 
     # Data Quality Checks
@@ -25,104 +25,28 @@
         # Notes/Comments
 ############################################
 
-# connect to outlook
-outlb <- get_business_outlook()
+# # view email for Iowa (test file with lots of errors)
+# fnc_email(adm_table_checklist, pop_table_checklist, costs_table_checklist, definitions_table_checklist, "Iowa")
 
-# email subject line
-subject_line_text <- "More Community, Less Confinement Project (2022)"
+# loop through states and generate email for each
+for(i in 1:length(states)){
 
-#create button to link to form
-form_button <-
-  HTML('<table align="center">
-       <tr>
-           <td style="background-color:#355DA1; border-radius:5px; padding:10px; border: 1px solid #355DA1;
-                      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-                      margin:0.5rem; text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box">
-              <a style="color:white; text-decoration:none; font-size:1rem; font-weight:400; line-height:1.5" href="https://csgjusticecenter.org/"><strong>Your State Form</strong></a>
-           </td>
-       </tr>
-       </table>')
+  # assign state name
+  state_name <- states[i]
 
-# set survey depenging on state
-# Alabama for now
-form <- "[here](https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing)"
-mari_email <- "[mroberts@csg.org](mailto:mroberts@csg.org)"
+  # custom function that creates email
+  email <- fnc_email(adm_table_checklist, pop_table_checklist, costs_table_checklist, definitions_table_checklist, state_name)
 
-# email
-# md uses markdown text
-mclc_email <- compose_email(
-  body = md(c(
+  # save to hold results
+  assign(paste("email_", state_name,sep=''),email)
 
-    "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
-    "<br>",
-    " ",
-    form_button,
-    " ",
+}
 
+################
+# View emails created
+################
 
-
-    "## Data Quality Check",
-    data_quality_sentence,
-
-    qa_supervision_violations,
-    qa_supervision_violation_admissions_22,
-    qa_supervision_violation_population_22,
-
-    qa_probation_violations,
-    qa_probation_admissions_22,
-    qa_probation_population_22,
-
-    qa_parole_violations,
-    qa_parole_admissions_22,
-    qa_parole_population_22,
-
-    qa_technical_violations,
-    qa_technical_violation_admissions_22,
-    qa_technical_violation_population_22,
-
-    qa_new_offense_violations,
-    qa_new_offense_violation_admissions_22,
-    qa_new_offense_violation_population_22,
-
-    "<br>",
-    "<br>",
-    "",
-    "## Definitions",
-    confirmed_definitions_sentence,
-    definitions_table,
-    "<br>",
-    "<br>",
-    "",
-
-    "## Your Submission",
-    "Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank and requires attention.",
-    "<br>",
-    adm_table,
-    "<br>",
-
-    pop_table,
-    "<br>",
-
-    costs_table,
-    "<br>",
-
-    notes_comments_table,
-    "<br>",
-
-
-
-
-    "If you have any questions or concerns. Please reply to this email.",
-    "",
-    "<br>",
-    "<br>",
-    "Best,",
-    "<br>",
-    "Mari Roberts",
-    "<br>"
-  )),
-  footer = ("The Council of State Governments Justice Center")
-)
-
-mclc_email
-
+email_Alabama
+email_Idaho
+email_Iowa
+email_Pennsylvania

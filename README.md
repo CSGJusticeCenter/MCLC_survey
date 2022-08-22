@@ -1,20 +1,33 @@
 # MCLC Survey (2022)
 
+For now, this code checks 4 test files (Alabama, Idaho, Iowa, Pennsylvania) that were created with errors.  
+
+This repository contains code that generates an email that is specific to each state. The email is comprised of:  
+
+- Thank you sentence  
+- Button link to form  
+- Data submission quality sentence  
+- Data submission issues (sentence and corresponding table that shows how data doesn't add up), if applicable  
+- Definition issues, if applicable  
+- Submission summary (admissions, population, costs, notes, comments)  
+
+## Data
+
+This repository uses MCLC data from state specific Google Sheets. Connecticut, New York, and Texas will have excel sheets since they can't access Google Sheets. 
+
 ## Repository Structure 
 
     |-- code (run in this order)
-      |-- 00_functions.R   # custom functions
-      |-- 01_import.R      # imports MCLC survey data from Google Sheets  
-      |-- 02_generate.R    # generate checklists based on data from Google Sheets 
-      |-- 03_figures.R     # generate tables and figures based on checklists 
-      |-- 04_email.R       # Send emails conditionally
+      |-- 00_import.R          # load packages and imports MCLC survey data from Google Sheets  
+      |-- 01_functions.R       # custom functions for data cleaning and qa checklists
+      |-- 02_functions_gt.R    # custom functions focused on gt tables attributes
+      |-- 03_functions_email.R # custom function to generate full email
+      |-- 04_previous_survey.R # 2021 survey data for comparisions
+      |-- 05_checklists.R      # Create qa checklists
+      |-- 06_create_email.R    # Create each state email
+      |-- 07_send_email.R      # Send emails
       
 # Google Sheet Links
 
-- [All forms](https://drive.google.com/drive/folders/1I-TbzusuCd9yTDkRZKucPoppQ2ONKrCV?usp=sharing)  
-- [Alabama](https://docs.google.com/spreadsheets/d/1ggMloM9Y5W4mkZeGIi020Ycvbvxbw9TS-mbI_H0c3cY/edit?usp=sharing)    
-- [Idaho](https://docs.google.com/spreadsheets/d/1KpmE0WJIbrBs9Uuc-CyF77cJ8nETWHM4k0LYW0VPlPk/edit?usp=sharing)     
-- [Iowa](https://docs.google.com/spreadsheets/d/1AxedM8YOYems1YslCHQncHPiv8ENvIZnr3-dXJ6FzNY/edit?usp=sharing)     
-- [Missouri](https://docs.google.com/spreadsheets/d/1-aVOwXJvxqMNLNkrqbcX_cSF4S_T8u2PIl3L7rdk4Oc/edit?usp=sharing)     
-- [Pennsylvania](https://docs.google.com/spreadsheets/d/1FcMVgowc4fdYL-L_btFzUi-SgaA0Z3QTG2kxJncKOZo/edit?usp=sharing)     
-
+- [All forms](https://drive.google.com/drive/folders/1I-TbzusuCd9yTDkRZKucPoppQ2ONKrCV?usp=sharing)   
+- Connecticut, New York, and Texas will have excel sheets.  
