@@ -4,14 +4,14 @@
 # Last updated: August 21, 2022
 # Author: Mari Roberts
 
-# Save state contact info
-# Checklist for data, definitions, costs, notes
-
 # Checklists created:
-# state_data_checklist = checks for no data and if data doesn't add up
+# survey_checklist = checks for data left blank and if data doesn't add up correctly
 # previous_survey_checklist = check for changes in data between the two surveys
-# adm_table_checklist = final admissions table (filter by state) that will be formatted in an email
-# pop_table_checklist = final population table (filter by state) that will be formatted in an email
+# adm_table_checklist = final admissions table with qa checks (filter by state) that will be formatted in gt
+# pop_table_checklist = final population table with qa checks (filter by state) that will be formatted in gt
+# notes_comments_list = puts notes and comments in a table that will be formatted in gt
+# contact_list = contact info by state
+# definitions_table_checklist = table that shows definitions that weren't confirmed that will be formatted in gt
 ############################################
 
 # create list containing each state's submission in google sheets

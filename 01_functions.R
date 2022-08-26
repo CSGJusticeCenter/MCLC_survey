@@ -17,7 +17,7 @@ fnc_contact_info <- function(df, state_name){
   email <- df[18,4]
   df1 <- as.data.frame(c(name, email))
   df1 <- df1 %>%
-    mutate(state_name = state_name) %>%
+    mutate(state = state_name) %>%
     rename(name = 1,
            email = 2)
 }

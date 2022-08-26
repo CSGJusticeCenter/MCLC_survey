@@ -54,7 +54,7 @@ adm_pop <- adm_pop %>%
          total_technical_violation_admissions = technical_parole_violation_admissions + technical_probation_violation_admissions,
          total_technical_violation_population = technical_parole_violation_population + technical_probation_violation_population)
 
-# rename variables so they're consistent with new survey in 2022
+# rename variables in the 2021 survey so they're consistent with new survey in 2022
 # add commas to numbers
 previous_survey <- adm_pop %>%
 

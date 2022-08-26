@@ -2,11 +2,12 @@
 # Final Email Function
 ####################################################
 
-# custom function that generates a state list of the following:
+# custom function that generates a email of the following:
 # 1) sentence about data submission
 # 2) sentences about whether data doesn't add up correctly and whether data was left blank, if applicable
 # 3) tables that show data that doesn't add up, if applicable
-# 4) submission tables showing green cells as new data and yellow cells as "left blank"
+# 4) table that shows definitions that weren't confirmed
+# 5) submission tables showing green cells as new data and yellow cells as "left blank"
 
 fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
 
@@ -299,9 +300,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   # email
   ############
 
-  # email subject line
-  subject_line_text <- "More Community, Less Confinement Project (2022)"
-
   #create button to link to form
   LINK <- form_links %>% filter(state == state_name)
   LINK <- LINK$form_link
@@ -312,6 +310,9 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   mclc_email <- compose_email(
     body = md(c(
 
+      paste("##", state_name),
+      "<br>",
+      " ",
       "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
       "<br>",
       " ",

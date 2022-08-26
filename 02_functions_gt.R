@@ -342,11 +342,6 @@ fnc_gt_definitions_table <- function(df, state_name){
   { if(dim(df1)[1] != 0){
     definitions_table <- gt(df1) %>%
 
-      # # table title and subtitle
-      # tab_header(title = "Definitions") %>%
-      # tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
-      #           locations = cells_title("title")) %>%
-
       # Set missing value defaults
       fmt_missing(columns = gt::everything(), missing_text = "") %>%
 

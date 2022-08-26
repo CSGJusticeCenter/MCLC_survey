@@ -46,7 +46,7 @@ sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocation
 # # Use this code to connect to google drive, fetch new token, and authorize tidyverse api
 # # Make sure the sheets have been officially shared with you and you have editing access
 # googlesheets4::gs4_deauth()
-# googlesheets4::gs4_auth()
+googlesheets4::gs4_auth()
 
 # get data submitted in 2021 to compare with new submissions in 2022
 # this way we will know who changed their data for 2018, 2019, and 2020
@@ -63,6 +63,7 @@ costs <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep
 
 # FAKE DATA - test sheets for developing this code
 # some of these will have accurate data and some will have issues
+# contact info is mari's email for now
 Alabama      <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
 Idaho        <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
 Iowa         <- read_sheet('https://docs.google.com/spreadsheets/d/1IOQgFXYGu0n5CdhNK7ZUmUpCEn4M0RPk7us0jP9xoTs/edit?usp=sharing')

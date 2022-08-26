@@ -24,8 +24,7 @@ This repository uses MCLC data from state specific Google Sheets. Connecticut, N
       |-- 03_functions_email.R # custom function to generate full email
       |-- 04_previous_survey.R # 2021 survey data for comparisions
       |-- 05_checklists.R      # Create qa checklists
-      |-- 06_create_email.R    # Create each state email
-      |-- 07_send_email.R      # Send emails
+      |-- 06_send_email.R      # Create each state email and sends to contact
       
 # Google Sheet Links
 
