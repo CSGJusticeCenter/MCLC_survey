@@ -132,7 +132,7 @@ fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, 
       header
 
   } else if(test == FALSE){
-    qa_table <- "<span>"
+    qa_table <- "<span></span>"
   }
   }
 }
@@ -348,6 +348,11 @@ fnc_gt_definitions_table <- function(df, state_name){
       # add custom table settings and unique header (functions below) depending on metric
       fnc_table_settings() %>%
 
+      # # table title and subtitle
+      # tab_header(title = "Definitions") %>%
+      # tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
+      #           locations = cells_title("title")) %>%
+
       cols_width(
         "metric" ~ px(300),
         "include" ~ px(225),
@@ -372,7 +377,7 @@ fnc_gt_definitions_table <- function(df, state_name){
     return(definitions_table)
 
   } else if(dim(df1)[1] == 0){
-    definitions_table <- "<span>"
+    definitions_table <- "<span></span>"
   }
   }
 
@@ -387,7 +392,7 @@ fnc_gt_adm_table <- function(df, state_name){
 
   # filter by state
   df <- adm_table_checklist %>%
-    filter(state == "Alabama") %>%
+    filter(state == state_name) %>%
     select(-c(state))
   df <- tibble(df)
 

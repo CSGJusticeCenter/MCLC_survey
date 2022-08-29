@@ -61,7 +61,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   # if a sentence isn't needed, then <span></span> is input into the email. This is basically a blank space in html that doesn't mess up formatting
   data_quality_sentence <- case_when(
 
-    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "Thank you for submitting data! Please review your submission below. If you need to make any updates, please do so in your form using the button above.<br>",
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "Thank you for submitting data! Please review your submission below. If you need to make any updates, please click on the button above.<br>",
     left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Costs Previously Submitted section blank. If you do not have data, please input NA in your form.<br>",
     left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Population sections blank. If you do not have data, please input NA in your form.<br>",
     left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Population and Costs Previously Submitted sections blank. If you do not have data, please input NA in your form.<br>",
@@ -85,7 +85,13 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   # generate sentence depending on definition issues
   confirmed_definitions_sentence <- case_when(
     left_blank_definitions == TRUE ~ "You did not confirm the following definitions or input anything in the definition notes. Please go to your state form and confirm that these definitions are correct or let us know how your definitions differ.<br>",
-    left_blank_definitions == FALSE ~ "Thank you for confirming your definitions.<br>"
+    left_blank_definitions == FALSE ~ "<span></span>"
+  )
+
+  # add title to defitions section if needed
+  definitions_title <- case_when(
+    left_blank_definitions == TRUE ~ paste("","## Unconfirmed Definitions", "<br>"),
+    left_blank_definitions == FALSE ~ "<span></span>"
   )
 
   # custom function to generate sentence about whether data doesn't add up. otherwise, leave blank
@@ -116,6 +122,9 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_supervision_violation_admissions_22 <- qa_supervision_violation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_supervision_violation_admissions_22), rows = check_supervision_violation_admissions_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_supervision_violation_admissions_22), rows = check_supervision_violation_admissions_22 == "Left Blank")) %>%
+
       as_raw_html()
   } else {
     qa_supervision_violation_admissions_22 <- "<span></span>"
@@ -134,6 +143,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_probation_admissions_22 <- qa_probation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_probation_violation_admissions_22), rows = check_probation_violation_admissions_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_probation_violation_admissions_22), rows = check_probation_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {qa_probation_admissions_22 <- "<span></span>"}}
 
@@ -149,6 +160,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_parole_admissions_22 <- qa_parole_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_parole_violation_admissions_22), rows = check_parole_violation_admissions_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_parole_violation_admissions_22), rows = check_parole_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_parole_admissions_22 <- "<span></span>"
@@ -167,6 +180,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_technical_violation_admissions_22 <- qa_technical_violation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_total_technical_violation_admissions_22), rows = check_total_technical_violation_admissions_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_total_technical_violation_admissions_22), rows = check_total_technical_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_technical_violation_admissions_22 <- "<span></span>"
@@ -185,6 +200,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_new_offense_violation_admissions_22 <- qa_new_offense_violation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_new_offense_violation_admissions_22), rows = check_new_offense_violation_admissions_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_new_offense_violation_admissions_22), rows = check_new_offense_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_new_offense_violation_admissions_22 <- "<span></span>"
@@ -203,6 +220,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_supervision_violation_population_22 <- qa_supervision_violation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_supervision_violation_population_22), rows = check_supervision_violation_population_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_supervision_violation_population_22), rows = check_supervision_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_supervision_violation_population_22 <- "<span></span>"
@@ -221,6 +240,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_probation_population_22 <- qa_probation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_probation_violation_population_22), rows = check_probation_violation_population_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_probation_violation_population_22), rows = check_probation_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {qa_probation_population_22 <- "<span></span>"}}
 
@@ -236,6 +257,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_parole_population_22 <- qa_parole_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_parole_violation_population_22), rows = check_parole_violation_population_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_parole_violation_population_22), rows = check_parole_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_parole_population_22 <- "<span></span>"
@@ -254,6 +277,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_technical_violation_population_22 <- qa_technical_violation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_total_technical_violation_population_22), rows = check_total_technical_violation_population_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_total_technical_violation_population_22), rows = check_total_technical_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_technical_violation_population_22 <- "<span></span>"
@@ -272,6 +297,8 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_new_offense_violation_population_22 <- qa_new_offense_violation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_new_offense_violation_population_22), rows = check_new_offense_violation_population_22 == "Doesn't Add Up")) %>%
+      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
+                locations = cells_body(columns = c(check_new_offense_violation_population_22), rows = check_new_offense_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_new_offense_violation_population_22 <- "<span></span>"
@@ -307,14 +334,16 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   form_button <- HTML(paste0('<table align="center"><tr><td style="background-color:#355DA1; border-radius:5px; padding:10px; border: 1px solid #355DA1;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;margin:0.5rem; text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box">
               <a style="color:white; text-decoration:none; font-size:1rem; font-weight:400; line-height:1.5" href="', LINK, '"><strong>Your State Form</strong></a></td></tr></table>'))
 
+  mclc_website <- "[More Community, Less Confinement](https://csgjusticecenter.org/publications/more-community-less-confinement/national-report/)"
+
   # md uses markdown text
   mclc_email <- compose_email(
     body = md(c(
 
       paste("#", state_name),
       " ",
-      "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project.",
-      "<br>",
+      "Hello, Thank you for participating in the 2022 ", mclc_website, " data collection project.",
+      "<br><br>",
       "Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
       "<br>",
       " ",
@@ -348,13 +377,10 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
 
 
       "<br>",
-      "<br>",
       "",
-      "### Definitions",
+      definitions_title,
       confirmed_definitions_sentence,
       definitions_table,
-      "<br>",
-      "<br>",
       "",
 
       "## Your Submission",

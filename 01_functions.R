@@ -69,6 +69,7 @@ fnc_costs <- function(df, state_name){
                                            . == "[none]" |
                                            . == "none"
                                          , "No Data"))) %>%
+    mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
     mutate(across(everything(), ~replace(., . ==  "null", "Left Blank"))) %>%
     mutate(check_year_2019 = case_when(year_2019 == "No Data" ~ "No Data",
                                        year_2019 == "Left Blank" ~ "Left Blank",
