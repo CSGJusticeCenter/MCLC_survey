@@ -14,15 +14,9 @@
 # definitions_table_checklist = table that shows definitions that weren't confirmed that will be formatted in gt
 ############################################
 
-# create list containing each state's submission in google sheets
-dfs <- list(Alabama, Idaho, Iowa, Pennsylvania)
-dfs <- setNames(dfs,c("Alabama", "Idaho", "Iowa", "Pennsylvania"))
-
-# create a vector state names
-states <- c("Alabama", "Idaho", "Iowa", "Pennsylvania")
-
 ###########
-# state_data_checklist
+# survey_checklist
+# contains: NA vs left blank and whether data changed from previous survey
 ###########
 
 # create empty list
@@ -35,7 +29,7 @@ df_final <- list()
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing value
 state_data_checklist <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_create_state_data_checklist(df_state, x)
 })
 
@@ -81,13 +75,14 @@ survey_checklist <- survey_checklist %>%
 
 ###########
 # adm_table_checklist
+# contains: NA vs left blank
 ###########
 
 # run custom function that creates an admissions list (one df for each state) with data quality checks
 # these final tables will include previously submitted data and new data
 # ignore the warning message
 adm_table_checklist <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_adm_table_checklist(df_state, x)
 })
 
@@ -97,6 +92,7 @@ adm_table_checklist <- adm_table_checklist %>% select(state, everything())
 
 ###########
 # pop_table_checklist
+# contains: NA vs left blank
 ###########
 
 # run custom function that creates an population list (one df for each state) with data quality checks
@@ -104,7 +100,7 @@ adm_table_checklist <- adm_table_checklist %>% select(state, everything())
 # ignore the warning message, it's about changing some values to NA when-
 # it's not possible to calculate something because of a missing data value
 pop_table_checklist <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_pop_table_checklist(df_state, x)
 })
 
@@ -114,12 +110,13 @@ pop_table_checklist <- pop_table_checklist %>% select(state, everything())
 
 ###########
 # costs_table_checklist
+# contains: NA vs left blank and whether data changed from previous survey
 ###########
 
 # run custom function that creates a cost list (one df for each state) with data quality checks
 # ignore the warning message, it's about changing some values to NA
 costs_table_checklist <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_costs(df_state, x)
 })
 
@@ -142,13 +139,14 @@ costs_table_checklist <- costs_table_checklist %>%
 
 ###########
 # notes_comments_list
+# contains: NA vs left blank
 ###########
 
 # run custom function that creates a notes and comments list (one df for each state)
 # no qa check for notes. they can see what was submitted and change it if they want to
 # ignore warning message
 notes_comments_list <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_notes_comments(df_state, x)
 })
 
@@ -162,7 +160,7 @@ notes_comments_list <- bind_rows(notes_comments_list)
 # run custom function that creates a contact list (one df for each state)
 # ignore error message
 contact_list <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_contact_info(df_state, x)
 })
 
@@ -177,10 +175,14 @@ contact_list <- bind_rows(contact_list)
 # checks to make sure the respondent checked the box next to the definitions
 # ignore error message
 definitions_table_checklist <- map(.x = states,  .f = function(x) {
-  df_state <- dfs[[x]]
+  df_state <- state_dfs[[x]]
   df_final[x] <- fnc_definitions(df_state, x)
 })
 
 # change list into a data frame
 definitions_table_checklist <- bind_rows(definitions_table_checklist)
 # definitions_table_checklist <- definitions_table_checklist %>% filter(definition_confirmation == "Not Confirmed")
+
+###########
+#
+###########

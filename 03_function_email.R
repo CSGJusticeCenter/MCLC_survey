@@ -58,6 +58,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   ############
 
   # generate sentence depending on data issues
+  # if a sentence isn't needed, then <span></span> is input into the email. This is basically a blank space in html that doesn't mess up formatting
   data_quality_sentence <- case_when(
 
     left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "Thank you for submitting data! Please review your submission below. If you need to make any updates, please do so in your form using the button above.<br>",
@@ -78,7 +79,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions and Population sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
     left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions, Population, and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
 
-    TRUE ~ "<span>"
+    TRUE ~ "<span></span>"
   )
 
   # generate sentence depending on definition issues
@@ -117,7 +118,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_supervision_violation_admissions_22), rows = check_supervision_violation_admissions_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_supervision_violation_admissions_22 <- "<span>"
+    qa_supervision_violation_admissions_22 <- "<span></span>"
   }
   }
 
@@ -134,7 +135,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_probation_violation_admissions_22), rows = check_probation_violation_admissions_22 == "Doesn't Add Up")) %>%
       as_raw_html()
-  } else {qa_probation_admissions_22 <- "<span>"}}
+  } else {qa_probation_admissions_22 <- "<span></span>"}}
 
   # create qa table for parole admissions if it exists
   qa_parole_admissions_22 <- fnc_gt_qa_table(df = state_data_checklist,
@@ -150,7 +151,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_parole_violation_admissions_22), rows = check_parole_violation_admissions_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_parole_admissions_22 <- "<span>"
+    qa_parole_admissions_22 <- "<span></span>"
   }
   }
 
@@ -168,7 +169,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_total_technical_violation_admissions_22), rows = check_total_technical_violation_admissions_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_technical_violation_admissions_22 <- "<span>"
+    qa_technical_violation_admissions_22 <- "<span></span>"
   }
   }
 
@@ -186,7 +187,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_new_offense_violation_admissions_22), rows = check_new_offense_violation_admissions_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_new_offense_violation_admissions_22 <- "<span>"
+    qa_new_offense_violation_admissions_22 <- "<span></span>"
   }
   }
 
@@ -204,7 +205,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_supervision_violation_population_22), rows = check_supervision_violation_population_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_supervision_violation_population_22 <- "<span>"
+    qa_supervision_violation_population_22 <- "<span></span>"
   }
   }
 
@@ -221,7 +222,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_probation_violation_population_22), rows = check_probation_violation_population_22 == "Doesn't Add Up")) %>%
       as_raw_html()
-  } else {qa_probation_population_22 <- "<span>"}}
+  } else {qa_probation_population_22 <- "<span></span>"}}
 
   # create qa table for parole population if it exists
   qa_parole_population_22 <- fnc_gt_qa_table(df = state_data_checklist,
@@ -237,7 +238,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_parole_violation_population_22), rows = check_parole_violation_population_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_parole_population_22 <- "<span>"
+    qa_parole_population_22 <- "<span></span>"
   }
   }
 
@@ -255,7 +256,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_total_technical_violation_population_22), rows = check_total_technical_violation_population_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_technical_violation_population_22 <- "<span>"
+    qa_technical_violation_population_22 <- "<span></span>"
   }
   }
 
@@ -273,7 +274,7 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
                 locations = cells_body(columns = c(check_new_offense_violation_population_22), rows = check_new_offense_violation_population_22 == "Doesn't Add Up")) %>%
       as_raw_html()
   } else {
-    qa_new_offense_violation_population_22 <- "<span>"
+    qa_new_offense_violation_population_22 <- "<span></span>"
   }
   }
 
@@ -310,10 +311,11 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   mclc_email <- compose_email(
     body = md(c(
 
-      paste("##", state_name),
-      "<br>",
+      paste("#", state_name),
       " ",
-      "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
+      "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project.",
+      "<br>",
+      "Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
       "<br>",
       " ",
       form_button,

@@ -98,6 +98,9 @@ fnc_costs <- function(df, state_name){
 #############################################
 
 # custom function to extract definition confirmations used in checklists.R
+# if they checked the box to confirm their definition then it is "Confirmed"
+# if they did not check the box but left some notes, then it is also "Confirmed"
+# if they did not check the box and did not leave notes, then it is "Not Confirmed"
 fnc_definitions <- function(df, state_name){
   df1 <- janitor::clean_names(df)
   df1$metric <- apply(df1[,1:3], 1, function(x) x[!is.na(x)][1])
@@ -118,8 +121,10 @@ fnc_definitions <- function(df, state_name){
 # QA sentences
 #############################################
 
-# custom function that generates a sentence depending on data issue
+# custom function that generates a data quality sentence depending on data issue
 # for example, supervision violation admissions should equal the number of probation and parole violation admissions, otherwise leave blank in email
+# if the data doesn't add up (check == TRUE), then generate a sentence saying that the data may be inaccurate
+# admissions
 fnc_qa_sentence_adm <- function(check, variable_1, variable_2, variable_3){
   variable_1<-eval(parse(text = "variable_1"))
   variable_2<-eval(parse(text = "variable_2"))
@@ -129,6 +134,11 @@ fnc_qa_sentence_adm <- function(check, variable_1, variable_2, variable_3){
                            " and ", variable_3, ".<br><br>",sep = ""),
     TRUE ~ "<span>")
 }
+
+# custom function that generates a data quality sentence depending on data issue
+# for example, supervision violation population should equal the number of probation and parole violation populations, otherwise leave blank in email
+# if the data doesn't add up (check == TRUE), then generate a sentence saying that the data may be inaccurate
+# population
 fnc_qa_sentence_pop <- function(check, variable_1, variable_2, variable_3){
   variable_1<-eval(parse(text = "variable_1"))
   variable_2<-eval(parse(text = "variable_2"))
@@ -145,7 +155,7 @@ fnc_qa_sentence_pop <- function(check, variable_1, variable_2, variable_3){
 #############################################
 
 # custom function to generate state data checklist used in checklists.R
-# if numbers don't add up, what was left blank, or no data
+# indicates if numbers don't add up, what was left blank, or no data
 # there's a lot of code because one column can have a number and character data type
 # and we want to add commas to the numbers while also retaining whether an NA is an actual NA or if it was left blank
 fnc_create_state_data_checklist <- function(df, state_name){
@@ -235,8 +245,8 @@ fnc_create_state_data_checklist <- function(df, state_name){
                             grepl("2019", year) ~ 2019,
                             grepl("2020", year) ~ 2020,
                             grepl("2021", year) ~ 2021)) %>%
-    rename_with(~ paste0(., "_22"), -c(year)) %>%
-    mutate(across(everything(), as.numeric))
+    rename_with(~ paste0(., "_22"), -c(year))
+  # mutate(across(everything(), as.numeric))
 
   # check to see if numbers add up correctly
   # supervision violations = probation + parole violations
@@ -358,45 +368,45 @@ fnc_create_state_data_checklist <- function(df, state_name){
   df_final <- df_final %>%
     mutate(across(everything(), as.character))  %>%
 
-    mutate(total_prison_admissions_22                     = case_when(total_prison_admissions_22 == "NA"  ~ entry_check_total_prison_admissions_22,
+    mutate(total_prison_admissions_22                     = case_when(total_prison_admissions_22 == "NA"                     ~ entry_check_total_prison_admissions_22,
                                                                       TRUE ~ total_prison_admissions_22),
-           total_supervision_violation_admissions_22      = case_when(total_supervision_violation_admissions_22 == "NA"  ~ entry_check_total_supervision_violation_admissions_22,
+           total_supervision_violation_admissions_22      = case_when(total_supervision_violation_admissions_22 == "NA"      ~ entry_check_total_supervision_violation_admissions_22,
                                                                       TRUE ~ total_supervision_violation_admissions_22),
-           probation_violation_admissions_22              = case_when(probation_violation_admissions_22 == "NA"  ~ entry_check_probation_violation_admissions_22,
+           probation_violation_admissions_22              = case_when(probation_violation_admissions_22 == "NA"              ~ entry_check_probation_violation_admissions_22,
                                                                       TRUE ~ probation_violation_admissions_22),
-           parole_violation_admissions_22                 = case_when(parole_violation_admissions_22 == "NA"  ~ entry_check_parole_violation_admissions_22,
+           parole_violation_admissions_22                 = case_when(parole_violation_admissions_22 == "NA"                 ~ entry_check_parole_violation_admissions_22,
                                                                       TRUE ~ parole_violation_admissions_22),
-           total_technical_violation_admissions_22        = case_when(total_technical_violation_admissions_22 == "NA"  ~ entry_check_total_technical_violation_admissions_22,
+           total_technical_violation_admissions_22        = case_when(total_technical_violation_admissions_22 == "NA"        ~ entry_check_total_technical_violation_admissions_22,
                                                                       TRUE ~ total_technical_violation_admissions_22),
-           technical_probation_violation_admissions_22    = case_when(technical_probation_violation_admissions_22 == "NA"  ~ entry_check_technical_probation_violation_admissions_22,
+           technical_probation_violation_admissions_22    = case_when(technical_probation_violation_admissions_22 == "NA"    ~ entry_check_technical_probation_violation_admissions_22,
                                                                       TRUE ~ technical_probation_violation_admissions_22),
-           technical_parole_violation_admissions_22       = case_when(technical_parole_violation_admissions_22 == "NA"  ~ entry_check_technical_parole_violation_admissions_22,
+           technical_parole_violation_admissions_22       = case_when(technical_parole_violation_admissions_22 == "NA"       ~ entry_check_technical_parole_violation_admissions_22,
                                                                       TRUE ~ technical_parole_violation_admissions_22),
-           total_new_offense_population_22                = case_when(total_new_offense_population_22 == "NA"  ~ entry_check_total_new_offense_population_22,
-                                                                      TRUE ~ total_new_offense_population_22),
-           new_offense_probation_violation_population_22  = case_when(new_offense_probation_violation_population_22 == "NA"  ~ entry_check_new_offense_probation_violation_population_22,
-                                                                      TRUE ~ new_offense_probation_violation_population_22),
-           new_offense_parole_violation_population_22     = case_when(new_offense_parole_violation_population_22 == "NA"  ~ entry_check_new_offense_parole_violation_population_22,
-                                                                      TRUE ~ new_offense_parole_violation_population_22),
-           total_prison_population_22                     = case_when(total_prison_population_22 == "NA"  ~ entry_check_total_prison_population_22,
+           total_new_offense_admissions_22                = case_when(total_new_offense_admissions_22 == "NA"                ~ entry_check_total_new_offense_admissions_22,
+                                                                      TRUE ~ total_new_offense_admissions_22),
+           new_offense_probation_violation_admissions_22  = case_when(new_offense_probation_violation_admissions_22 == "NA"  ~ entry_check_new_offense_probation_violation_admissions_22,
+                                                                      TRUE ~ new_offense_probation_violation_admissions_22),
+           new_offense_parole_violation_admissions_22     = case_when(new_offense_parole_violation_admissions_22 == "NA"     ~ entry_check_new_offense_parole_violation_admissions_22,
+                                                                      TRUE ~ new_offense_parole_violation_admissions_22),
+           total_prison_population_22                     = case_when(total_prison_population_22 == "NA"                     ~ entry_check_total_prison_population_22,
                                                                       TRUE ~ total_prison_population_22),
-           total_supervision_violation_population_22      = case_when(total_supervision_violation_population_22 == "NA"  ~ entry_check_total_supervision_violation_population_22,
+           total_supervision_violation_population_22      = case_when(total_supervision_violation_population_22 == "NA"      ~ entry_check_total_supervision_violation_population_22,
                                                                       TRUE ~ total_supervision_violation_population_22),
-           probation_violation_population_22              = case_when(probation_violation_population_22 == "NA"  ~ entry_check_probation_violation_population_22,
+           probation_violation_population_22              = case_when(probation_violation_population_22 == "NA"              ~ entry_check_probation_violation_population_22,
                                                                       TRUE ~ probation_violation_population_22),
-           parole_violation_population_22                 = case_when(parole_violation_population_22 == "NA"  ~ entry_check_parole_violation_population_22,
+           parole_violation_population_22                 = case_when(parole_violation_population_22 == "NA"                 ~ entry_check_parole_violation_population_22,
                                                                       TRUE ~ parole_violation_population_22),
-           total_technical_violation_population_22        = case_when(total_technical_violation_population_22 == "NA"  ~ entry_check_total_technical_violation_population_22,
+           total_technical_violation_population_22        = case_when(total_technical_violation_population_22 == "NA"        ~ entry_check_total_technical_violation_population_22,
                                                                       TRUE ~ total_technical_violation_population_22),
-           technical_probation_violation_population_22    = case_when(technical_probation_violation_population_22 == "NA"  ~ entry_check_technical_probation_violation_population_22,
+           technical_probation_violation_population_22    = case_when(technical_probation_violation_population_22 == "NA"    ~ entry_check_technical_probation_violation_population_22,
                                                                       TRUE ~ technical_probation_violation_population_22),
-           technical_parole_violation_population_22       = case_when(technical_parole_violation_population_22 == "NA"  ~ entry_check_technical_parole_violation_population_22,
+           technical_parole_violation_population_22       = case_when(technical_parole_violation_population_22 == "NA"       ~ entry_check_technical_parole_violation_population_22,
                                                                       TRUE ~ technical_parole_violation_population_22),
-           total_new_offense_population_22                = case_when(total_new_offense_population_22 == "NA"  ~ entry_check_total_new_offense_population_22,
+           total_new_offense_population_22                = case_when(total_new_offense_population_22 == "NA"                ~ entry_check_total_new_offense_population_22,
                                                                       TRUE ~ total_new_offense_population_22),
            new_offense_probation_violation_population_22  = case_when(new_offense_probation_violation_population_22 == "NA"  ~ entry_check_new_offense_probation_violation_population_22,
                                                                       TRUE ~ new_offense_probation_violation_population_22),
-           new_offense_parole_violation_population_22     = case_when(new_offense_parole_violation_population_22 == "NA"  ~ entry_check_new_offense_parole_violation_population_22,
+           new_offense_parole_violation_population_22     = case_when(new_offense_parole_violation_population_22 == "NA"     ~ entry_check_new_offense_parole_violation_population_22,
                                                                       TRUE ~ new_offense_parole_violation_population_22)) %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, funs(ifelse(is.na(.), "No Data", .)))
@@ -408,7 +418,7 @@ fnc_create_state_data_checklist <- function(df, state_name){
 # ADMISSIONS TABLE
 #############################################
 
-# custom function to generate an admissions table that shows survey 2021, survey 2022, and qa check "left blank"
+# admissions table
 fnc_adm_table_checklist <- function(df, state_name){
 
   # filter data to state and select 2021 data
@@ -419,11 +429,11 @@ fnc_adm_table_checklist <- function(df, state_name){
   df_adm_22 <- state_data_checklist %>% filter(state == state_name) %>%
     select(year, total_prison_admissions_22:new_offense_parole_violation_admissions_22)
 
-  # filter data to state and select data quality checks in previous survey checklist (2018-2022 numbers were changed)
+  # filter data to state and select data quality checks in previous survey checklist (where 2018-2022 numbers changed?)
   df_adm_check_21_22 <- survey_checklist %>% filter(state == state_name) %>%
     select(year, check_total_prison_admissions_21_22:check_new_offense_parole_violation_admissions_21_22)
 
-  # reshape data so years are columns and metrics are rows
+  # reshape data
   df_adm_21 <- reshape2::dcast(reshape2::melt(df_adm_21, id.vars = "year"), variable ~ year)
 
   # rename variables and rename metrics for table format
@@ -470,7 +480,6 @@ fnc_adm_table_checklist <- function(df, state_name){
     mutate(metric = str_to_title(metric))
 
   # add data together and order metrics in table
-  # change data types
   df_adm <- merge(df_adm_21, df_adm_22, by = "metric", all.x = TRUE, all.y = TRUE)
   df_adm <- merge(df_adm, df_adm_check_21_22, by = "metric", all.x = TRUE, all.y = TRUE)
   df_adm <- df_adm %>%
@@ -490,6 +499,7 @@ fnc_adm_table_checklist <- function(df, state_name){
     arrange(order) %>%
     select(-order)
 }
+
 
 #############################################
 # POPULATION TABLE
