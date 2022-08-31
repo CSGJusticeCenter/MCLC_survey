@@ -148,9 +148,9 @@ fnc_qa_supervision_adm_headers <- function(gt_object){
       "check_supervision_violation_admissions_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
-      total_supervision_violation_admissions_22  = "Total Supervision Violation admissions",
-      probation_violation_admissions_22          = "Probation Violation admissions",
-      parole_violation_admissions_22             = "Parole Violation admissions",
+      total_supervision_violation_admissions_22  = "Total Supervision Violation Admissions",
+      probation_violation_admissions_22          = "Probation Violation Admissions",
+      parole_violation_admissions_22             = "Parole Violation Admissions",
       check_supervision_violation_admissions_22  = "Data Quality Check",
       plus                                       = " ",
       equal                                      = " ")
@@ -186,9 +186,9 @@ fnc_qa_parole_adm_headers <- function(gt_object){
       "check_parole_violation_admissions_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
-      parole_violation_admissions_22             = "Parole Violation admissions",
-      new_offense_parole_violation_admissions_22 = "New Offense Parole Violation admissions",
-      technical_parole_violation_admissions_22   = "Technical Parole Violation admissions",
+      parole_violation_admissions_22             = "Parole Violation Admissions",
+      new_offense_parole_violation_admissions_22 = "New Offense Parole Violation Admissions",
+      technical_parole_violation_admissions_22   = "Technical Parole Violation Admissions",
       check_parole_violation_admissions_22       = "Data Quality Check",
       plus                                       = " ",
       equal                                      = " ")
@@ -224,9 +224,9 @@ fnc_qa_new_offense_adm_headers <- function(gt_object){
       "check_new_offense_violation_admissions_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
-      total_new_offense_admissions_22                 = "Total New Offense Violation admissions",
-      new_offense_probation_violation_admissions_22   = "New Offense Probation Violation admissions",
-      new_offense_parole_violation_admissions_22      = "New Offense Parole Violation admissions",
+      total_new_offense_admissions_22                 = "Total New Offense Violation Admissions",
+      new_offense_probation_violation_admissions_22   = "New Offense Probation Violation Admissions",
+      new_offense_parole_violation_admissions_22      = "New Offense Parole Violation Admissions",
       check_new_offense_violation_admissions_22       = "Data Quality Check",
       plus                                            = " ",
       equal                                           = " ")
