@@ -15,6 +15,7 @@
 
 # load packages
 library(googlesheets4)
+library(googlesheets)
 library(readxl)
 library(csgjcr)
 library(janitor)
@@ -71,7 +72,8 @@ form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>
 
 # # Use this code to connect to google drive, fetch new token, and authorize tidyverse api
 # # Make sure the sheets have been officially shared with you and you have editing access
-# googlesheets4::gs4_deauth()
+gs_auth(new_user = TRUE)
+googlesheets4::gs4_deauth()
 googlesheets4::gs4_auth()
 
 # read google sheets data into r
