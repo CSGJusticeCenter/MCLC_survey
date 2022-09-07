@@ -182,7 +182,3 @@ definitions_table_checklist <- map(.x = states,  .f = function(x) {
 # change list into a data frame
 definitions_table_checklist <- bind_rows(definitions_table_checklist)
 # definitions_table_checklist <- definitions_table_checklist %>% filter(definition_confirmation == "Not Confirmed")
-
-###########
-#
-###########

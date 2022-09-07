@@ -16,23 +16,23 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   ############
 
   # determine whether someone left data blank in the admissions section
-  state_adm <- adm_table_checklist %>% filter(state ==  state_name)
+  state_adm <- adm_table_checklist %>% filter(state ==  "Indiana")
   left_blank_adm <- any(state_adm=="Left Blank")
 
   # determine whether someone left data blank in the population section
-  state_pop <- pop_table_checklist %>% filter(state ==  state_name)
+  state_pop <- pop_table_checklist %>% filter(state ==  "Indiana")
   left_blank_pop <- any(state_pop=="Left Blank")
 
   # determine whether someone left data blank in the costs section
-  state_costs <- costs_table_checklist %>% filter(state ==  state_name)
+  state_costs <- costs_table_checklist %>% filter(state ==  "Indiana")
   left_blank_costs <- any(state_costs=="Left Blank")
 
   # determine whether someone left data blank in the confirm definitions section
-  state_definitions <- definitions_table_checklist %>% filter(state ==  state_name)
+  state_definitions <- definitions_table_checklist %>% filter(state ==  "Indiana")
   left_blank_definitions <- any(state_definitions$definition_confirmation=="Not Confirmed")
 
   # filter to state
-  state_data_quality <- state_data_checklist %>% filter(state == state_name)
+  state_data_quality <- state_data_checklist %>% filter(state == "Indiana")
 
   # determine whether data doesn't add up correctly
   check_supervision_violation_admissions_22     <- any(state_data_quality$check_supervision_violation_admissions_22     =="Doesn't Add Up")
@@ -61,36 +61,77 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   # if a sentence isn't needed, then <span></span> is input into the email. This is basically a blank space in html that doesn't mess up formatting
   data_quality_sentence <- case_when(
 
-    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "Thank you for submitting data! Please review your submission below. If you need to make any updates, please click on the button above.<br>",
-    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Costs Previously Submitted section blank. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Population sections blank. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Population and Costs Previously Submitted sections blank. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions section blank. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Population section blank. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Admissions, Population, and Costs Previously Submitted sections blank. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Population sections blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "Thank you for submitting data! We reviewed your data and did not notice any issues. Please review your submission below. If you need to make any updates, please click on the button below.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Costs Previously Submitted section blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Population sections blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Population and Costs Previously Submitted sections blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions section blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Population section blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Admissions, Population, and Costs Previously Submitted sections blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Population sections blank. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data. Please review the issue(s) in the table(s) below.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Costs Previously Submitted section blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Population section blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Population and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions section blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions and Population sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    # left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions, Population, and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
 
-    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data. Please review the issue(s) in the table(s) below.<br>",
-    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Costs Previously Submitted section blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Population section blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Population and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions section blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == FALSE & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == FALSE & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions and Population sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
-    left_blank_adm == TRUE  & left_blank_pop == TRUE  & left_blank_costs == TRUE  & checks == TRUE  ~ "We noticed some potential issues with your data and that you left some fields in the Admissions, Population, and Costs Previously Submitted sections blank. Please review the issue(s) in the table(s) below. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions, Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions, Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions, Admissions, and Population section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions, Admissions, and Population section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Admissions and Population section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == TRUE   & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Population section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions, Admissions, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions, Admissions, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Admissions and Costs section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions and Admissions section blank. If you do not have data, please input NA in your form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions and Admissions section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Admissions section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == TRUE & left_blank_pop == FALSE  & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Admissions section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions, Population, and Costs section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions, Population, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Population and Costs section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Population and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions and Population section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions and Population section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Population section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == TRUE  & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Population section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions and Costs section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == TRUE  ~ "We noticed you left some fields in the Definitions, Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == TRUE  & left_blank_definitions == FALSE & checks == FALSE ~ "We noticed you left some fields in the Definitions, Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == TRUE  ~ "We noticed you left some fields in the Definitions, Admissions, Population, and Costs section blank. If you do not have data, please input NA in your form. We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & left_blank_definitions == TRUE  & checks == FALSE ~ "We noticed you left some fields in the Definitions section blank. Please read this email and update your form to help us address these issues.<br>",
+
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == TRUE  ~ "We also noticed some potential issues with your data. Please review the issue(s) in the table(s) below and make the necessary updates to your state's form.<br>",
+    left_blank_adm == FALSE & left_blank_pop == FALSE & left_blank_costs == FALSE & left_blank_definitions == FALSE & checks == FALSE ~ "Thank you for submitting data! We reviewed your data and did not notice any issues. Please review your submission below. If you need to make any updates, please click on the button below.<br>",
 
     TRUE ~ "<span></span>"
   )
 
   # generate sentence depending on definition issues
   confirmed_definitions_sentence <- case_when(
-    left_blank_definitions == TRUE ~ "You did not confirm the following definitions or input anything in the definition notes. Please go to your state form and confirm that these definitions are correct or let us know how your definitions differ.<br>",
-    left_blank_definitions == FALSE ~ "<span></span>"
-  )
-
-  # add title to defitions section if needed
-  definitions_title <- case_when(
-    left_blank_definitions == TRUE ~ paste("","## Unconfirmed Definitions", "<br>"),
+    left_blank_definitions == TRUE ~ "<b>You did not confirm the following definitions or input anything in the definition notes. Please go to your state form and confirm that these definitions are correct or let us know how your definitions differ.</b><br>",
     left_blank_definitions == FALSE ~ "<span></span>"
   )
 
@@ -122,9 +163,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_supervision_violation_admissions_22 <- qa_supervision_violation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_supervision_violation_admissions_22), rows = check_supervision_violation_admissions_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_supervision_violation_admissions_22), rows = check_supervision_violation_admissions_22 == "Left Blank")) %>%
-
       as_raw_html()
   } else {
     qa_supervision_violation_admissions_22 <- "<span></span>"
@@ -143,8 +181,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_probation_admissions_22 <- qa_probation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_probation_violation_admissions_22), rows = check_probation_violation_admissions_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_probation_violation_admissions_22), rows = check_probation_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {qa_probation_admissions_22 <- "<span></span>"}}
 
@@ -160,8 +196,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_parole_admissions_22 <- qa_parole_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_parole_violation_admissions_22), rows = check_parole_violation_admissions_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_parole_violation_admissions_22), rows = check_parole_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_parole_admissions_22 <- "<span></span>"
@@ -180,8 +214,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_technical_violation_admissions_22 <- qa_technical_violation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_total_technical_violation_admissions_22), rows = check_total_technical_violation_admissions_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_total_technical_violation_admissions_22), rows = check_total_technical_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_technical_violation_admissions_22 <- "<span></span>"
@@ -200,8 +232,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_new_offense_violation_admissions_22 <- qa_new_offense_violation_admissions_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_new_offense_violation_admissions_22), rows = check_new_offense_violation_admissions_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_new_offense_violation_admissions_22), rows = check_new_offense_violation_admissions_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_new_offense_violation_admissions_22 <- "<span></span>"
@@ -220,8 +250,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_supervision_violation_population_22 <- qa_supervision_violation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_supervision_violation_population_22), rows = check_supervision_violation_population_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_supervision_violation_population_22), rows = check_supervision_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_supervision_violation_population_22 <- "<span></span>"
@@ -240,8 +268,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_probation_population_22 <- qa_probation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_probation_violation_population_22), rows = check_probation_violation_population_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_probation_violation_population_22), rows = check_probation_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {qa_probation_population_22 <- "<span></span>"}}
 
@@ -257,8 +283,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_parole_population_22 <- qa_parole_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_parole_violation_population_22), rows = check_parole_violation_population_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_parole_violation_population_22), rows = check_parole_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_parole_population_22 <- "<span></span>"
@@ -277,8 +301,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_technical_violation_population_22 <- qa_technical_violation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_total_technical_violation_population_22), rows = check_total_technical_violation_population_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_total_technical_violation_population_22), rows = check_total_technical_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_technical_violation_population_22 <- "<span></span>"
@@ -297,8 +319,6 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
     qa_new_offense_violation_population_22 <- qa_new_offense_violation_population_22 %>%
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = c(check_new_offense_violation_population_22), rows = check_new_offense_violation_population_22 == "Doesn't Add Up")) %>%
-      tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
-                locations = cells_body(columns = c(check_new_offense_violation_population_22), rows = check_new_offense_violation_population_22 == "Left Blank")) %>%
       as_raw_html()
   } else {
     qa_new_offense_violation_population_22 <- "<span></span>"
@@ -334,26 +354,24 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
   form_button <- HTML(paste0('<table align="center"><tr><td style="background-color:#355DA1; border-radius:5px; padding:10px; border: 1px solid #355DA1;transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;margin:0.5rem; text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box">
               <a style="color:white; text-decoration:none; font-size:1rem; font-weight:400; line-height:1.5" href="', LINK, '"><strong>Your State Form</strong></a></td></tr></table>'))
 
-  mclc_website <- "[More Community, Less Confinement](https://csgjusticecenter.org/publications/more-community-less-confinement/national-report/)"
-
   # md uses markdown text
   mclc_email <- compose_email(
     body = md(c(
 
       paste("#", state_name),
       " ",
-      "Hello, Thank you for participating in the 2022 ", mclc_website, " data collection project.",
-      "<br><br>",
-      "Please review your data submission below. Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
+      "Hello, Thank you for participating in the 2022 More Community, Less Confinement data collection project. We're sending this email to give you an overview of your 2022 data submission and how it changed from last year, and to let you know if we noticed any issues.",
       "<br>",
       " ",
-      form_button,
-      " ",
-
-
 
       "## Data Quality Check",
       "<b>",data_quality_sentence,"</b>",
+      "<br>",
+      "As a friendly reminder, data submissions and edits are due by September 15, 2022.",
+      "<br>",
+      "<br>",
+      form_button,
+      " ",
       qa_supervision_violations_adm,
       qa_supervision_violation_admissions_22,
       qa_probation_violations_adm,
@@ -378,13 +396,12 @@ fnc_email <- function(adm_df, pop_df, costs_df, definitions_df, state_name){
 
       "<br>",
       "",
-      definitions_title,
       confirmed_definitions_sentence,
       definitions_table,
       "",
 
       "## Your Submission",
-      "Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank and requires attention.",
+      "Cells highlighted in green indicate new data that was submitted. Cells highlighted in yellow indicate that the field was left blank or requires attention.",
       "<br>",
       adm_table,
       "<br>",

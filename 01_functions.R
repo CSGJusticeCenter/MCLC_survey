@@ -59,7 +59,7 @@ fnc_costs <- function(df, state_name){
   df_costs <- df_costs %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
-    mutate(across(everything(), ~replace(., . == "na" |
+    mutate(across(everything(), ~replace(., . == "n/a" |
                                            . ==  "nodata" |
                                            . ==  "no data" |
                                            . ==  "notavailable" |
@@ -69,17 +69,20 @@ fnc_costs <- function(df, state_name){
                                            . == "[none]" |
                                            . == "none"
                                          , "No Data"))) %>%
-    mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
-    mutate(across(everything(), ~replace(., . ==  "null", "Left Blank"))) %>%
+    # mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
+    # mutate(across(everything(), ~replace(., . ==  "null", "Left Blank"))) %>%
+    mutate(year_2019 = ifelse(is.na(year_2019) | year_2019 == "null", "No Data",    year_2019),
+           year_2020 = ifelse(is.na(year_2020) | year_2020 == "null", "No Data",    year_2020)) %>%
+    mutate(year_2021 = ifelse(is.na(year_2021) | year_2021 == "null", "Left Blank", year_2021)) %>%
     mutate(check_year_2019 = case_when(year_2019 == "No Data" ~ "No Data",
                                        year_2019 == "Left Blank" ~ "Left Blank",
-                                       TRUE ~ "Complete"),
+                                       TRUE ~ year_2019),
            check_year_2020 = case_when(year_2020 == "No Data" ~ "No Data",
                                        year_2020 == "Left Blank" ~ "Left Blank",
-                                       TRUE ~ "Complete"),
+                                       TRUE ~ year_2020),
            check_year_2021 = case_when(year_2021 == "No Data" ~ "No Data",
                                        year_2021 == "Left Blank" ~ "Left Blank",
-                                       TRUE ~ "Complete")) %>%
+                                       TRUE ~ year_2021)) %>%
     mutate(across(c(year_2019, year_2020, year_2021), as.numeric)) %>%
     mutate_if(is.numeric,funs(comma(., digits = 2))) %>%
     mutate_if(is.numeric,funs(paste0("$", .))) %>%
@@ -180,12 +183,25 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # indicate when data was left blank, NA was entered
   # if "null" then the respondent left the field blank
   # if "NA" (or variations of the spelling of NA) then the respondent inputed this and we label it as "No Data"
+  # df1 <- df1 %>%
+  #   mutate(across(everything(), as.character)) %>%
+  #   mutate_if(is.character, str_to_lower) %>%
+  #   mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
+  #   mutate_if(grepl('null',.), ~replace(., grepl('null', .), "Left Blank")) %>%
+  #   mutate(across(everything(), ~replace(., . ==  "na" |
+  #                                          . ==  "nodata" |
+  #                                          . ==  "no data" |
+  #                                          . ==  "notavailable" |
+  #                                          . ==  "not available" |
+  #                                          . ==  "notready" |
+  #                                          . ==  "not ready" |
+  #                                          . == "[none]" |
+  #                                          . == "none"
+  #                                        , "No Data")))
   df1 <- df1 %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
-    mutate_if(is.character, funs(ifelse(is.na(.), "Left Blank", .))) %>%
-    mutate_if(grepl('null',.), ~replace(., grepl('null', .), "Left Blank")) %>%
-    mutate(across(everything(), ~replace(., . ==  "na" |
+    mutate(across(everything(), ~replace(., . ==  "n/a" |
                                            . ==  "nodata" |
                                            . ==  "no data" |
                                            . ==  "notavailable" |
@@ -194,7 +210,11 @@ fnc_create_state_data_checklist <- function(df, state_name){
                                            . ==  "not ready" |
                                            . == "[none]" |
                                            . == "none"
-                                         , "No Data")))
+                                         , "No Data"))) %>%
+    mutate(year_2018 = ifelse(is.na(year_2018) | year_2018 == "null", "No Data",    year_2018),
+           year_2019 = ifelse(is.na(year_2019) | year_2019 == "null", "No Data",    year_2019),
+           year_2020 = ifelse(is.na(year_2020) | year_2020 == "null", "No Data",    year_2020)) %>%
+    mutate(year_2021 = ifelse(is.na(year_2021) | year_2021 == "null", "Left Blank", year_2021))
 
   # need to add commas to numbers but the column is character because of Left Blank and No Data
   # which is info we want
