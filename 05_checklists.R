@@ -90,6 +90,20 @@ adm_table_checklist <- map(.x = states,  .f = function(x) {
 adm_table_checklist <- bind_rows(adm_table_checklist)
 adm_table_checklist <- adm_table_checklist %>% select(state, everything())
 
+# edit issue with Virginia where aggregated numbers should be NA instead of added together like in other states
+adm_table_checklist <- adm_table_checklist %>%
+ mutate(current_2018 = case_when(state == "Nebraska" & metric == "Total New Offense Admissions" ~ "No Data",
+                                 state == "Nebraska" & metric == "Total Technical Violation Admissions" ~ "No Data", TRUE ~ current_2018),
+        current_2019 = case_when(state == "Virginia" & metric == "Total New Offense Admissions" ~ "No Data",
+                                 state == "Virginia" & metric == "Total Technical Violation Admissions" ~ "No Data",
+                                 state == "Nebraska" & metric == "Total New Offense Admissions" ~ "No Data",
+                                 state == "Nebraska" & metric == "Total Technical Violation Admissions" ~ "No Data", TRUE ~ current_2019),
+        current_2020 = case_when(state == "Virginia" & metric == "Total New Offense Admissions" ~ "No Data",
+                                 state == "Virginia" & metric == "Total Technical Violation Admissions" ~ "No Data",
+                                 state == "Nebraska" & metric == "Total New Offense Admissions" ~ "No Data",
+                                 state == "Nebraska" & metric == "Total Technical Violation Admissions" ~ "No Data", TRUE ~ current_2020)
+)
+
 ###########
 # pop_table_checklist
 # contains: NA vs left blank
@@ -106,7 +120,14 @@ pop_table_checklist <- map(.x = states,  .f = function(x) {
 
 # change list into a data frame and arrange columns
 pop_table_checklist <- bind_rows(pop_table_checklist)
-pop_table_checklist <- pop_table_checklist %>% select(state, everything())
+pop_table_checklist <- pop_table_checklist %>% select(state, everything()) %>%
+  mutate(current_2018 = case_when(state == "Nebraska" & metric == "Total New Offense Population" ~ "No Data",
+                                  state == "Nebraska" & metric == "Total Technical Violation Population" ~ "No Data", TRUE ~ current_2018),
+         current_2019 = case_when(state == "Nebraska" & metric == "Total New Offense Population" ~ "No Data",
+                                  state == "Nebraska" & metric == "Total Technical Violation Population" ~ "No Data", TRUE ~ current_2019),
+         current_2020 = case_when(state == "Nebraska" & metric == "Total New Offense Population" ~ "No Data",
+                                  state == "Nebraska" & metric == "Total Technical Violation Population" ~ "No Data", TRUE ~ current_2020)
+)
 
 ###########
 # costs_table_checklist

@@ -56,17 +56,17 @@ for(i in 1:length(states)){
 
   email_Alabama
   email_Alaska
-  email_Arizona
+  email_Arizona         # is saying it's not accurate but it is
   email_Arkansas
   email_California
   email_Colorado
-  #email_Connecticut
+  email_Connecticut     # excel
   email_Delaware
   email_Florida
   email_Georgia
   email_Hawaii
   email_Idaho
-  #email_Illinois
+  email_Illinois        # excel
   email_Indiana
   email_Iowa
   email_Kansas
@@ -85,7 +85,7 @@ for(i in 1:length(states)){
  `email_New Hampshire`
  `email_New Jersey`
  `email_New Mexico`
- #`email_New York`
+ `email_New York`       # excel
  `email_North Carolina`
  `email_North Dakota`
   email_Ohio
@@ -93,10 +93,10 @@ for(i in 1:length(states)){
   email_Oregon
   email_Pennsylvania
  `email_Rhode Island`
-  #`email_South Carolina` they asked for an extension so give them more time before emailing
+ `email_South Carolina`
  `email_South Dakota`
   email_Tennessee
-  # email_Texas
+  email_Texas           # excel
   email_Utah
   email_Vermont
   email_Virginia

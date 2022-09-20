@@ -67,7 +67,7 @@ form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>
 
 ###################    Attention    #####################
 
-# Load the remaining lines of code one by one or there will be a connection issue with google sheets
+# Load the next line of code by itself and press 1 to connect to google sheets
 
 # # Use this code to connect to google drive, fetch new token, and authorize tidyverse api
 # # Make sure the sheets have been officially shared with you and you have editing access
@@ -83,7 +83,7 @@ California     <- read_sheet('https://docs.google.com/spreadsheets/d/1dMD28LifJh
 Colorado       <- read_sheet('https://docs.google.com/spreadsheets/d/1pxOPsE-GCIhazJpwCZkpeXPY4VHdFwcFjEROXt5c4wU/edit?usp=sharing')
 
 # Connecticut can't use google sheets
-# Connecticut    <- read_sheet('https://docs.google.com/spreadsheets/d/1E4OPFS3dkj3AK6vwuDI5btBJEBWNpobRMPnqIJf3jsw/edit?usp=sharing')
+Connecticut    <- read_sheet('https://docs.google.com/spreadsheets/d/1E4OPFS3dkj3AK6vwuDI5btBJEBWNpobRMPnqIJf3jsw/edit?usp=sharing')
 
 Delaware       <- read_sheet('https://docs.google.com/spreadsheets/d/111pvJGJl37BnSowV1vv0UHgttFlPKG2dNxn7dN-wERg/edit?usp=sharing')
 Florida        <- read_sheet('https://docs.google.com/spreadsheets/d/14_fE47eIhGXDzXm52B8UnrFMY4JWlhqMhmO13zQqlCk/edit?usp=sharing')
@@ -91,8 +91,8 @@ Georgia        <- read_sheet('https://docs.google.com/spreadsheets/d/19xGMo2hiaj
 Hawaii         <- read_sheet('https://docs.google.com/spreadsheets/d/1BKT-slHFfFq_Dat-zePTjh-t_8xZwwCfusNv61m0VTk/edit?usp=sharing')
 Idaho          <- read_sheet('https://docs.google.com/spreadsheets/d/1KpmE0WJIbrBs9Uuc-CyF77cJ8nETWHM4k0LYW0VPlPk/edit?usp=sharing')
 
-# Illinois sent a spreadsheet
-# Illinois       <- read_sheet('https://docs.google.com/spreadsheets/d/1DXVve69iDWCZqqKvJ8MEzTiy2QMeQP62u9s1TykPtTU/edit?usp=sharing')
+# Illinois can't use google sheets so these numbers were input from a excel spreadsheet
+Illinois       <- read_sheet('https://docs.google.com/spreadsheets/d/1DXVve69iDWCZqqKvJ8MEzTiy2QMeQP62u9s1TykPtTU/edit?usp=sharing')
 
 Indiana        <- read_sheet('https://docs.google.com/spreadsheets/d/1KGzRj3yM3UsAWfdLlJ50y0C-F0Me53HG2Epf0MWJEbM/edit?usp=sharing')
 Iowa           <- read_sheet('https://docs.google.com/spreadsheets/d/1AxedM8YOYems1YslCHQncHPiv8ENvIZnr3-dXJ6FzNY/edit?usp=sharing')
@@ -114,7 +114,7 @@ New_Jersey     <- read_sheet('https://docs.google.com/spreadsheets/d/1C6xKjf5yWT
 New_Mexico     <- read_sheet('https://docs.google.com/spreadsheets/d/1CANUAioqFepSGNPxkG4ogYSYD568S-aIfvB_0uTnQw8/edit?usp=sharing')
 
 # New York can't use google sheets
-# New_York       <- read_sheet('https://docs.google.com/spreadsheets/d/1IrIFxk5t2cAEAY2UjYayw5O7FkvgoKZNrLfZFg7itMc/edit?usp=sharing')
+New_York       <- read_sheet('https://docs.google.com/spreadsheets/d/1IrIFxk5t2cAEAY2UjYayw5O7FkvgoKZNrLfZFg7itMc/edit?usp=sharing')
 
 North_Carolina <- read_sheet('https://docs.google.com/spreadsheets/d/1LlsTsiu6JUwEK-tFsdOhWiTdMe-9Y582dT-0ba4swkw/edit?usp=sharing')
 North_Dakota   <- read_sheet('https://docs.google.com/spreadsheets/d/1NysXznACYJwzq9P8J5pDamcwQ7myPcscjnaDhI_Xg4g/edit?usp=sharing')
@@ -127,9 +127,9 @@ South_Carolina <- read_sheet('https://docs.google.com/spreadsheets/d/1gTBKIkbGBc
 South_Dakota   <- read_sheet('https://docs.google.com/spreadsheets/d/1hB1o7eY5kDl7XVZD7cjALxHMuzTnYEHwQC6wIEeN37g/edit?usp=sharing')
 Tennessee      <- read_sheet('https://docs.google.com/spreadsheets/d/1i0GgBxzXVX6bAqylUkxBNSNsFih__ra9dvbfJuOGaMs/edit?usp=sharing')
 
-# Texas can't use google sheets
-# Texas          <- read_sheet('https://docs.google.com/spreadsheets/d/1PprWIzpdkhG-7fKCkvmlvkogzY9Sd66AInV3_0VzffE/edit?usp=sharing')
+# Texas can't use google sheets so these numbers were input from a excel spreadsheet
 # Texas          <- read_excel(paste0(sp_data_path, "/Files from States/Texas_MCLC_completed.xlsx", sep = ""))
+Texas          <- read_sheet('https://docs.google.com/spreadsheets/d/1PprWIzpdkhG-7fKCkvmlvkogzY9Sd66AInV3_0VzffE/edit?usp=sharing')
 
 Utah           <- read_sheet('https://docs.google.com/spreadsheets/d/1iIzx_z4f_flSvWfTtPVUy5qFh4AWfprSGBO58EUlu0g/edit?usp=sharing')
 Vermont        <- read_sheet('https://docs.google.com/spreadsheets/d/1iMzx-RDAqE359x1dBqGzQttJnZoiQPZuMwwCFnL6N5g/edit?usp=sharing')
@@ -146,13 +146,13 @@ state_dfs <- list(Alabama,
                   Arkansas,
                   California,
                   Colorado,
-                  #Connecticut,
+                  Connecticut,    # excel
                   Delaware,
                   Florida,
                   Georgia,
                   Hawaii,
                   Idaho,
-                  #Illinois,
+                  Illinois,       # excel
                   Indiana,
                   Iowa,
                   Kansas,
@@ -171,7 +171,7 @@ state_dfs <- list(Alabama,
                   New_Hampshire,
                   New_Jersey,
                   New_Mexico,
-                  #New_York,
+                  New_York,      # excel
                   North_Carolina,
                   North_Dakota,
                   Ohio,
@@ -182,7 +182,7 @@ state_dfs <- list(Alabama,
                   South_Carolina,
                   South_Dakota,
                   Tennessee,
-                  #Texas,
+                  Texas,         # excel
                   Utah,
                   Vermont,
                   Virginia,
@@ -198,13 +198,13 @@ state_dfs <- setNames(state_dfs,c('Alabama',
                                   'Arkansas',
                                   'California',
                                   'Colorado',
-                                  #'Connecticut',
+                                  'Connecticut',
                                   'Delaware',
                                   'Florida',
                                   'Georgia',
                                   'Hawaii',
                                   'Idaho',
-                                  #'Illinois',
+                                  'Illinois',
                                   'Indiana',
                                   'Iowa',
                                   'Kansas',
@@ -223,7 +223,7 @@ state_dfs <- setNames(state_dfs,c('Alabama',
                                   'New Hampshire',
                                   'New Jersey',
                                   'New Mexico',
-                                  #'New York',
+                                  'New York',
                                   'North Carolina',
                                   'North Dakota',
                                   'Ohio',
@@ -234,7 +234,7 @@ state_dfs <- setNames(state_dfs,c('Alabama',
                                   'South Carolina',
                                   'South Dakota',
                                   'Tennessee',
-                                  #'Texas',
+                                  'Texas',
                                   'Utah',
                                   'Vermont',
                                   'Virginia',
@@ -250,13 +250,13 @@ states <- c('Alabama',
             'Arkansas',
             'California',
             'Colorado',
-            #'Connecticut',
+            'Connecticut',
             'Delaware',
             'Florida',
             'Georgia',
             'Hawaii',
             'Idaho',
-            #'Illinois',
+            'Illinois',
             'Indiana',
             'Iowa',
             'Kansas',
@@ -275,7 +275,7 @@ states <- c('Alabama',
             'New Hampshire',
             'New Jersey',
             'New Mexico',
-            #'New York',
+            'New York',
             'North Carolina',
             'North Dakota',
             'Ohio',
@@ -286,7 +286,7 @@ states <- c('Alabama',
             'South Carolina',
             'South Dakota',
             'Tennessee',
-            #'Texas',
+            'Texas',
             'Utah',
             'Vermont',
             'Virginia',
@@ -294,13 +294,3 @@ states <- c('Alabama',
             'West Virginia',
             'Wisconsin',
             'Wyoming')
-
-###################################################################
-# FAKE DATA - test sheets for developing this code
-# some of these will have accurate data and some will have issues
-# not using anymore but here just in case
-# Alabama      <- read_sheet('https://docs.google.com/spreadsheets/d/1xIPV2AyBKYKPrBfcqAstaMUjQCsrhbo337SbP44QGYM/edit?usp=sharing')
-# Idaho        <- read_sheet('https://docs.google.com/spreadsheets/d/1iGuhPCQwi78tesYmgRUQDSI24pc6Ks-hg-lx2awC99I/edit?usp=sharing')
-# Iowa         <- read_sheet('https://docs.google.com/spreadsheets/d/1IOQgFXYGu0n5CdhNK7ZUmUpCEn4M0RPk7us0jP9xoTs/edit?usp=sharing')
-# Pennsylvania <- read_sheet('https://docs.google.com/spreadsheets/d/1FLrh75tRW-qALtJzbcNWVyVdSNuc5cQw483pocy9h1U/edit?usp=sharing')
-

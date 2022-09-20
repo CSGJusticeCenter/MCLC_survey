@@ -60,6 +60,7 @@ fnc_costs <- function(df, state_name){
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
     mutate(across(everything(), ~replace(., . == "n/a" |
+                                           . == "na" |
                                            . ==  "nodata" |
                                            . ==  "no data" |
                                            . ==  "notavailable" |
@@ -202,6 +203,7 @@ fnc_create_state_data_checklist <- function(df, state_name){
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
     mutate(across(everything(), ~replace(., . ==  "n/a" |
+                                           . == "na" |
                                            . ==  "nodata" |
                                            . ==  "no data" |
                                            . ==  "notavailable" |
@@ -220,16 +222,16 @@ fnc_create_state_data_checklist <- function(df, state_name){
   # which is info we want
   # create temporary columns that capture this info
   df1 <- df1 %>%
-    mutate(check_year_2018 = case_when(year_2018 == "No Data" ~ "No Data",
+    mutate(check_year_2018 = case_when(year_2018 == "No Data" | year_2018 == "NA" ~ "No Data",
                                        year_2018 == "Left Blank" ~ "Left Blank",
                                        TRUE ~ "Complete"),
-           check_year_2019 = case_when(year_2019 == "No Data" ~ "No Data",
+           check_year_2019 = case_when(year_2019 == "No Data" | year_2019 == "NA" ~ "No Data",
                                        year_2019 == "Left Blank" ~ "Left Blank",
                                        TRUE ~ "Complete"),
-           check_year_2020 = case_when(year_2020 == "No Data" ~ "No Data",
+           check_year_2020 = case_when(year_2020 == "No Data" | year_2020 == "NA" ~ "No Data",
                                        year_2020 == "Left Blank" ~ "Left Blank",
                                        TRUE ~ "Complete"),
-           check_year_2021 = case_when(year_2021 == "No Data" ~ "No Data",
+           check_year_2021 = case_when(year_2021 == "No Data" | year_2021 == "NA" ~ "No Data",
                                        year_2021 == "Left Blank" ~ "Left Blank",
                                        TRUE ~ "Complete"))
 
