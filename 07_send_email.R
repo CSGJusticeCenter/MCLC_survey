@@ -7,6 +7,13 @@
 # Send email
 ############################################
 
+source("00_import.R")
+source("01_functions.R")
+source("02_functions_gt.R")
+source("03_function_email.R")
+source("04_previous_survey.R")
+source("05_checklists.R")
+source("06_create_email.R")
 
 ###################    WARNING    #####################
 
@@ -39,7 +46,7 @@ for(i in 1:length(states)){
 
   # create email
   # the commented out line will send to mari instead of contact
-  state_email <- outlb$create_email(state_email_name, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = "mroberts@csg.org", cc = c("mariroberts90@gmail.com", "marialexandriaroberts@gmail.com"))
+  state_email <- outlb$create_email(state_email_name, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = "mroberts@csg.org")
   # state_email <- outlb$create_email(state_email_name, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = contact_info, cc = c("jmallett@csg.org", "agunter@csg.org", "mroberts@csg.org"))
 
   # send email
