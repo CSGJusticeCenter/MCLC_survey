@@ -85,7 +85,7 @@ fnc_costs <- function(df, state_name){
                                        year_2021 == "Left Blank" ~ "Left Blank",
                                        TRUE ~ year_2021)) %>%
     mutate(across(c(year_2019, year_2020, year_2021), as.numeric)) %>%
-    mutate_if(is.numeric,funs(comma(., digits = 2))) %>%
+    mutate_if(is.numeric,funs(formattable::comma(., digits = 2))) %>%
     mutate_if(is.numeric,funs(paste0("$", .))) %>%
     mutate(across(everything(), as.character)) %>%
     mutate(state = state_name) %>%
@@ -362,30 +362,30 @@ fnc_create_state_data_checklist <- function(df, state_name){
 
   # add commas to numbers
   df_final <- df_final %>%
-    mutate(total_prison_admissions_22                    = comma(total_prison_admissions_22, digits = 0),
-           total_supervision_violation_admissions_22     = comma(total_supervision_violation_admissions_22, digits = 0),
-           probation_violation_admissions_22             = comma(probation_violation_admissions_22, digits = 0),
-           parole_violation_admissions_22                = comma(parole_violation_admissions_22, digits = 0),
-           total_technical_violation_admissions_22       = comma(total_technical_violation_admissions_22, digits = 0),
-           technical_probation_violation_admissions_22   = comma(technical_probation_violation_admissions_22, digits = 0),
-           technical_parole_violation_admissions_22      = comma(technical_parole_violation_admissions_22, digits = 0),
-           total_new_offense_admissions_22               = comma(total_new_offense_admissions_22, digits = 0),
-           new_offense_probation_violation_admissions_22 = comma(new_offense_probation_violation_admissions_22, digits = 0),
-           new_offense_parole_violation_admissions_22    = comma(new_offense_parole_violation_admissions_22, digits = 0),
+    mutate(total_prison_admissions_22                    = formattable::comma(total_prison_admissions_22, digits = 0),
+           total_supervision_violation_admissions_22     = formattable::comma(total_supervision_violation_admissions_22, digits = 0),
+           probation_violation_admissions_22             = formattable::comma(probation_violation_admissions_22, digits = 0),
+           parole_violation_admissions_22                = formattable::comma(parole_violation_admissions_22, digits = 0),
+           total_technical_violation_admissions_22       = formattable::comma(total_technical_violation_admissions_22, digits = 0),
+           technical_probation_violation_admissions_22   = formattable::comma(technical_probation_violation_admissions_22, digits = 0),
+           technical_parole_violation_admissions_22      = formattable::comma(technical_parole_violation_admissions_22, digits = 0),
+           total_new_offense_admissions_22               = formattable::comma(total_new_offense_admissions_22, digits = 0),
+           new_offense_probation_violation_admissions_22 = formattable::comma(new_offense_probation_violation_admissions_22, digits = 0),
+           new_offense_parole_violation_admissions_22    = formattable::comma(new_offense_parole_violation_admissions_22, digits = 0),
 
-           total_prison_population_22                    = comma(total_prison_population_22, digits = 0),
-           total_supervision_violation_population_22     = comma(total_supervision_violation_population_22, digits = 0),
-           probation_violation_population_22             = comma(probation_violation_population_22, digits = 0),
-           parole_violation_population_22                = comma(parole_violation_population_22, digits = 0),
-           total_technical_violation_population_22       = comma(total_technical_violation_population_22, digits = 0),
-           technical_probation_violation_population_22   = comma(technical_probation_violation_population_22, digits = 0),
-           technical_parole_violation_population_22      = comma(technical_parole_violation_population_22, digits = 0),
-           total_new_offense_population_22               = comma(total_new_offense_population_22, digits = 0),
-           new_offense_probation_violation_population_22 = comma(new_offense_probation_violation_population_22, digits = 0),
-           new_offense_parole_violation_population_22    = comma(new_offense_parole_violation_population_22, digits = 0),
+           total_prison_population_22                    = formattable::comma(total_prison_population_22, digits = 0),
+           total_supervision_violation_population_22     = formattable::comma(total_supervision_violation_population_22, digits = 0),
+           probation_violation_population_22             = formattable::comma(probation_violation_population_22, digits = 0),
+           parole_violation_population_22                = formattable::comma(parole_violation_population_22, digits = 0),
+           total_technical_violation_population_22       = formattable::comma(total_technical_violation_population_22, digits = 0),
+           technical_probation_violation_population_22   = formattable::comma(technical_probation_violation_population_22, digits = 0),
+           technical_parole_violation_population_22      = formattable::comma(technical_parole_violation_population_22, digits = 0),
+           total_new_offense_population_22               = formattable::comma(total_new_offense_population_22, digits = 0),
+           new_offense_probation_violation_population_22 = formattable::comma(new_offense_probation_violation_population_22, digits = 0),
+           new_offense_parole_violation_population_22    = formattable::comma(new_offense_parole_violation_population_22, digits = 0),
 
-           check_other_prison_admissions_22              = comma(check_other_prison_admissions_22, digits = 0),
-           check_other_prison_population_22              = comma(check_other_prison_population_22, digits = 0))
+           check_other_prison_admissions_22              = formattable::comma(check_other_prison_admissions_22, digits = 0),
+           check_other_prison_population_22              = formattable::comma(check_other_prison_population_22, digits = 0))
 
   # identify NA vs Left Blank
   df_final <- df_final %>%
