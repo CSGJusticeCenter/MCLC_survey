@@ -609,3 +609,36 @@ fnc_pop_table_checklist <- function(df, state_name){
     arrange(order) %>%
     select(-order)
 }
+
+# organize columns for last years format
+fnc_org_adm_columns <- function(df){
+  df <- df %>% select(
+    state,
+    `Total Prison Admissions`,
+    `Total Supervision Violation Admissions`,
+    `Probation Violation Admissions`,
+    `Technical Probation Violation Admissions`,
+    `New Offense Probation Violation Admissions`,
+    `Parole Violation Admissions`,
+    `Technical Parole Violation Admissions`,
+    `New Offense Parole Violation Admissions`,
+    `Total New Offense Admissions`,
+    `Total Technical Violation Admissions`
+  )
+}
+
+fnc_org_pop_columns <- function(df){
+  df <- df %>% select(
+    state,
+    `Total Prison Population`,
+    `Total Supervision Violation Population`,
+    `Probation Violation Population`,
+    `Technical Probation Violation Population`,
+    `New Offense Probation Violation Population`,
+    `Parole Violation Population`,
+    `Technical Parole Violation Population`,
+    `New Offense Parole Violation Population`,
+    `Total New Offense Population`,
+    `Total Technical Violation Population`
+  )
+}
