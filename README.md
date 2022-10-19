@@ -18,7 +18,12 @@ This repository uses MCLC data from state specific Google Sheets.
 
 ## Repository Structure 
 
-    |-- code (run in this order)
+    |-- code 
+      |-- survey (run in this order, use for current MCLC data)
+          |-- 00_functions.R       # Custom functions to extract 2022 survey data 
+          |-- 00_import.R          # Load packages and imports MCLC survey data from Google Sheets 
+          |-- 01_format_data.R     # Format data like 2021 survey data
+          |-- 02_impute.R          # Impute missing values
       |-- automated_emails
           |-- 00_import.R          # Load packages and imports MCLC survey data from Google Sheets  
           |-- 01_functions.R       # Custom functions for data cleaning and qa checklists
@@ -28,12 +33,6 @@ This repository uses MCLC data from state specific Google Sheets.
           |-- 05_checklists.R      # Create qa checklists
           |-- 06_create_email.R    # Create each state email 
           |-- 07_send_email.R      # Sends email to contact   
-      |-- survey
-          |-- 00_functions.R       # Custom functions to extract 2022 survey data 
-          |-- 00_import.R          # Load packages and imports MCLC survey data from Google Sheets 
-          |-- 01_format_data.R     # Format data like 2021 survey data
-          |-- 02_impute.R          # Impute missing values
-
           
 # Google Sheet Links
 
