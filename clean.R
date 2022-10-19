@@ -21,21 +21,27 @@ library(janitor)
 library(Hmisc)
 library(eeptools)
 
-dataname <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v1.xlsx"
+dataname <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v2.xlsx"
+
+################################
+# COSTS: read cost data for 2019-2021
+################################
+costs        <- read_xlsx(dataname, sheet = "Costs",           .name_repair = "universal") %>%
+  mutate_at(vars(-c("state")), as.numeric) %>%
+  dplyr::rename(Cost.in.2019 = year_2019,
+                Cost.in.2020 = year_2020,
+                Cost.in.2021 = year_2021)
 
 # read excel population/admissions data for 2018-2021
-population18 <- read_xlsx(dataname,sheet = "Population 2018", .name_repair = "universal")
-population19 <- read_xlsx(dataname,sheet = "Population 2019", .name_repair = "universal")
-population20 <- read_xlsx(dataname,sheet = "Population 2020", .name_repair = "universal")
-population21 <- read_xlsx(dataname,sheet = "Population 2021", .name_repair = "universal")
+population18 <- read_xlsx(dataname, sheet = "Population 2018", .name_repair = "universal")
+population19 <- read_xlsx(dataname, sheet = "Population 2019", .name_repair = "universal")
+population20 <- read_xlsx(dataname, sheet = "Population 2020", .name_repair = "universal")
+population21 <- read_xlsx(dataname, sheet = "Population 2021", .name_repair = "universal")
 
-admissions18 <- read_xlsx(dataname,sheet = "Admissions 2018", .name_repair = "universal")
-admissions19 <- read_xlsx(dataname,sheet = "Admissions 2019", .name_repair = "universal")
-admissions20 <- read_xlsx(dataname,sheet = "Admissions 2020", .name_repair = "universal")
-admissions21 <- read_xlsx(dataname,sheet = "Admissions 2021", .name_repair = "universal")
-
-# read cost data for 2019-2020
-costs <- read_xlsx("C:/Users/jmallett/OneDrive - The Council of State Governments/GitProjects/cc_survey/data/Data for web team 2021 v13.xlsx", sheet = "Costs", .name_repair = "universal")
+admissions18 <- read_xlsx(dataname, sheet = "Admissions 2018", .name_repair = "universal")
+admissions19 <- read_xlsx(dataname, sheet = "Admissions 2019", .name_repair = "universal")
+admissions20 <- read_xlsx(dataname, sheet = "Admissions 2020", .name_repair = "universal")
+admissions21 <- read_xlsx(dataname, sheet = "Admissions 2021", .name_repair = "universal")
 
 ##############
 # Population
