@@ -79,3 +79,6 @@ source("code/survey/MImp3.R")
 source("code/survey/Costs.R")
 #averted cost total
 sum(cost.final$averted_costs, na.rm = TRUE)
+
+# save data to sharepoint
+write.csv(micedata,  file=paste0(sp_data_path, "/Data/mclc_data_2022_with_imputatation.csv",  sep = ""))
