@@ -4,27 +4,18 @@
 # AUTHOR: JSM
 #######################################
 
-# read automated_clean to get data
+# read automated_clean to get data, reformat
 source("clean.R")
-
-#rename columns
-names(admissions)[names(admissions) == "States"] <- "states"
-names(population)[names(population) == "States"] <- "states"
-
-# merge together, set up tables for change
-adm_pop_analysis <- merge(admissions, population, by = c("states","year")) %>% 
-  select(states, year, everything()) %>% 
-  arrange(desc(states))
 
 ##SETUP
 #years of data
-year     <- c('2018','2019','2020')
-yearnum  <- c(1,     2,     3)
-refyear  <- c('2019','2020')
-refnum   <- 1:2
+year     <- c('2018','2019','2020','2021')
+yearnum  <- c(1,     2,     3,     4)
+refyear  <- c('2019','2020','2021')
+refnum   <- 1:3
 
 #number of survey variables
-numvar  <- 1:8
+numvar   <- 1:8
 
 #labels
 var.labels = c(year                                = "Year",
@@ -67,6 +58,8 @@ cbind(nat.2018all,natCI.2018all) %>%
 cbind(nat.2019all,natCI.2019all) %>%
   mutate(across(where(is.numeric),formattable::comma,1))
 cbind(nat.2020all,natCI.2020all) %>%
+  mutate(across(where(is.numeric),formattable::comma,1))
+cbind(nat.2021all,natCI.2021all) %>%
   mutate(across(where(is.numeric),formattable::comma,1))
 ##############################################################
 ##############################################################
