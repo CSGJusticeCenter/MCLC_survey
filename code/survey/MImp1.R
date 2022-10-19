@@ -1,13 +1,14 @@
 #New National Variables/columns - REQUIRES UPDATING!
 m.imp <- adm_pop_analysis %>% mutate(
-  overall_admissions                  = Total.Prison.Admissions,
-  admissions_for_violations           = Total.Supervision.Violation.Admissions,
-  admissions_for_technical_violations = Technical.Probation.Violation.Admissions + Technical.Parole.Violation.Admissions,
-  admissions_for_new_crime_violations = New.Offense.Probation.Violation.Admissions + New.Offense.Parole.Violation.Admissions,
-  overall_population                  = Total.Prison.Population,
-  violator_population                 = Total.Supervision.Violation.Population,
-  technical_violator_population       = Technical.Probation.Violation.Population + Technical.Parole.Violation.Population,
-  new_crime_violator_population       = New.Offense.Probation.Violation.Population + New.Offense.Parole.Violation.Population
+  overall_admissions                  = total_prison_admissions,
+  admissions_for_violations           = total_supervision_violation_admissions,
+  admissions_for_technical_violations = technical_probation_violation_admissions + technical_parole_violation_admissions,
+  admissions_for_new_crime_violations = new_offense_probation_violation_admissions + new_offense_parole_violation_admissions,
+
+  overall_population                  = total_prison_population,
+  violator_population                 = total_supervision_violation_population,
+  technical_violator_population       = technical_probation_violation_population + technical_parole_violation_population,
+  new_crime_violator_population       = new_offense_probation_violation_population + new_offense_parole_violation_population
 ) %>%
   select(states, year,
          overall_admissions,

@@ -20,19 +20,20 @@ This repository uses MCLC data from state specific Google Sheets.
 
     |-- code 
       |-- survey (run in this order, use for current MCLC data)
-          |-- 00_functions.R       # Custom functions to extract 2022 survey data 
-          |-- 00_import.R          # Load packages and imports MCLC survey data from Google Sheets 
-          |-- 01_format_data.R     # Format data like 2021 survey data
-          |-- 02_impute.R          # Impute missing values
+          |-- 00_functions.R         # Custom functions to extract 2022 survey data 
+          |-- 00_import.R            # Load packages and imports MCLC survey data from Google Sheets 
+          |-- 01_format_data.R       # Save data to sp
+          |-- 02_clean.R             # Format data like 2021 survey data
+          |-- 03_multiple_imputation # imput missing values (sources Costs.R, MImp1.R, MImp3.R, MImp3.R)
       |-- automated_emails
-          |-- 00_import.R          # Load packages and imports MCLC survey data from Google Sheets  
-          |-- 01_functions.R       # Custom functions for data cleaning and qa checklists
-          |-- 02_functions_gt.R    # Custom functions focused on gt tables attributes
-          |-- 03_functions_email.R # Custom function to generate full email
-          |-- 04_previous_survey.R # 2021 survey data for comparisions
-          |-- 05_checklists.R      # Create qa checklists
-          |-- 06_create_email.R    # Create each state email 
-          |-- 07_send_email.R      # Sends email to contact   
+          |-- 00_import.R            # Load packages and imports MCLC survey data from Google Sheets  
+          |-- 01_functions.R         # Custom functions for data cleaning and qa checklists
+          |-- 02_functions_gt.R      # Custom functions focused on gt tables attributes
+          |-- 03_functions_email.R   # Custom function to generate full email
+          |-- 04_previous_survey.R   # 2021 survey data for comparisions
+          |-- 05_checklists.R        # Create qa checklists
+          |-- 06_create_email.R      # Create each state email 
+          |-- 07_send_email.R        # Sends email to contact   
           
 # Google Sheet Links
 
