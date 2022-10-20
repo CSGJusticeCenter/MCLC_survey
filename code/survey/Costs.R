@@ -16,5 +16,11 @@ cost.final <- costs %>%
   ) %>% 
   bind_cols(forreport) %>%
   mutate(
-    averted_costs = (violator_population2020*Cost.in.2021*365) - (violator_population2021*Cost.in.2021*365)
+    averted_costs20_21 = (violator_population2020*Cost.in.2021*365) - 
+                         (violator_population2021*Cost.in.2021*365),
+    averted_costs19_21 = (violator_population2019*Cost.in.2021*365) - 
+                         (violator_population2021*Cost.in.2021*365),    
+    averted_costs19_20 = (violator_population2019*Cost.in.2020*365) - 
+                         (violator_population2020*Cost.in.2020*365),        
+    
   )
