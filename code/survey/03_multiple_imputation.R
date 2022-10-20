@@ -5,7 +5,7 @@
 #######################################
 
 # read automated_clean to get data, reformat
-source("clean.R")
+source("code/survey/02_clean.R")
 
 ##SETUP
 #years of data
@@ -36,19 +36,18 @@ var.labels = c(year                                = "Year",
 ################################################################################
 
 #calculate imputed values (multiple imputation)
-source("MImp1.R")
+source("code/survey/MImp1.R")
 
 ######
 #produce confidence intervals
 #post multiple imputation t-test
 #grab response columns for creating estimated counts/CIs
 ######
-
 #get response columns from survey
 #there are 8 response columns
 tablevals<- colnames(mice_imputed_data1[numvar[3]:(length(numvar)+2)])
 
-source("MImp2.R")
+source("code/survey/MImp2.R")
 
 ##############################################################
 ##################CREATE A TABLE HERE!!!!!!!!!!!!#############
@@ -67,15 +66,16 @@ cbind(nat.2021all,natCI.2021all) %>%
 
 #############################################################################
 ###############CALCULATING STATE ESTIMATES
-#
-#
 #############################################################################
 
-source("MImp3.R")
+source("code/survey/MImp3.R")
+
+# save data to sharepoint
+write.csv(national.est,  file=paste0(sp_data_path,"/mclc_data_2022_with_imputatation.csv"))
 
 #############################
 ###COSTS#####################
 
-source("Costs.R")
+source("code/survey/Costs.R")
 #averted cost total
-sum(cost.final$averted_costs)
+sum(cost.final$averted_costs, na.rm = TRUE)

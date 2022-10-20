@@ -1,17 +1,19 @@
 ############################################
 # Project:  MCLC Survey (2022)
-# File: functions.r
-# Last updated: August 22, 2022
+# File: functions_gt.R
+# Last updated: October 19, 2022
 # Author: Mari Roberts
 
 # Custom functions to create gt tables for emails
 ############################################
 
-#############################################
-# GT Tables for Email
-#############################################
+################################################################################
 
-# custom function to format table headers for admissions and population tables
+# GT Tables for Email
+
+################################################################################
+
+# Format gt table headers for admissions and population tables
 fnc_headers <- function(gt_object){
   gt_object %>%
     cols_width(
@@ -36,7 +38,7 @@ fnc_headers <- function(gt_object){
     )
 }
 
-# custom function to format table headers for costs table
+# Format gt table headers for costs table
 fnc_headers_costs <- function(gt_object){
   gt_object %>%
     cols_width(
@@ -55,7 +57,7 @@ fnc_headers_costs <- function(gt_object){
     )
 }
 
-# custom function to format table for for all gt tables (spacing, font size, colors, etc.)
+# Format for all gt tables (spacing, font size, colors, etc.)
 fnc_table_settings <- function(gt_object){
   gt_object %>%
     tab_options(#table.width = px(760),
@@ -64,7 +66,7 @@ fnc_table_settings <- function(gt_object){
 
       # remove row at top
       table.border.top.style = "hidden",
-      # table.border.bottom.style = "transparent",
+      # Table.border.bottom.style = "transparent",
       heading.border.bottom.style = "hidden",
       table.border.bottom.color = "gray",
 
@@ -74,7 +76,7 @@ fnc_table_settings <- function(gt_object){
       column_labels.border.bottom.width = px(2),
       column_labels.border.bottom.color = "gray",
 
-      # font sizes
+      # Font sizes
       heading.title.font.size = px(14),
       heading.subtitle.font.size = px(12),
       column_labels.font.size = px(12),
@@ -90,14 +92,16 @@ fnc_table_settings <- function(gt_object){
     )
 }
 
-####################################################################
-# gt table qa checks
-# if data adds up
-####################################################################
+################################################################################
+
+# QA Checks Tables
+
+################################################################################
 
 # QA table for state and metric with data quality issues - if data doesn't add up
 fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, variable_4, header){
-  # filter by state and metrics selected
+
+  # Filter by state and metrics selected
   df1 <- state_data_checklist %>%
     dplyr::filter(state == state_name) %>%
     dplyr::select(-c(state)) %>%
@@ -111,23 +115,18 @@ fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, 
                   variable_3,
                   variable_4)
 
-  # if the data doesn't add up, output a table, otherwise, leave blank
+  # If the data doesn't add up, output a table, otherwise, leave blank
   test <- any(df1=="Doesn't Add Up")
 
   { if(test == TRUE){
     qa_table <- gt(df1) %>%
 
-      # # table title and subtitle
-      # tab_header(title = "Data may not be accurate") %>%
-      # tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
-      #           locations = cells_title("title")) %>%
-
-      # bold headers and year column
+      # Bold headers and year column
       tab_style(style = cell_text(weight = 'bold'), locations = cells_body(columns = c(year))) %>%
       tab_style(locations = cells_column_labels(columns = everything()),
                 style = list(cell_text(weight = "bold"))) %>%
 
-      # add custom table settings and unique header (functions below) depending on metric
+      # Add custom table settings and unique header (functions below) depending on metric
       fnc_table_settings() %>%
       header
 
@@ -137,14 +136,14 @@ fnc_gt_qa_table <- function(df, state_name, variable_1, variable_2, variable_3, 
   }
 }
 
-# table headers for QA supervision violation admissions
+# Table headers for QA supervision violation admissions
 fnc_qa_supervision_adm_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
+      year                                        ~ px(50),
       "total_supervision_violation_admissions_22" ~ px(80),
-      "probation_violation_admissions_22" ~ px(80),
-      "parole_violation_admissions_22" ~ px(80),
+      "probation_violation_admissions_22"         ~ px(80),
+      "parole_violation_admissions_22"            ~ px(80),
       "check_supervision_violation_admissions_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
@@ -156,15 +155,15 @@ fnc_qa_supervision_adm_headers <- function(gt_object){
       equal                                      = " ")
 }
 
-# table headers for QA probation admissions
+# Table headers for QA probation admissions
 fnc_qa_probation_adm_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "probation_violation_admissions_22" ~ px(80),
+      year                                            ~ px(50),
+      "probation_violation_admissions_22"             ~ px(80),
       "new_offense_probation_violation_admissions_22" ~ px(80),
-      "technical_probation_violation_admissions_22" ~ px(80),
-      "check_probation_violation_admissions_22" ~ px(100)) %>%
+      "technical_probation_violation_admissions_22"   ~ px(80),
+      "check_probation_violation_admissions_22"       ~ px(100)) %>%
     cols_label(
       year = "Year",
       probation_violation_admissions_22             = "Probation Violation Admissions",
@@ -175,15 +174,15 @@ fnc_qa_probation_adm_headers <- function(gt_object){
       equal                                         = " ")
 }
 
-# table headers for QA parole admissions
+# Table headers for QA parole admissions
 fnc_qa_parole_adm_headers <- function(gt_object){
   gt_object %>%
     cols_width(
       year ~ px(50),
-      "parole_violation_admissions_22" ~ px(80),
+      "parole_violation_admissions_22"             ~ px(80),
       "new_offense_parole_violation_admissions_22" ~ px(80),
-      "technical_parole_violation_admissions_22" ~ px(80),
-      "check_parole_violation_admissions_22" ~ px(100)) %>%
+      "technical_parole_violation_admissions_22"   ~ px(80),
+      "check_parole_violation_admissions_22"       ~ px(100)) %>%
     cols_label(
       year = "Year",
       parole_violation_admissions_22             = "Parole Violation Admissions",
@@ -194,14 +193,14 @@ fnc_qa_parole_adm_headers <- function(gt_object){
       equal                                      = " ")
 }
 
-# table headers for QA technical violation admissions
+# Table headers for QA technical violation admissions
 fnc_qa_technical_adm_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "total_technical_violation_admissions_22" ~ px(80),
-      "technical_probation_violation_admissions_22" ~ px(80),
-      "technical_parole_violation_admissions_22" ~ px(80),
+      year                                            ~ px(50),
+      "total_technical_violation_admissions_22"       ~ px(80),
+      "technical_probation_violation_admissions_22"   ~ px(80),
+      "technical_parole_violation_admissions_22"      ~ px(80),
       "check_total_technical_violation_admissions_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
@@ -213,15 +212,15 @@ fnc_qa_technical_adm_headers <- function(gt_object){
       equal                                         = " ")
 }
 
-# table headers for QA new offense violation admissions
+# Table headers for QA new offense violation admissions
 fnc_qa_new_offense_adm_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "total_new_offense_admissions_22" ~ px(80),
+      year                                            ~ px(50),
+      "total_new_offense_admissions_22"               ~ px(80),
       "new_offense_probation_violation_admissions_22" ~ px(80),
-      "new_offense_parole_violation_admissions_22" ~ px(80),
-      "check_new_offense_violation_admissions_22" ~ px(100)) %>%
+      "new_offense_parole_violation_admissions_22"    ~ px(80),
+      "check_new_offense_violation_admissions_22"     ~ px(100)) %>%
     cols_label(
       year = "Year",
       total_new_offense_admissions_22                 = "Total New Offense Violation Admissions",
@@ -232,14 +231,14 @@ fnc_qa_new_offense_adm_headers <- function(gt_object){
       equal                                           = " ")
 }
 
-# table headers for QA supervision violation population
+# Table headers for QA supervision violation population
 fnc_qa_supervision_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
+      year                                        ~ px(50),
       "total_supervision_violation_population_22" ~ px(80),
-      "probation_violation_population_22" ~ px(80),
-      "parole_violation_population_22" ~ px(80),
+      "probation_violation_population_22"         ~ px(80),
+      "parole_violation_population_22"            ~ px(80),
       "check_supervision_violation_population_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
@@ -251,15 +250,15 @@ fnc_qa_supervision_pop_headers <- function(gt_object){
       equal                                      = " ")
 }
 
-# table headers for QA probation population
+# Table headers for QA probation population
 fnc_qa_probation_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "probation_violation_population_22" ~ px(80),
+      year                                            ~ px(50),
+      "probation_violation_population_22"             ~ px(80),
       "new_offense_probation_violation_population_22" ~ px(80),
-      "technical_probation_violation_population_22" ~ px(80),
-      "check_probation_violation_population_22" ~ px(100)) %>%
+      "technical_probation_violation_population_22"   ~ px(80),
+      "check_probation_violation_population_22      " ~ px(100)) %>%
     cols_label(
       year = "Year",
       probation_violation_population_22             = "Probation Violation Population",
@@ -270,15 +269,15 @@ fnc_qa_probation_pop_headers <- function(gt_object){
       equal                                         = " ")
 }
 
-# table headers for QA parole population
+# Table headers for QA parole population
 fnc_qa_parole_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "parole_violation_population_22" ~ px(80),
+      year                                         ~ px(50),
+      "parole_violation_population_22"             ~ px(80),
       "new_offense_parole_violation_population_22" ~ px(80),
-      "technical_parole_violation_population_22" ~ px(80),
-      "check_parole_violation_population_22" ~ px(100)) %>%
+      "technical_parole_violation_population_22"   ~ px(80),
+      "check_parole_violation_population_22"       ~ px(100)) %>%
     cols_label(
       year = "Year",
       parole_violation_population_22             = "Parole Violation Population",
@@ -289,14 +288,14 @@ fnc_qa_parole_pop_headers <- function(gt_object){
       equal                                      = " ")
 }
 
-# table headers for QA technical violation population
+# Table headers for QA technical violation population
 fnc_qa_technical_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "total_technical_violation_population_22" ~ px(80),
-      "technical_probation_violation_population_22" ~ px(80),
-      "technical_parole_violation_population_22" ~ px(80),
+      year                                            ~ px(50),
+      "total_technical_violation_population_22"       ~ px(80),
+      "technical_probation_violation_population_22"   ~ px(80),
+      "technical_parole_violation_population_22"      ~ px(80),
       "check_total_technical_violation_population_22" ~ px(100)) %>%
     cols_label(
       year = "Year",
@@ -308,15 +307,15 @@ fnc_qa_technical_pop_headers <- function(gt_object){
       equal                                         = " ")
 }
 
-# table headers for QA new offense violation population
+# Table headers for QA new offense violation population
 fnc_qa_new_offense_pop_headers <- function(gt_object){
   gt_object %>%
     cols_width(
-      year ~ px(50),
-      "total_new_offense_population_22" ~ px(80),
+      year                                            ~ px(50),
+      "total_new_offense_population_22"               ~ px(80),
       "new_offense_probation_violation_population_22" ~ px(80),
-      "new_offense_parole_violation_population_22" ~ px(80),
-      "check_new_offense_violation_population_22" ~ px(100)) %>%
+      "new_offense_parole_violation_population_22"    ~ px(80),
+      "check_new_offense_violation_population_22"     ~ px(100)) %>%
     cols_label(
       year = "Year",
       total_new_offense_population_22                 = "Total New Offense Violation Population",
@@ -327,13 +326,15 @@ fnc_qa_new_offense_pop_headers <- function(gt_object){
       equal                                           = " ")
 }
 
-#####################################################################################
+################################################################################
+
 # gt table for definition confirmations
-#####################################################################################
+
+################################################################################
 
 fnc_gt_definitions_table <- function(df, state_name){
 
-  # filter by state and metrics selected
+  # Filter by state and metrics selected
   df1 <- definitions_table_checklist %>%
     dplyr::filter(state == state_name) %>%
     dplyr::select(-c(state, definition_notes)) %>%
@@ -345,13 +346,8 @@ fnc_gt_definitions_table <- function(df, state_name){
       # Set missing value defaults
       fmt_missing(columns = gt::everything(), missing_text = "") %>%
 
-      # add custom table settings and unique header (functions below) depending on metric
+      # Add custom table settings and unique header (functions below) depending on metric
       fnc_table_settings() %>%
-
-      # # table title and subtitle
-      # tab_header(title = "Definitions") %>%
-      # tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
-      #           locations = cells_title("title")) %>%
 
       cols_width(
         "metric" ~ px(300),
@@ -364,14 +360,14 @@ fnc_gt_definitions_table <- function(df, state_name){
         dontinclude = " ",
         definition_confirmation = "Confirm Definition") %>%
 
-      # change color to yellow if a field was left blank
+      # Change color to yellow if a field was left blank
       tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
                 locations = cells_body(columns = definition_confirmation, rows = definition_confirmation == "Not Confirmed")) %>%
 
       tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
                 locations = cells_body(columns = definition_confirmation, rows = definition_confirmation != "Not Confirmed")) %>%
 
-      # change to raw html for email
+      # Change to raw html for email
       as_raw_html()
 
     return(definitions_table)
@@ -384,13 +380,15 @@ fnc_gt_definitions_table <- function(df, state_name){
 }
 
 
-#####################################################################################
+################################################################################
+
 # gt table for admissions
-#####################################################################################
+
+################################################################################
 
 fnc_gt_adm_table <- function(df, state_name){
 
-  # filter by state
+  # Filter by state
   df <- adm_table_checklist %>%
     filter(state == state_name) %>%
     select(-c(state))
@@ -398,39 +396,39 @@ fnc_gt_adm_table <- function(df, state_name){
 
   adm_table <- gt(df) %>%
 
-    # spanner for 2021 Survey
+    # Spanner for 2021 Survey
     tab_spanner(label = "Survey 2021", columns = c(previous_2018, previous_2019, previous_2020)) %>%
     tab_style(style = cell_text(size = px(12)),
               locations = cells_column_labels(columns = c(previous_2018, previous_2019, previous_2020))) %>%
 
-    # spanner for 2022 survey
+    # Spanner for 2022 survey
     tab_spanner(label = "Survey 2022", columns = c(current_2018, current_2019, current_2020, current_2021)) %>%
     tab_style(style = cell_text(size = px(12)),
               locations = cells_column_labels(columns = c(current_2018, current_2019, current_2020, current_2021))) %>%
 
-    # table title and subtitle
+    # Table title and subtitle
     tab_header(title = "Prison Admissions", subtitle = "2021 Data and Changes in Data from 2018 to 2020") %>%
     tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
               locations = cells_title("title")) %>%
     tab_style(style = cell_text(color = "#696969", weight = "normal", align = "left"),
               locations = cells_title("subtitle")) %>%
 
-    # border lines around 2021 survey
+    # Border lines around 2021 survey
     tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(previous_2018))) %>%
     tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(current_2018))) %>%
 
-    # hide data check columns
+    # Hide data check columns
     cols_hide(columns = c(check_2018_21_22, check_2019_21_22, check_2020_21_22)) %>%
 
-    # appearance settings
+    # Appearance settings
     fnc_table_settings() %>%
 
-    # specifications for column widths and labels
+    # Specifications for column widths and labels
     fnc_headers() %>%
 
-    # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
+    # Change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = c(current_2018), rows = previous_2018 != current_2018 & (rows = current_2018 != "Left Blank"))) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -440,7 +438,7 @@ fnc_gt_adm_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
 
-    # change color to yellow if a field was left blank
+    # Change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2018, rows = current_2018 == "Left Blank")) %>%
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
@@ -450,19 +448,21 @@ fnc_gt_adm_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 == "Left Blank")) %>%
 
-    # change to raw html for email
+    # Change to raw html for email
     as_raw_html()
 
   return(adm_table)
 }
 
-####################################################################
+################################################################################
+
 # gt table for population
-####################################################################
+
+################################################################################
 
 fnc_gt_pop_table <- function(df, state_name){
 
-  # filter by state
+  # Filter by state
   df <- pop_table_checklist %>%
     filter(state == state_name) %>%
     select(-c(state))
@@ -470,39 +470,39 @@ fnc_gt_pop_table <- function(df, state_name){
 
   pop_table <- gt(df) %>%
 
-    # spanner for 2021 Survey
+    # Spanner for 2021 Survey
     tab_spanner(label = "Survey 2021", columns = c(previous_2018, previous_2019, previous_2020)) %>%
     tab_style(style = cell_text(size = px(12)),
               locations = cells_column_labels(columns = c(previous_2018, previous_2019, previous_2020))) %>%
 
-    # spanner for 2022 survey
+    # Spanner for 2022 survey
     tab_spanner(label = "Survey 2022", columns = c(current_2018, current_2019, current_2020, current_2021)) %>%
     tab_style(style = cell_text(size = px(12)),
               locations = cells_column_labels(columns = c(current_2018, current_2019, current_2020, current_2021))) %>%
 
-    # table title and subtitle
+    # Table title and subtitle
     tab_header(title = "Prison Population", subtitle = "2021 Data and Changes in Data from 2018 to 2020") %>%
     tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
               locations = cells_title("title")) %>%
     tab_style(style = cell_text(color = "#696969", weight = "normal", align = "left"),
               locations = cells_title("subtitle")) %>%
 
-    # border lines around 2021 survey
+    # Border lines around 2021 survey
     tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(previous_2018))) %>%
     tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(current_2018))) %>%
 
-    # hide data check columns
+    # Hide data check columns
     cols_hide(columns = c(check_2018_21_22, check_2019_21_22, check_2020_21_22)) %>%
 
-    # appearance settings
+    # Appearance settings
     fnc_table_settings() %>%
 
-    # specifications for column widths and labels
+    # Specifications for column widths and labels
     fnc_headers() %>%
 
-    # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
+    # Change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = c(current_2018), rows = previous_2018 != current_2018 & (rows = current_2018 != "Left Blank"))) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -512,7 +512,7 @@ fnc_gt_pop_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
 
-    # change color to yellow if a field was left blank
+    # Change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2018, rows = current_2018 == "Left Blank")) %>%
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
@@ -522,19 +522,21 @@ fnc_gt_pop_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 == "Left Blank")) %>%
 
-    # change to raw html for email
+    # Change to raw html for email
     as_raw_html()
 
   return(pop_table)
 }
 
-####################################################################
+################################################################################
+
 # gt table for costs
-####################################################################
+
+################################################################################
 
 fnc_gt_costs_table <- function(df, state_name){
 
-  # filter by state
+  # Filter by state
   df <- costs_table_checklist %>%
     filter(state == state_name) %>%
     select(-c(state))
@@ -542,40 +544,40 @@ fnc_gt_costs_table <- function(df, state_name){
 
   costs_table <- gt(df) %>%
 
-    # spanner for 2021 Survey
+    # Spanner for 2021 Survey
     tab_spanner(label = "Survey 2021", columns = c(previous_2019, previous_2020)) %>%
     tab_style(style = cell_text(size = px(12)),
               locations = cells_column_labels(columns = c(previous_2019, previous_2020))) %>%
 
-    # spanner for 2022 survey
+    # Spanner for 2022 survey
     tab_spanner(label = "Survey 2022", columns = c(current_2019, current_2020, current_2021)) %>%
     tab_style(style = cell_text(size = px(12)),
               locations = cells_column_labels(columns = c(current_2019, current_2020, current_2021))) %>%
 
-    # table title and subtitle
+    # Table title and subtitle
     tab_header(title = "Cost Per Day Per Person", subtitle = "2021 Data and Changes in Data from 2018 to 2020") %>%
     tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
               locations = cells_title("title")) %>%
     tab_style(style = cell_text(color = "#696969", weight = "normal", align = "left"),
               locations = cells_title("subtitle")) %>%
 
-    # border lines around 2021 survey
+    # Border lines around 2021 survey
     tab_style(style = list(cell_borders(side = c("left"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(current_2019))) %>%
 
-    # hide data check columns
+    # Hide data check columns
     cols_hide(columns = c(check_2019_21_22, check_2020_21_22)) %>%
 
-    # appearance settings
+    # Appearance settings
     fnc_table_settings() %>%
 
-    # specifications for column widths and labels
+    # Specifications for column widths and labels
     fnc_headers_costs() %>%
 
-    # change color to yellow if a field was left blank
-    # change colors to green if data was changed between years
-    # change colors to green if the data is new (2021)
-    # change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
+    # Change color to yellow if a field was left blank
+    # Change colors to green if data was changed between years
+    # Change colors to green if the data is new (2021)
+    # Change color to green if there were updates to the data from 2018 - 2020, and new data for 2021
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = c(current_2019), rows = previous_2019 != current_2019)) %>%
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
@@ -585,7 +587,7 @@ fnc_gt_costs_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "#cefad0"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 != "Left Blank")) %>%
 
-    # change color to yellow if a field was left blank
+    # Change color to yellow if a field was left blank
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2019, rows = current_2019 == "Left Blank")) %>%
 
@@ -595,19 +597,21 @@ fnc_gt_costs_table <- function(df, state_name){
     tab_style(style = list(cell_fill(color = "yellow"), cell_text(weight = "bold")),
               locations = cells_body(columns = current_2021, rows = current_2021 == "Left Blank")) %>%
 
-    # change to raw html for email
+    # Change to raw html for email
     as_raw_html()
 
   return(costs_table)
 }
 
-####################################################################
+################################################################################
+
 # gt table for notes and comments
-####################################################################
+
+################################################################################
 
 fnc_gt_notes_comments_table <- function(df, state_name){
 
-  # filter by state
+  # Filter by state
   df <- notes_comments_list %>%
     clean_names() %>%
     filter(state == state_name) %>%
@@ -616,16 +620,16 @@ fnc_gt_notes_comments_table <- function(df, state_name){
 
   notes_comments_table <- gt(df) %>%
 
-    # table title and subtitle
+    # Table title and subtitle
     tab_header(title = "Notes and Comments") %>%
     tab_style(style = cell_text(color = "black", weight = "bold", align = "left"),
               locations = cells_title("title")) %>%
 
-    # border lines around 2021 survey
+    # Border lines around 2021 survey
     tab_style(style = list(cell_borders(side = c("right"), color = "gray", weight = px(1))),
               locations = cells_body(columns = c(notes))) %>%
 
-    # appearance settings
+    # Appearance settings
     fnc_table_settings() %>%
 
     cols_width(
@@ -635,7 +639,7 @@ fnc_gt_notes_comments_table <- function(df, state_name){
       notes = "State Notes",
       comments = "Additional Comments") %>%
 
-    # change to raw html for email
+    # Change to raw html for email
     as_raw_html()
 
   return(notes_comments_table)

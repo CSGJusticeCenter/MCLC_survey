@@ -90,7 +90,11 @@ for (h in yearnum){
     v5 <- mice_imputed_data5.nat[h,i]
     w  <- sum(v1,v2,v3,v4,v5)/5
     #BETWEEN-IMPUTATION VARIANCE
-    b  <- (((mice_imputed_data1.nat[h,i] - final.parest.imp[h,i])^2) + ((mice_imputed_data2.nat[h,i] - final.parest.imp[h,i])^2) + ((mice_imputed_data3.nat[h,i] - final.parest.imp[h,i])^2) + ((mice_imputed_data4.nat[h,i] - final.parest.imp[h,i])^2) + ((mice_imputed_data5.nat[h,i] - final.parest.imp[h,i])^2))/4
+    b  <- (((mice_imputed_data1.nat[h,i] - final.parest.imp[h,i])^2) + 
+             ((mice_imputed_data2.nat[h,i] - final.parest.imp[h,i])^2) + 
+             ((mice_imputed_data3.nat[h,i] - final.parest.imp[h,i])^2) + 
+             ((mice_imputed_data4.nat[h,i] - final.parest.imp[h,i])^2) + 
+             ((mice_imputed_data5.nat[h,i] - final.parest.imp[h,i])^2))/4
     #TOTAL VARIANCE, then calculate standard error
     s  <- sqrt(w + (1 + (1/5))*b)
     #final CI
