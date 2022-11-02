@@ -1,0 +1,183 @@
+\documentclass{article}
+
+\usepackage[a4paper, 
+            top=1.2in, 
+            bottom=1in, 
+            left=.525in, 
+            right=.525in, 
+            headsep=10pt, 
+            footskip=40pt,
+            head=70pt
+            ]
+            {geometry}
+            
+% packages for xtable
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{rotating}
+\usepackage{tabularx}
+
+  
+<< include=FALSE >>=
+#######################################
+# PROJECT: More Community, Less Confinement (2022)
+# PURPOSE: Impute values, national estimates, state estimates and costs
+# AUTHOR: JSM
+#######################################
+
+# read automated_clean to get data, reformat
+source("02_clean.R")
+
+##SETUP
+#years of data
+year     <- c('2018','2019','2020','2021')
+yearnum  <- c(1,     2,     3,     4)
+refyear  <- c('2019','2020','2021')
+refnum   <- 1:3
+
+#number of survey variables
+numvar   <- 1:8
+
+#labels
+var.labels = c(year                                = "Year",
+               overall_admissions                  = "Overall admissions",
+               admissions_for_violations           = "Admissions for violations",
+               admissions_for_technical_violations = "Admissions for technical violations",
+               admissions_for_new_crime_violations = "Admissions for new crime violations",
+               overall_population                  = "Overall population",
+               violator_population                 = "Violator population",
+               technical_violator_population       = "Technical violator population",
+               new_crime_violator_population       = "New crime violator population"
+)
+
+################################################################################
+# IMPUTATION
+# MICE
+# National Estimates w/95% CI's
+################################################################################
+
+#calculate imputed values (multiple imputation)
+source("MImp1.R")
+
+######
+#produce confidence intervals
+#post multiple imputation t-test
+#grab response columns for creating estimated counts/CIs
+######
+#get response columns from survey
+#there are 8 response columns
+tablevals<- colnames(mice_imputed_data1[numvar[3]:(length(numvar)+2)])
+
+source("MImp2.R")
+
+##############################################################
+##################CREATE A TABLE HERE!!!!!!!!!!!!#############
+#combine
+table2018 <- cbind(nat.2018all,natCI.2018all) %>%
+  mutate(across(where(is.numeric),formattable::comma,1),
+         id     = 1:8,
+         ' '    = '95% Confidence Interval',
+         '2018' = paste0('(',`1`,', ',`2`,')')
+         )
+table2019 <- cbind(nat.2019all,natCI.2019all) %>%
+  mutate(across(where(is.numeric),formattable::comma,1),
+         '2019' = paste0('(',`1`,', ',`2`,')'))
+table2020 <- cbind(nat.2020all,natCI.2020all) %>%
+  mutate(across(where(is.numeric),formattable::comma,1),
+         '2020' = paste0('(',`1`,', ',`2`,')'))
+table2021 <- cbind(nat.2021all,natCI.2021all) %>%
+  mutate(across(where(is.numeric),formattable::comma,1),
+         '2021' = paste0('(',`1`,', ',`2`,')'))
+
+bold <- function(x){
+  paste0('{\\bfseries ', x, '}')
+}
+
+tablevals.pretty <- c('Overall Admissions',
+                     'Admissions for Supervision Violations',
+                     'Admissions for Technical Supervision Violations',
+                     'Admissions for New Crime Violations',
+                     'Overall Population',
+                     'Population of Supervision Violators',
+                     'Population of Technical Supervision Violators',
+                     'Population of New Crime Violators')
+
+tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Estimate,table2021$Estimate)) %>%
+  mutate(id = 1:8,
+         ' ' = 'Estimate', .before="V1") %>%
+  dplyr::rename('2018' = "V1",
+                '2019' = "V2",
+                '2020' = "V3",
+                '2021' = "V4") %>%
+  rbind(
+    data.table(' ' = tablevals.pretty,
+               id  = 1:8,
+               id2 = 0),
+    
+    data.table(cbind(
+      ' '    = table2018$` `,
+      '2018' = table2018$`2018`,
+      '2019' = table2019$`2019`,
+      '2020' = table2020$`2020`,
+      '2021' = table2021$`2021`,
+      'id'   = table2018$id
+  )),
+  fill = TRUE) %>%
+  arrange(id,id2) %>%
+  select(-c(id,id2))
+
+#create table
+table_nat1 <- print(xtable(tab.full[1:12,],
+                           align = c("llcccc")),
+                    include.rownames = FALSE, floating = FALSE, print.results = FALSE)
+
+table_nat2 <- print(xtable(tab.full[13:24,],
+                           align = c("llcccc")),
+                    include.rownames = FALSE, floating = FALSE, print.results = FALSE)
+
+##############################################################
+##############################################################
+
+#############################################################################
+###############CALCULATING STATE ESTIMATES
+#############################################################################
+
+source("MImp3.R")
+
+# save data to sharepoint
+write.csv(national.est,  file=paste0(sp_data_path,"/mclc_data_2022_with_imputatation.csv"))
+
+#############################
+###COSTS#####################
+
+source("Costs.R")
+
+#averted cost total
+avert19_20last <- 2742725774
+avert19_20     <- sum(cost.final$averted_costs19_20, na.rm = TRUE) #2019 - 2020
+avertdiff      <- avert19_20last - avert19_20 
+avert19_21     <- sum(cost.final$averted_costs19_21, na.rm = TRUE) #2019 - 2021
+avert20_21     <- sum(cost.final$averted_costs20_21, na.rm = TRUE) #2020 - 2021
+
+@
+
+\begin{document}
+
+\section*{National Estimates}
+
+
+\begin{table}[h]
+{\tiny \Sexpr{table_nat1}}
+\end{table}
+
+\begin{table}[h]
+{\tiny \Sexpr{table_nat2}}
+\end{table}
+
+\section*{Averted Costs}
+
+The previous MCLC survey averted costs were calculated from pre-COVID looking at 2019-2020. These costs were \verb!\Sexpr{dollar_format()(avert19_20last)}!. States were given the opportunity to make data corrections in this year's MCLC survey, and so the current averted costs looking at 2019-2020 are \verb!\Sexpr{dollar_format()(avert19_20)}!. The difference is \verb!\Sexpr{dollar_format()(avertdiff)}!. \newline
+
+\noindent The 2019-2021 total averted costs: \verb!\Sexpr{dollar_format()(avert19_21)}!.
+
+\end{document}
