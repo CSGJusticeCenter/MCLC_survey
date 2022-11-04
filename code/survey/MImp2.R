@@ -17,7 +17,7 @@ for (i in 1:5) {
 }
 for (i in 1:5) {
   test <- get(paste0(micelist[i],".nat"))
-  label(test)<-as.list(var.labels[match(names(get(paste0(micelist[i],".nat"))), names(var.labels))])
+  test = upData(get(paste0(micelist[i],".nat")), labels = var.labels)
   assign(paste0(micelist[i],".nat"),test,envir = .GlobalEnv)
 }
 #calculate 95% CI for all counts across all years

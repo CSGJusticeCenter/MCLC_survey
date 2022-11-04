@@ -77,7 +77,7 @@ var.labels = c(states                                     = "State name",
                new_offense_parole_violation_population    = "New offense parole violation population",
                technical_parole_violation_population      = "Technical parole violation population")
 
-label(population) = as.list(var.labels[match(names(population), names(var.labels))])
+population = upData(population, labels = var.labels)
 
 ##############
 # Admissions
@@ -108,7 +108,7 @@ var.labels = c(states                                     = "State name",
                new_offense_parole_violation_admissions    = "New offense parole violation admissions",
                technical_parole_violation_admissions      = "Technical parole violation admissions")
 
-label(admissions) = as.list(var.labels[match(names(admissions), names(var.labels))])
+admissions = upData(admissions, labels = var.labels)
 
 # merge together, set up tables for change
 adm_pop_analysis <- merge(admissions, population, by = c("states","year")) %>%

@@ -5,7 +5,9 @@
 ################################################################################
 
 #just for state-level cost report REQUIRES UPDATING!!!
-forreport <- national.est[,c("violator_population2019","violator_population2020","violator_population2021")]
+#community supervision violators, technical supervision violators populations
+forreport <- national.est[,c("violator_population2019",          "violator_population2020",          "violator_population2021",
+                             "technical_violator_population2019","technical_violator_population2020","technical_violator_population2021")]
 
 cost.final <- costs %>%
   mutate(
@@ -21,6 +23,8 @@ cost.final <- costs %>%
     averted_costs19_21 = (violator_population2019*Cost.in.2021*365) - 
                          (violator_population2021*Cost.in.2021*365),    
     averted_costs19_20 = (violator_population2019*Cost.in.2020*365) - 
-                         (violator_population2020*Cost.in.2020*365),        
-    
-  )
+                         (violator_population2020*Cost.in.2020*365),
+    cost.vp21          = (Cost.in.2021*365*violator_population2021),
+    cost.tvp21         = (Cost.in.2021*365*technical_violator_population2021)
+    ) %>%
+  dplyr::rename(State=state)
