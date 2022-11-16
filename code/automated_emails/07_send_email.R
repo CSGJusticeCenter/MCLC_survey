@@ -7,13 +7,13 @@
 # Send email
 ############################################
 
-source("00_import.R")
-source("01_functions.R")
-source("02_functions_gt.R")
-source("03_function_email.R")
-source("04_previous_survey.R")
-source("05_checklists.R")
-source("06_create_email.R")
+source("code/automated_emails/00_import.R")
+source("code/automated_emails/01_functions.R")
+source("code/automated_emails/02_functions_gt.R")
+source("code/automated_emails/03_function_email.R")
+source("code/automated_emails/04_previous_survey.R")
+source("code/automated_emails/05_checklists.R")
+source("code/automated_emails/06_create_email.R")
 
 ###################    WARNING    #####################
 

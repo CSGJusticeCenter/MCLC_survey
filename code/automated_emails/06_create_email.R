@@ -54,54 +54,54 @@ for(i in 1:length(states)){
 # View emails
 ################
 
- #  email_Alabama
- #  email_Alaska
- #  email_Arizona         # is saying it's not accurate but it is
- #  email_Arkansas
- #  email_California
- #  email_Colorado
- #  email_Connecticut     # excel
- #  email_Delaware
- #  email_Florida
- #  email_Georgia
- #  email_Hawaii
- #  email_Idaho
- #  email_Illinois        # excel
- #  email_Indiana
- #  email_Iowa
- #  email_Kansas
- #  email_Kentucky
- #  email_Louisiana
- #  email_Maine
- #  email_Maryland
- #  email_Massachusetts
- #  email_Michigan
- #  email_Minnesota
- #  email_Mississippi
- #  email_Missouri
- #  email_Montana
- #  email_Nebraska
- #  email_Nevada
- # `email_New Hampshire`
- # `email_New Jersey`
- # `email_New Mexico`
- # `email_New York`       # excel
- # `email_North Carolina`
- # `email_North Dakota`
- #  email_Ohio
- #  email_Oklahoma
- #  email_Oregon
- #  email_Pennsylvania
- # `email_Rhode Island`
- # `email_South Carolina`
- # `email_South Dakota`
- #  email_Tennessee
- #  email_Texas           # excel
- #  email_Utah
- #  email_Vermont
- #  email_Virginia
- #  email_Washington
- # `email_West Virginia`
- #  email_Wisconsin
- #  email_Wyoming
+  email_Alabama
+  email_Alaska
+  email_Arizona         # is saying it's not accurate but it is, per email
+  email_Arkansas
+  email_California
+  email_Colorado
+  email_Connecticut     # excel
+  email_Delaware
+  email_Florida
+  email_Georgia
+  email_Hawaii
+  email_Idaho
+  email_Illinois        # excel
+  email_Indiana
+  email_Iowa
+  email_Kansas
+  email_Kentucky
+  email_Louisiana
+  email_Maine
+  email_Maryland
+  email_Massachusetts
+  email_Michigan
+  email_Minnesota
+  email_Mississippi
+  email_Missouri
+  email_Montana
+  email_Nebraska
+  email_Nevada
+ `email_New Hampshire`
+ `email_New Jersey`
+ `email_New Mexico`
+ `email_New York`       # excel
+ `email_North Carolina`
+ `email_North Dakota`
+  email_Ohio
+  email_Oklahoma
+  email_Oregon
+  email_Pennsylvania
+ `email_Rhode Island`
+ `email_South Carolina`
+ `email_South Dakota`
+  email_Tennessee
+  email_Texas           # excel
+  email_Utah
+  email_Vermont
+  email_Virginia
+  email_Washington
+ `email_West Virginia`
+  email_Wisconsin
+  email_Wyoming
  #
