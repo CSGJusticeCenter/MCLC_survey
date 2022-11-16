@@ -1,6 +1,15 @@
+############################################
+# Project:  MCLC Survey (2022)
+# File: data_availability.R
+# Last updated: November 16, 2022
+# Author: Mari Roberts
+
 # Tables showing what states submitted to MCLC from 2018 to 2021
 # There was some manual coding in this file. Due to time constraints,
-#    I could not figure out how to combine rows by state, year, and what they submitted.
+#    I could not figure out how to combine rows by state, year, and what they submitted, when they submitted
+#    something different for some years. This was only done for Alaska, Maine, Maryland, Nebraska, New Hampshire,
+#    New Jersey, and New Mexico
+############################################
 
 # load packages
 library(csgjcr)
@@ -36,7 +45,6 @@ yes_no_fmt  <- formatter("span", style = function(x) style(display           = "
                                                       color = ifelse(x == "No" , "#B05D24", "#5c9c80")), x ~ icontext(ifelse(x == "No", "glyphicon glyphicon-remove", "glyphicon glyphicon-ok"), x))
 
 year_fmt <- formatter("span", style = function(x) style(display           = "inline-block",
-                                                      direction         = "rtl",
                                                       `border-radius`   = "4px",
                                                       `padding-right`   = "2px",
                                                       `background-color`= "white",
@@ -139,7 +147,7 @@ pop_data_availability_table <- formattable(pop,
                                                 `Probation New Offense Population` = yes_no_fmt,
                                                 `Parole New Offense Population` = yes_no_fmt))
 
-export_formattable <- function(f, file, width = 1123, height = NULL,
+export_formattable <- function(f, file, width = 1150, height = NULL,
                                background = "white", delay = 10)
 {
   w <- as.htmlwidget(f, width = width, height = height)
@@ -150,6 +158,9 @@ export_formattable <- function(f, file, width = 1123, height = NULL,
           selector = ".formattable_widget",
           delay = delay)
 }
+
+write.csv(pop, "pop_data_availability_table_allyrs_v1.csv")
+write.csv(adm, "adm_data_availability_table_allyrs_v1.csv")
 
 export_formattable(pop_data_availability_table,"pop_data_availability_table_allyrs_v1.png")
 export_formattable(adm_data_availability_table,"adm_data_availability_table_allyrs_v1.png")
@@ -309,11 +320,6 @@ states_diff_manual <- states_diff %>%
     State == "Alaska" & Year == "2020" ~ "2018 - 2020",
     State == "Alaska" & Year == "2021" ~ "2021",
 
-    State == "Maine" & Year == "2018" ~ "2018 - 2020",
-    State == "Maine" & Year == "2019" ~ "2018 - 2020",
-    State == "Maine" & Year == "2020" ~ "2018 - 2020",
-    State == "Maine" & Year == "2021" ~ "2021",
-
     State == "Maryland" & Year == "2018" ~ "2018 - 2020",
     State == "Maryland" & Year == "2019" ~ "2018 - 2020",
     State == "Maryland" & Year == "2020" ~ "2018 - 2020",
@@ -323,16 +329,6 @@ states_diff_manual <- states_diff %>%
     State == "Nebraska" & Year == "2019" ~ "2018 - 2019",
     State == "Nebraska" & Year == "2020" ~ "2020 - 2021",
     State == "Nebraska" & Year == "2021" ~ "2020 - 2021",
-
-    State == "New Hampshire" & Year == "2018" ~ "2018 - 2020",
-    State == "New Hampshire" & Year == "2019" ~ "2018 - 2020",
-    State == "New Hampshire" & Year == "2020" ~ "2018 - 2020",
-    State == "New Hampshire" & Year == "2021" ~ "2021",
-
-    State == "New Jersey" & Year == "2018" ~ "2018 - 2020",
-    State == "New Jersey" & Year == "2019" ~ "2018 - 2020",
-    State == "New Jersey" & Year == "2020" ~ "2018 - 2020",
-    State == "New Jersey" & Year == "2021" ~ "2021",
 
     State == "New Mexico" & Year == "2018" ~ "2018 - 2019",
     State == "New Mexico" & Year == "2019" ~ "2018 - 2019",
@@ -366,7 +362,7 @@ pop_data_availability_table2 <- formattable(pop2,
                                                 `Probation New Offense Population` = yes_no_fmt,
                                                 `Parole New Offense Population` = yes_no_fmt))
 
-export_formattable <- function(f, file, width = 1150, height = NULL,
+export_formattable <- function(f, file, width = 1200, height = NULL,
                                background = "white", delay = 10)
 {
   w <- as.htmlwidget(f, width = width, height = height)
@@ -378,5 +374,8 @@ export_formattable <- function(f, file, width = 1150, height = NULL,
           delay = delay)
 }
 
-export_formattable(pop_data_availability_table2,"pop_data_availability_table_allyrs_v1.png")
-export_formattable(adm_data_availability_table2,"adm_data_availability_table_allyrs_v1.png")
+write.csv(pop2, "pop_data_availability_table_allyrs_v2.csv")
+write.csv(adm2, "adm_data_availability_table_allyrs_v2.csv")
+
+export_formattable(pop_data_availability_table2,"pop_data_availability_table_allyrs_v2.png")
+export_formattable(adm_data_availability_table2,"adm_data_availability_table_allyrs_v2.png")
