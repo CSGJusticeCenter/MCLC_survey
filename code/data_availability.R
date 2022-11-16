@@ -1,7 +1,6 @@
-
-###################################
-# Misc Asks from Jess, Josh, Comms
-###################################
+# Tables showing what states submitted to MCLC from 2018 to 2021
+# There was some manual coding in this file. Due to time constraints,
+#    I could not figure out how to combine rows by state, year, and what they submitted.
 
 # load packages
 library(csgjcr)
@@ -15,12 +14,12 @@ library(htmlwidgets)
 library(extrafont)
 library(sysfonts)
 
-# Add fonts
-font_add("Graphik Regular", regular = "GraphikRegular.otf")
-font_import(paths = "C:/Users/mroberts/AppData/Local/Microsoft/Windows/Fonts")
-extrafont::loadfonts()
-loadfonts(device="win")
-loadfonts(device="pdf")
+# # Add fonts
+# font_add("Graphik Regular", regular = "GraphikRegular.otf")
+# font_import(paths = "C:/Users/YOURNAME/AppData/Local/Microsoft/Windows/Fonts")
+# extrafont::loadfonts()
+# loadfonts(device="win")
+# loadfonts(device="pdf")
 
 my_color_bar <- function (color = "lightgray", fixedWidth=150,...)
 {
@@ -367,7 +366,7 @@ pop_data_availability_table2 <- formattable(pop2,
                                                 `Probation New Offense Population` = yes_no_fmt,
                                                 `Parole New Offense Population` = yes_no_fmt))
 
-export_formattable <- function(f, file, width = 1130, height = NULL,
+export_formattable <- function(f, file, width = 1150, height = NULL,
                                background = "white", delay = 10)
 {
   w <- as.htmlwidget(f, width = width, height = height)
@@ -381,38 +380,3 @@ export_formattable <- function(f, file, width = 1130, height = NULL,
 
 export_formattable(pop_data_availability_table2,"pop_data_availability_table_allyrs_v1.png")
 export_formattable(adm_data_availability_table2,"adm_data_availability_table_allyrs_v1.png")
-
-
-
-
-# TEST
-# https://kcuilla.github.io/reactablefmtr/articles/icon_sets.html
-# library(reactablefmtr)
-#
-# car_data <- MASS::Cars93 %>%
-#   filter(Type %in% c("Compact", "Sporty", "Van")) %>%
-#   select(c("Make", "Type", "MPG.city", "MPG.highway")) %>%
-#   head(10)
-# car_types <- car_data %>%
-#   mutate(car_icons = dplyr::case_when(
-#     Type == "Compact" ~ "car",
-#     Type == "Sporty" ~ "flag-checkered",
-#     Type == "Van" ~ "shuttle-van",
-#     TRUE ~ "other"
-#   ))
-#
-# car_types %>%
-#   reactable(
-#     .,
-#     defaultSorted = "Type",
-#     defaultColDef = colDef(
-#       align = "center",
-#       cell = icon_sets(., icon_size = 28, icons = "gas-pump", colors = c("red", "grey", "darkgreen"))
-#     ),
-#     columns = list(
-#       car_icons = colDef(show = FALSE),
-#       Type = colDef(
-#         cell = icon_sets(., icon_ref = "car_icons", icon_position = "over", icon_size = 28, colors = "black")
-#       )
-#     )
-#   )
