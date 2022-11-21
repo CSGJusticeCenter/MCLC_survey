@@ -54,15 +54,15 @@ year_fmt <- formatter("span", style = function(x) style(display           = "inl
 sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2022)", "Data"))
 
 # Which metrics did states submit?
-adm18 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Admissions 2018")
-adm19 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Admissions 2019")
-adm20 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Admissions 2020")
-adm21 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Admissions 2021")
+adm18 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Admissions 2018")
+adm19 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Admissions 2019")
+adm20 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Admissions 2020")
+adm21 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Admissions 2021")
 
-pop18 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Population 2018")
-pop19 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Population 2019")
-pop20 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Population 2020")
-pop21 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v2.xlsx", sep = ""), sheet = "Population 2021")
+pop18 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Population 2018")
+pop19 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Population 2019")
+pop20 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Population 2020")
+pop21 <- read_excel(paste0(sp_data_path, "/mclc_data_2022_v3.xlsx", sep = ""), sheet = "Population 2021")
 
 adm_all <- rbind(adm18,
              adm19,
@@ -159,11 +159,11 @@ export_formattable <- function(f, file, width = 1150, height = NULL,
           delay = delay)
 }
 
-write.csv(pop, "pop_data_availability_table_allyrs_v1.csv")
-write.csv(adm, "adm_data_availability_table_allyrs_v1.csv")
+# write.csv(pop, "pop_data_availability_table_allyrs_v1.csv")
+# write.csv(adm, "adm_data_availability_table_allyrs_v1.csv")
 
-export_formattable(pop_data_availability_table,"pop_data_availability_table_allyrs_v1.png")
-export_formattable(adm_data_availability_table,"adm_data_availability_table_allyrs_v1.png")
+export_formattable(pop_data_availability_table,"pop_data_availability_table_allyrs_v3a.png")
+export_formattable(adm_data_availability_table,"adm_data_availability_table_allyrs_v3a.png")
 
 #########################################################################################################
 # Option with all years
@@ -374,8 +374,8 @@ export_formattable <- function(f, file, width = 1200, height = NULL,
           delay = delay)
 }
 
-write.csv(pop2, "pop_data_availability_table_allyrs_v2.csv")
-write.csv(adm2, "adm_data_availability_table_allyrs_v2.csv")
+# write.csv(pop2, "pop_data_availability_table_allyrs_v2.csv")
+# write.csv(adm2, "adm_data_availability_table_allyrs_v2.csv")
 
-export_formattable(pop_data_availability_table2,"pop_data_availability_table_allyrs_v2.png")
-export_formattable(adm_data_availability_table2,"adm_data_availability_table_allyrs_v2.png")
+export_formattable(pop_data_availability_table2,"pop_data_availability_table_allyrs_v3b.png")
+export_formattable(adm_data_availability_table2,"adm_data_availability_table_allyrs_v3b.png")
