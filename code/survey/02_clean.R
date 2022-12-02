@@ -24,7 +24,7 @@ library(csgjcr)
 library(scales)
 library(xtable)
 
-dataname     <- "/mclc_data_2022_v2.xlsx"
+dataname     <- "/mclc_data_2022_v3.xlsx"
 sp_data_path <- csgjcr::csg_sp_path("50 State Revocations Project/50 State Survey (2022)/Data")
 readin       <- paste0(sp_data_path,dataname)
 
