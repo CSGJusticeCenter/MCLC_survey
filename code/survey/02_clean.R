@@ -5,28 +5,7 @@
 # 10/18/2022
 #######################################
 
-# load necessary packages
-library(dplyr)
-library(readr)
-library(reshape)
-library(readxl)
-library(tidyverse)
-library(data.table)
-library(formattable)
-library(scales)
-library(mice)
-library(VIM)
-library(finalfit)
-library(janitor)
-library(Hmisc)
-library(eeptools)
-library(csgjcr)
-library(scales)
-library(xtable)
-
-dataname     <- "/mclc_data_2022_v3.xlsx"
-sp_data_path <- csgjcr::csg_sp_path("50 State Revocations Project/50 State Survey (2022)/Data")
-readin       <- paste0(sp_data_path,dataname)
+readin <- paste0(sp_data_path,dataname)
 
 ################################
 # COSTS: read cost data for 2019-2021

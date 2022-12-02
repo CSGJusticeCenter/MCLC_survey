@@ -35,9 +35,31 @@ bold <- function(x){
 
 
 ###################################################
+#OVERALL SETUP
+#load necessary packages
+library(dplyr)
+library(readr)
+library(reshape)
+library(readxl)
+library(tidyverse)
+library(data.table)
+library(formattable)
+library(scales)
+library(mice)
+library(VIM)
+library(finalfit)
+library(janitor)
+library(Hmisc)
+library(eeptools)
+library(csgjcr)
+library(scales)
+library(xtable)
 
+#name of data to import and path
+sp_data_path <- csgjcr::csg_sp_path("50 State Revocations Project/50 State Survey (2022)/Data")
+dataname     <- "/mclc_data_2022_v4.xlsx"
 
-# read automated_clean to get data, reformat
+#read automated_clean to get data, reformat
 source("02_clean.R")
 
 ##SETUP
@@ -188,12 +210,14 @@ addtorow         <- list()
 addtorow$pos     <- as.list(c(seq(1,50,by=2)))
 addtorow$command <- c(rep("\\rowcolor{lightgray}",25))
 
-table_costs <- print(xtable(cost.final[c("State","cost.vp21","cost.tvp21")] %>%
+table_costs <- print(xtable(cost.final[c("State","cost.vp21.state","cost.tvp21.state")] %>%
                               mutate(
-                                `Community Supervision Violator Cost` = dollar_format()(cost.vp21),
-                                `Technical Violator Cost`             = dollar_format()(cost.tvp21)
+                                `Community Supervision Violator Cost` = case_when(cost.vp21.state >=0 ~ dollar_format()(cost.vp21.state),
+                                                                                  TRUE ~ NA_character_),
+                                `Technical Violator Cost`             = case_when(cost.vp21.state >=0 ~ dollar_format()(cost.tvp21.state),
+                                                                                  TRUE ~ NA_character_)
                                      ) %>%
-                              select(-c(cost.vp21,cost.tvp21)),
+                              select(-c(cost.vp21.state,cost.tvp21.state)),
                            align = c("llrr")),
                      add.to.row                 = addtorow,
                      include.rownames           = FALSE, 
@@ -229,7 +253,7 @@ The total annual cost for incarcerating community supervision violators in 2021 
 
 \noindent The total annual cost for incarcerating just those with technical violations in 2021 is \verb!\Sexpr{dollar_format()(total.tvp21)}!. \newline
 
-\noindent Below is a table of these costs by state:
+\noindent Below is a table of these costs by state (no imputation). Note that missing cells indicate that a state did not submit 2021 population data:
 
 \begin{table}[h]
 {\tiny \Sexpr{table_costs}}
