@@ -56,14 +56,14 @@ for (i in 1:5) {
 #sum of theta estimates divided by total number of imputations
 for (j in yearnum){
   parest <- data.frame(
-    overall_admissions                  = (mice_imputed_data1.nat[j,1] + mice_imputed_data2.nat[j,1] + mice_imputed_data3.nat[j,1] + mice_imputed_data4.nat[j,1] + mice_imputed_data5.nat[j,1])/5,
-    admissions_for_violations           = (mice_imputed_data1.nat[j,2] + mice_imputed_data2.nat[j,2] + mice_imputed_data3.nat[j,2] + mice_imputed_data4.nat[j,2] + mice_imputed_data5.nat[j,2])/5,
-    admissions_for_technical_violations = (mice_imputed_data1.nat[j,3] + mice_imputed_data2.nat[j,3] + mice_imputed_data3.nat[j,3] + mice_imputed_data4.nat[j,3] + mice_imputed_data5.nat[j,3])/5,
-    admissions_for_new_crime_violations = (mice_imputed_data1.nat[j,4] + mice_imputed_data2.nat[j,4] + mice_imputed_data3.nat[j,4] + mice_imputed_data4.nat[j,4] + mice_imputed_data5.nat[j,4])/5,
-    overall_population                  = (mice_imputed_data1.nat[j,5] + mice_imputed_data2.nat[j,5] + mice_imputed_data3.nat[j,5] + mice_imputed_data4.nat[j,5] + mice_imputed_data5.nat[j,5])/5,
-    violator_population                 = (mice_imputed_data1.nat[j,6] + mice_imputed_data2.nat[j,6] + mice_imputed_data3.nat[j,6] + mice_imputed_data4.nat[j,6] + mice_imputed_data5.nat[j,6])/5,
-    technical_violator_population       = (mice_imputed_data1.nat[j,7] + mice_imputed_data2.nat[j,7] + mice_imputed_data3.nat[j,7] + mice_imputed_data4.nat[j,7] + mice_imputed_data5.nat[j,7])/5,
-    new_crime_violator_population       = (mice_imputed_data1.nat[j,8] + mice_imputed_data2.nat[j,8] + mice_imputed_data3.nat[j,8] + mice_imputed_data4.nat[j,8] + mice_imputed_data5.nat[j,8])/5
+    overall_admissions                  = floor(as.numeric((mice_imputed_data1.nat[j,1] + mice_imputed_data2.nat[j,1] + mice_imputed_data3.nat[j,1] + mice_imputed_data4.nat[j,1] + mice_imputed_data5.nat[j,1])/5)),
+    admissions_for_violations           = floor(as.numeric((mice_imputed_data1.nat[j,2] + mice_imputed_data2.nat[j,2] + mice_imputed_data3.nat[j,2] + mice_imputed_data4.nat[j,2] + mice_imputed_data5.nat[j,2])/5)),
+    admissions_for_technical_violations = floor(as.numeric((mice_imputed_data1.nat[j,3] + mice_imputed_data2.nat[j,3] + mice_imputed_data3.nat[j,3] + mice_imputed_data4.nat[j,3] + mice_imputed_data5.nat[j,3])/5)),
+    admissions_for_new_crime_violations = floor(as.numeric((mice_imputed_data1.nat[j,4] + mice_imputed_data2.nat[j,4] + mice_imputed_data3.nat[j,4] + mice_imputed_data4.nat[j,4] + mice_imputed_data5.nat[j,4])/5)),
+    overall_population                  = floor(as.numeric((mice_imputed_data1.nat[j,5] + mice_imputed_data2.nat[j,5] + mice_imputed_data3.nat[j,5] + mice_imputed_data4.nat[j,5] + mice_imputed_data5.nat[j,5])/5)),
+    violator_population                 = floor(as.numeric((mice_imputed_data1.nat[j,6] + mice_imputed_data2.nat[j,6] + mice_imputed_data3.nat[j,6] + mice_imputed_data4.nat[j,6] + mice_imputed_data5.nat[j,6])/5)),
+    technical_violator_population       = floor(as.numeric((mice_imputed_data1.nat[j,7] + mice_imputed_data2.nat[j,7] + mice_imputed_data3.nat[j,7] + mice_imputed_data4.nat[j,7] + mice_imputed_data5.nat[j,7])/5)),
+    new_crime_violator_population       = floor(as.numeric((mice_imputed_data1.nat[j,8] + mice_imputed_data2.nat[j,8] + mice_imputed_data3.nat[j,8] + mice_imputed_data4.nat[j,8] + mice_imputed_data5.nat[j,8])/5))
   )
   assign(paste0("final.parest.imp",year[j]),parest,envir = .GlobalEnv)
 }
@@ -98,7 +98,8 @@ for (h in yearnum){
     #TOTAL VARIANCE, then calculate standard error
     s  <- sqrt(w + (1 + (1/5))*b)
     #final CI
-    natCI <- c(final.parest.imp[h,i] - (s*1.96), final.parest.imp[h,i] + (s*1.96))
+    natCI <- c(floor(as.numeric(final.parest.imp[h,i] - (s*1.96))), 
+               floor(as.numeric(final.parest.imp[h,i] + (s*1.96))))
     assign(paste0("natCI.",year[h],".",i),natCI,envir = .GlobalEnv)
   }
 }
@@ -119,7 +120,9 @@ rownames(natCI.2021all) <- numvar
 
 #manipulate estimates for merging with CIs
 for (i in year) {
-  natest <- as.data.frame(t(as.matrix(final.parest.imp[which(year==i),]))) %>%
+  natest <- as.data.frame(t(matrix(as.numeric(unlist(final.parest.imp[which(year==i),])),
+                                   nrow=nrow(final.parest.imp[which(year==i),]))
+                            )) %>%
     slice(numvar)
   rownames(natest) <- numvar
   colnames(natest) <- "Estimate"

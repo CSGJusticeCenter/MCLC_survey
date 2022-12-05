@@ -92,19 +92,19 @@ source("MImp2.R")
 ##################CREATE A TABLE HERE!!!!!!!!!!!!#############
 #combine
 table2018 <- cbind(nat.2018all,natCI.2018all) %>%
-  mutate(across(where(is.numeric),formattable::comma,1),
+  mutate(across(where(is.numeric),formattable::comma,0),
          id     = 1:8,
          ' '    = '95% Confidence Interval',
          '2018' = paste0('(',`1`,', ',`2`,')')
          )
 table2019 <- cbind(nat.2019all,natCI.2019all) %>%
-  mutate(across(where(is.numeric),formattable::comma,1),
+  mutate(across(where(is.numeric),formattable::comma,0),
          '2019' = paste0('(',`1`,', ',`2`,')'))
 table2020 <- cbind(nat.2020all,natCI.2020all) %>%
-  mutate(across(where(is.numeric),formattable::comma,1),
+  mutate(across(where(is.numeric),formattable::comma,0),
          '2020' = paste0('(',`1`,', ',`2`,')'))
 table2021 <- cbind(nat.2021all,natCI.2021all) %>%
-  mutate(across(where(is.numeric),formattable::comma,1),
+  mutate(across(where(is.numeric),formattable::comma,0),
          '2021' = paste0('(',`1`,', ',`2`,')'))
 
 bold <- function(x){
