@@ -1,10 +1,10 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: format_data.R
-# Last updated: October 11, 2022
+# Last updated: February 21, 2023 (MAR)
 # Author: Mari Roberts
 
-# Format MCLC survey data for web team
+# Format MCLC survey data
 ############################################
 
 ################################################################################
@@ -133,5 +133,5 @@ mclc_data_2022 <- list('Admissions 2018' = adm_2018,
                        'Population 2021' = pop_2021,
                        'Costs'           = costs)
 
-# Save data to sharepoint
-write.xlsx(mclc_data_2022, file = paste0(sp_data_path,"/Data/mclc_data_2022.xlsx"))
+# # Save data to sharepoint (most recent version: version 4 - with manual edits in Excel)
+# write.xlsx(mclc_data_2022, file = paste0(sp_data_path,"/Data/mclc_data_2022.xlsx"))

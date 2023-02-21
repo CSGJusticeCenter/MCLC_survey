@@ -1,22 +1,38 @@
----
-title: "2022 MCLC Survey Results"
-author: "The CSG Justice Center"
-date: "12/5/2022"
-output:
-  html_document
----
+\documentclass{article}
 
-```{r, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+\usepackage[a4paper,
+            top=1.2in,
+            bottom=1in,
+            left=.525in,
+            right=.525in,
+            headsep=10pt,
+            footskip=40pt,
+            head=70pt
+            ]
+            {geometry}
+
+% packages for xtable
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{rotating}
+\usepackage{tabularx}
+
+%colors
+\definecolor{lightgray}{rgb}{0.9, 0.9, 0.9}
+
+<< include=FALSE >>=
 #######################################
 # PROJECT: More Community, Less Confinement (2022)
 # PURPOSE: Impute values, national estimates, state estimates and costs
 # AUTHOR: JSM
 #######################################
 
+
 #LaTeX setup
 bold <- function(x){
   paste0('{\\bfseries ', x, '}')
 }
+
 
 ###################################################
 #OVERALL SETUP
@@ -39,12 +55,14 @@ library(csgjcr)
 library(scales)
 library(xtable)
 
-#name of data to import and path
-sp_data_path <- csgjcr::csg_sp_path("50 State Revocations Project/50 State Survey (2022)/Data")
-dataname     <- "/mclc_data_2022_v4.xlsx"
+# #name of data to import and path
+# sp_data_path <- csgjcr::csg_sp_path("50 State Revocations Project/50 State Survey (2022)/Data")
+# dataname     <- "/mclc_data_2022_v4.xlsx"
 
-#read automated_clean to get data, reformat
-source("02_clean.R")
+# #read automated_clean to get data, reformat
+# source("02_clean.R")
+
+source("code/survey/03_clean.R")
 
 ##SETUP
 #years of data
@@ -92,19 +110,19 @@ source("MImp2.R")
 ##################CREATE A TABLE HERE!!!!!!!!!!!!#############
 #combine
 table2018 <- cbind(nat.2018all,natCI.2018all) %>%
-  mutate(across(where(is.numeric),formattable::comma,0),
+  mutate(across(where(is.numeric),formattable::comma,1),
          id     = 1:8,
          ' '    = '95% Confidence Interval',
          '2018' = paste0('(',`1`,', ',`2`,')')
          )
 table2019 <- cbind(nat.2019all,natCI.2019all) %>%
-  mutate(across(where(is.numeric),formattable::comma,0),
+  mutate(across(where(is.numeric),formattable::comma,1),
          '2019' = paste0('(',`1`,', ',`2`,')'))
 table2020 <- cbind(nat.2020all,natCI.2020all) %>%
-  mutate(across(where(is.numeric),formattable::comma,0),
+  mutate(across(where(is.numeric),formattable::comma,1),
          '2020' = paste0('(',`1`,', ',`2`,')'))
 table2021 <- cbind(nat.2021all,natCI.2021all) %>%
-  mutate(across(where(is.numeric),formattable::comma,0),
+  mutate(across(where(is.numeric),formattable::comma,1),
          '2021' = paste0('(',`1`,', ',`2`,')'))
 
 bold <- function(x){
@@ -131,7 +149,7 @@ tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Est
     data.table(' ' = tablevals.pretty,
                id  = 1:8,
                id2 = 0),
-    
+
     data.table(cbind(
       ' '    = table2018$` `,
       '2018' = table2018$`2018`,
@@ -150,6 +168,24 @@ addtorow         <- list()
 addtorow$pos     <- as.list(c(seq(0,9,by=3)))
 addtorow$command <- c(rep("\\rowcolor{lightgray}",4))
 
+table_nat1 <- print(xtable(tab.full[1:12,],
+                           align = c("llcccc")),
+                     add.to.row                 = addtorow,
+                     include.rownames           = FALSE,
+                     floating                   = FALSE,
+                     print.results              = FALSE,
+                     latex.environments         = "",
+                     sanitize.colnames.function = bold)
+
+table_nat2 <- print(xtable(tab.full[13:24,],
+                           align = c("llcccc")),
+                     add.to.row                 = addtorow,
+                     include.rownames           = FALSE,
+                     floating                   = FALSE,
+                     print.results              = FALSE,
+                     latex.environments         = "",
+                     sanitize.colnames.function = bold)
+
 ##############################################################
 ##############################################################
 
@@ -164,13 +200,6 @@ source("MImp3.R")
 
 source("Costs.R")
 
-#averted cost total
-avert19_20last <- 2742725774
-avert19_20     <- sum(cost.final$averted_costs19_20, na.rm = TRUE) #2019 - 2020
-avertdiff      <- avert19_20last - avert19_20 
-avert19_21     <- sum(cost.final$averted_costs19_21, na.rm = TRUE) #2019 - 2021
-avert20_21     <- sum(cost.final$averted_costs20_21, na.rm = TRUE) #2020 - 2021
-
 ##Annual cost for incarcerating community supervision violators
 total.vp21 <- sum(cost.final$cost.vp21) #national
 
@@ -182,48 +211,8 @@ total.tvp21 <- sum(cost.final$cost.tvp21) #national
 addtorow         <- list()
 addtorow$pos     <- as.list(c(seq(1,50,by=2)))
 addtorow$command <- c(rep("\\rowcolor{lightgray}",25))
-```
 
-## National Estimates
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-
-print(xtable(tab.full[1:12,],
-                           align = c("llcccc")),
-      include.rownames = FALSE,
-      type             = "html")
-
-```
-
-<br>
-<br>
-
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-print(xtable(tab.full[13:24,],
-                           align = c("llcccc")),
-      include.rownames = FALSE,
-      type             = "html")
-```
-
-## 2021 Costs
-
-The total annual cost for incarcerating community supervision violators in 2021 is `r dollar_format()(total.vp21)`.
-
-<br>
-
-\noindent The total annual cost for incarcerating just those with technical violations in 2021 is `r dollar_format()(total.tvp21)`.
-
-<br>
-
-### 2021 Costs by State
-
-Below is a table of these costs by state (no imputation). Note that missing cells indicate that a state did not submit 2021 population data:
-
-<br>
-
-```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-print(xtable(cost.final[c("State","cost.vp21.state","cost.tvp21.state")] %>%
+table_costs <- print(xtable(cost.final[c("State","cost.vp21.state","cost.tvp21.state")] %>%
                               mutate(
                                 `Community Supervision Violator Cost` = case_when(cost.vp21.state >=0 ~ dollar_format()(cost.vp21.state),
                                                                                   TRUE ~ NA_character_),
@@ -232,6 +221,50 @@ print(xtable(cost.final[c("State","cost.vp21.state","cost.tvp21.state")] %>%
                                      ) %>%
                               select(-c(cost.vp21.state,cost.tvp21.state)),
                            align = c("llrr")),
-      include.rownames = FALSE,
-      type             = "html")
-```
+                     add.to.row                 = addtorow,
+                     include.rownames           = FALSE,
+                     floating                   = FALSE,
+                     print.results              = FALSE,
+                     latex.environments         = "",
+                     sanitize.colnames.function = bold)
+
+#averted cost total
+avert19_20last <- 2742725774
+avert19_20     <- sum(cost.final$averted_costs19_20, na.rm = TRUE) #2019 - 2020
+avertdiff      <- avert19_20last - avert19_20
+avert19_21     <- sum(cost.final$averted_costs19_21, na.rm = TRUE) #2019 - 2021
+avert20_21     <- sum(cost.final$averted_costs20_21, na.rm = TRUE) #2020 - 2021
+
+@
+
+\begin{document}
+
+\section*{National Estimates}
+
+
+\begin{table}[h]
+{\tiny \Sexpr{table_nat1}}
+\end{table}
+
+\begin{table}[h]
+{\tiny \Sexpr{table_nat2}}
+\end{table}
+
+\section*{Costs}
+The total annual cost for incarcerating community supervision violators in 2021 is \verb!\Sexpr{dollar_format()(total.vp21)}!. \newline
+
+\noindent The total annual cost for incarcerating just those with technical violations in 2021 is \verb!\Sexpr{dollar_format()(total.tvp21)}!. \newline
+
+\noindent Below is a table of these costs by state (no imputation). Note that missing cells indicate that a state did not submit 2021 population data:
+
+\begin{table}[h]
+{\tiny \Sexpr{table_costs}}
+\end{table}
+
+\section*{Averted Costs}
+
+The previous MCLC survey averted costs were calculated from pre-COVID looking at 2019-2020. These costs were \verb!\Sexpr{dollar_format()(avert19_20last)}!. States were given the opportunity to make data corrections in this year's MCLC survey, and so the current averted costs looking at 2019-2020 are \verb!\Sexpr{dollar_format()(avert19_20)}!. The difference is \verb!\Sexpr{dollar_format()(avertdiff)}!. \newline
+
+\noindent The 2019-2021 total averted costs: \verb!\Sexpr{dollar_format()(avert19_21)}!.
+
+\end{document}

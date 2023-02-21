@@ -5,7 +5,7 @@ date:   "10/20/2022"
 output:
   html_document
 ---
-  
+
   # {.tabset .tabset-fade .tabset-pills}
 
 #######################################
@@ -15,7 +15,8 @@ output:
 #######################################
 
 # read automated_clean to get data, reformat
-source("02_clean.R")
+# source("02_clean.R")
+source("code/survey/03_clean.R")
 
 ##SETUP
 #years of data

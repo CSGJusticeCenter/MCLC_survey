@@ -1,11 +1,56 @@
 ############################################
 # Project:  MCLC Survey (2022)
-# File: functions.R
-# Last updated: October 19, 2022
+# File: libary_functions.R
+# Last updated: February 21, 2023 (MAR)
 # Author: Mari Roberts
 
-# Custom functions to extract and format survey data
+# Load packages
+# Load custom functions
 ############################################
+
+# Instructions for installing the csgjcr package
+# In your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token here"
+# remotes::install_github("csgjusticecenter/csgjcr")
+
+#####
+# Load packages
+#####
+
+library(csgjcr)
+library(googlesheets4)
+library(googledrive)
+library(readxl)
+library(janitor)
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(formattable)
+library(data.table)
+library(blastula)
+library(Microsoft365R)
+library(webshot)
+library(shiny)
+library(tidyverse)
+library(reactable)
+library(glue)
+library(gt)
+library(gtExtras)
+library(openxlsx)
+library(eeptools)
+library(Hmisc)
+library(svDialogs)
+library(readr)
+library(reshape)
+library(mice)
+library(VIM)
+library(finalfit)
+library(scales)
+library(xtable)
+
+#####
+# Custom functions
+#####
 
 # Extract costs
 fnc_extract_costs <- function(df, state_name){
@@ -13,13 +58,13 @@ fnc_extract_costs <- function(df, state_name){
   # Extract cost data in spreadsheet
   df1 <- janitor::clean_names(df)
   df1 <- df1 %>% select(year_2019 = x6,
-                             year_2020 = x7,
-                             year_2021 = x8)
+                        year_2020 = x7,
+                        year_2021 = x8)
   df1 <- df1[46,]
   df1 <- df1 %>%
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
-    mutate(across(everything(), ~replace(., . ==  "n/a"           |
+    mutate(across(everything(), ~replace(., . ==  "n/a"          |
                                            . == "na"             |
                                            . ==  "nodata"        |
                                            . ==  "no data"       |
@@ -58,16 +103,16 @@ fnc_extract_data <- function(df, state_name){
     mutate(across(everything(), as.character)) %>%
     mutate_if(is.character, str_to_lower) %>%
     mutate(across(everything(), ~replace(., . ==  "n/a"           |
-                                            . == "na"             |
-                                            . ==  "nodata"        |
-                                            . ==  "no data"       |
-                                            . ==  "notavailable"  |
-                                            . ==  "not available" |
-                                            . ==  "nr"            |
-                                            . ==  "notready"      |
-                                            . ==  "not ready"     |
-                                            . == "[none]"         |
-                                            . == "none",           "No Data"))) %>%
+                                           . == "na"             |
+                                           . ==  "nodata"        |
+                                           . ==  "no data"       |
+                                           . ==  "notavailable"  |
+                                           . ==  "not available" |
+                                           . ==  "nr"            |
+                                           . ==  "notready"      |
+                                           . ==  "not ready"     |
+                                           . == "[none]"         |
+                                           . == "none",           "No Data"))) %>%
 
     mutate(year_2018 = ifelse(is.na(year_2018) | year_2018 == "null", "No Data",    year_2018),
            year_2019 = ifelse(is.na(year_2019) | year_2019 == "null", "No Data",    year_2019),
@@ -75,4 +120,3 @@ fnc_extract_data <- function(df, state_name){
     mutate(year_2021 = ifelse(is.na(year_2021) | year_2021 == "null", "Left Blank", year_2021)) %>%
     mutate(state = state_name)
 }
-

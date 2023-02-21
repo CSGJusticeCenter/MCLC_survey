@@ -14,26 +14,26 @@ This repository contains code that does two things:
 
 ## Data
 
-This repository uses MCLC data from state specific Google Sheets. 
+This repository uses MCLC data from state specific Google Sheets. Version 4 had manual edits in Excel and replaced total admissions and total population with BJS numbers. Therefore, the most recent version of the data is version 5.  
 
 ## Repository Structure 
 
     |-- code 
       |-- survey (run in this order, use for current MCLC data)
-          |-- 00_functions.R         # Custom functions to extract 2022 survey data 
-          |-- 00_import.R            # Load packages and imports MCLC survey data from Google Sheets 
-          |-- 01_format_data.R       # Save data to sp
-          |-- 02_clean.R             # Format data like 2021 survey data
-          |-- 03_multiple_imputation # imput missing values (sources Costs.R, MImp1.R, MImp3.R, MImp3.R)
+          |-- 00_library_functions.R   # Custom functions to extract 2022 survey data and load packages
+          |-- 01_import.R              # Imports MCLC survey data from Google Sheets and BJS data
+          |-- 02_format_data.R         # Save data to sp - no longer needed due to manual changes in data
+          |-- 03_clean.R               # Format data like 2021 survey data, replace data with BJS numbers
+          |-- 04_multiple_imputation.R # Imput missing values (sources Costs.R, MImp1.R, MImp3.R, MImp3.R)
       |-- automated_emails
-          |-- 00_import.R            # Load packages and imports MCLC survey data from Google Sheets  
-          |-- 01_functions.R         # Custom functions for data cleaning and qa checklists
-          |-- 02_functions_gt.R      # Custom functions focused on gt tables attributes
-          |-- 03_functions_email.R   # Custom function to generate full email
-          |-- 04_previous_survey.R   # 2021 survey data for comparisions
-          |-- 05_checklists.R        # Create qa checklists
-          |-- 06_create_email.R      # Create each state email 
-          |-- 07_send_email.R        # Sends email to contact   
+          |-- 00_import.R              # Load packages and imports MCLC survey data from Google Sheets  
+          |-- 01_functions.R           # Custom functions for data cleaning and qa checklists
+          |-- 02_functions_gt.R        # Custom functions focused on gt tables attributes
+          |-- 03_functions_email.R     # Custom function to generate full email
+          |-- 04_previous_survey.R     # 2021 survey data for comparisions
+          |-- 05_checklists.R          # Create qa checklists
+          |-- 06_create_email.R        # Create each state email 
+          |-- 07_send_email.R          # Sends email to contact    
           
 # Google Sheet Links
 
