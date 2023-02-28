@@ -1,7 +1,7 @@
 ---
 title: "2022 MCLC Survey Results"
 author: "The CSG Justice Center"
-date: "12/5/2022"
+date: "2/27/2023"
 output:
   html_document
 ---
@@ -21,6 +21,7 @@ bold <- function(x){
 ###################################################
 #OVERALL SETUP
 #load necessary packages
+library(openxlsx)
 library(dplyr)
 library(readr)
 library(reshape)
@@ -45,7 +46,7 @@ library(xtable)
 
 # #read automated_clean to get data, reformat
 # source("02_clean.R")
-source("code/survey/03_clean.R")
+source("03_clean.R")
 
 ##SETUP
 #years of data
@@ -186,6 +187,8 @@ addtorow$command <- c(rep("\\rowcolor{lightgray}",25))
 ```
 
 ## National Estimates
+
+These estimates incorporate BJS total population and admissions data in calculations across all years.
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
 

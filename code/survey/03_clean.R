@@ -10,24 +10,21 @@
 # Output: version 5 of data
 #######################################
 
-# Change path depending on SP name
-FULL_JC_FOLDER <- svDialogs::dlg_input(message = "Enter initials (e.g. MR)", default = "")$res
-# FULL_JC_FOLDER <- "MR"
-
-if (FULL_JC_FOLDER == "JM"){
-  sp_data_path <- csgjcr::csg_sp_path(file.path("50 State Revocations Project","50 State Survey (2022)"))
-} else {
-  sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2022)"))
-}
-
 # Get v4 of data and replace total admissions and total population with BJS numbers
 # Will create version 5 atthe end of this file
-dataname <- "/Data/mclc_data_2022_v4.xlsx"
-readin   <- paste0(sp_data_path,dataname)
+readin <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
 
 ################################
 # BJS data: use total admissions and population
 ################################
+
+#####
+# BJS data - use total admissions and population instead
+#####
+
+# Import BJS total admissions and population since these numbers are more reliable
+bjs_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
+bjs_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
 
 # BJS pop
 bjs_pop <- bjs_pop.xlsx %>%
@@ -151,4 +148,4 @@ var.labels = c(states                                     = "State name",
 adm_pop_analysis = upData(adm_pop_analysis, labels = var.labels)
 
 # Save data to sharepoint (most recent version: version 5 on 02/21/2023)
-write.xlsx(adm_pop_analysis, file = paste0(sp_data_path,"/Data/mclc_data_2022_v5.xlsx"))
+write.xlsx(adm_pop_analysis, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
