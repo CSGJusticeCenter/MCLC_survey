@@ -176,12 +176,12 @@ adm_pop_analysis <- adm_pop_analysis %>%
   left_join(comparison_bjs_mclc_adm, by = c("states", "year")) %>%
   left_join(comparison_bjs_mclc_pop, by = c("states", "year")) %>%
   mutate(
-    total_prison_population = case_when(states == "Alaka" &
+    total_prison_population_new = case_when(states == "Alaska" &
                                           year == 2021         ~ total_prison_population_bjs,
                                         states == "Nebraska"   ~ total_prison_population_bjs,
                                         states == "New Mexico" ~ total_prison_population_bjs,
                                         TRUE                   ~ total_prison_population),
-    total_prison_admissions = case_when(states == "Nebraska"   ~ total_prison_admissions_bjs,
+    total_prison_admissions_new = case_when(states == "Nebraska"   ~ total_prison_admissions_bjs,
                                         states == "New Mexico" ~ total_prison_admissions_bjs,
                                         TRUE                   ~ total_prison_admissions)
   ) %>%
