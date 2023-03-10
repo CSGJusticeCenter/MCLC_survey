@@ -9,9 +9,10 @@
 # Version 4: Manual changes by making Maine's new offense admissions NA in Excel
 # Version 5: Replace version 4 total admissions and population with BJS numbers - not using anymore bc we're only removing MCLC data for some states not all of them
 # Version 6: Replace version 4 total admissions and population with BJS numbers for specific states flagged in Comparison_MCLC_and_BJS_data_v1.xlsx
+# Version 7: Replace version 4 total admissions and population with BJS numbers for just New Mexico, Nebraska, and Alaska (population only)
 
 # Input: version 4 of data
-# Final: version 6 of data (3/9/23)
+# Final: version 7 of data (3/10/23)
 #######################################
 
 # Get v4 of data and replace total admissions and total population with BJS numbers
@@ -110,16 +111,14 @@ adm_pop_analysis <- merge(admissions, population, by = c("states","year")) %>%
 comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm.xlsx %>%
   clean_names() %>%
   select(states = x1,
-         use_mclc_vs_bjs = one,
          bjs_adm_18 = total_adms_2,
          bjs_adm_19 = total_adms_5,
          bjs_adm_20 = total_adms_8,
          bjs_adm_21 = total_adms_11) %>%
-  mutate(adm_or_pop = "Admissions") %>%
   distinct()
 
-# Save BJS vs MCLC variable
-mclc_vs_bjs <- comparison_bjs_mclc_adm %>% select(states, use_mclc_vs_bjs) %>% distinct()
+# # Save BJS vs MCLC variable
+# mclc_vs_bjs <- comparison_bjs_mclc_adm %>% select(states, use_mclc_vs_bjs) %>% distinct()
 
 # If MCLC numbers should be used, assign MCLC numbers as final numbers, otherwise use BJS numbers
 comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm %>%
@@ -131,22 +130,21 @@ comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm %>%
     name == "bjs_adm_20" ~ 2020,
     name == "bjs_adm_21" ~ 2021
   )) %>%
+  mutate(adm_or_pop = "Admissions") %>%
   select(states,
          year,
          total_prison_admissions_bjs = value) %>%
   mutate(year = as.character(year))
 
-# BJS population
+# BJS Population
 # Rename variables
 comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop.xlsx %>%
   clean_names() %>%
-  dplyr::rename(states = x1) %>%
-  select(states,
+  select(states = x1,
          bjs_pop_18 = x2018_2,
          bjs_pop_19 = x2019_3,
          bjs_pop_20 = x2020_4,
          bjs_pop_21 = x2021_5) %>%
-  mutate(pop_or_pop = "Population") %>%
   distinct()
 
 # If MCLC numbers should be used, assign MCLC numbers as final numbers, otherwise use BJS numbers
@@ -159,10 +157,13 @@ comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop %>%
     name == "bjs_pop_20" ~ 2020,
     name == "bjs_pop_21" ~ 2021
   )) %>%
+  mutate(adm_or_pop = "Population") %>%
   select(states,
          year,
          total_prison_population_bjs = value) %>%
   mutate(year = as.character(year))
+
+
 
 
 
@@ -174,9 +175,17 @@ comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop %>%
 adm_pop_analysis <- adm_pop_analysis %>%
   left_join(comparison_bjs_mclc_adm, by = c("states", "year")) %>%
   left_join(comparison_bjs_mclc_pop, by = c("states", "year")) %>%
-  left_join(mclc_vs_bjs, by = "states") %>%
-  mutate(total_prison_admissions = ifelse(use_mclc_vs_bjs == "MCLC", total_prison_admissions, total_prison_admissions_bjs),
-         total_prison_population = ifelse(use_mclc_vs_bjs == "MCLC", total_prison_population, total_prison_population_bjs))
+  mutate(
+    total_prison_population = case_when(states == "Alaka" &
+                                          year == 2021         ~ total_prison_population_bjs,
+                                        states == "Nebraska"   ~ total_prison_population_bjs,
+                                        states == "New Mexico" ~ total_prison_population_bjs,
+                                        TRUE                   ~ total_prison_population),
+    total_prison_admissions = case_when(states == "Nebraska"   ~ total_prison_admissions_bjs,
+                                        states == "New Mexico" ~ total_prison_admissions_bjs,
+                                        TRUE                   ~ total_prison_admissions)
+  ) %>%
+  select(-c(total_prison_population_bjs,total_prison_admissions_bjs))
 
 # add labels
 var.labels = c(states                                     = "State name",
@@ -200,6 +209,6 @@ var.labels = c(states                                     = "State name",
 
 adm_pop_analysis = upData(adm_pop_analysis, labels = var.labels)
 
-# Save data to sharepoint (most recent version: version 6 on 3/09/2023)
-write.xlsx(adm_pop_analysis, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
-# write.xlsx(adm_pop_analysis, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
+# Save data to sharepoint (most recent version: version 7 on 3/10/2023)
+# write.xlsx(adm_pop_analysis, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
+write.xlsx(adm_pop_analysis, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
