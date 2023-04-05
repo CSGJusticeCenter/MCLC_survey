@@ -15,10 +15,20 @@ m.imp <- adm_pop_analysis %>% mutate(
          admissions_for_violations,
          admissions_for_technical_violations,
          admissions_for_new_crime_violations,
+         technical_probation_violation_admissions, 
+         technical_parole_violation_admissions,
+         new_offense_probation_violation_admissions,
+         new_offense_parole_violation_admissions,
+         
          overall_population,
          violator_population,
          technical_violator_population,
-         new_crime_violator_population)
+         new_crime_violator_population,
+         technical_probation_violation_population,
+         technical_parole_violation_population,
+         new_offense_probation_violation_population,
+         new_offense_parole_violation_population
+         )
 
 # missing data for a certain feature or sample is more than 5%
 pMiss <- function(x){
