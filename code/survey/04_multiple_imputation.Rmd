@@ -13,11 +13,6 @@ output:
 # AUTHOR: JSM
 #######################################
 
-#LaTeX setup
-bold <- function(x){
-  paste0('{\\bfseries ', x, '}')
-}
-
 ###################################################
 #OVERALL SETUP
 #load necessary packages
@@ -117,10 +112,6 @@ table2020 <- cbind(nat.2020all,natCI.2020all) %>%
 table2021 <- cbind(nat.2021all,natCI.2021all) %>%
   mutate(across(where(is.numeric),formattable::comma,0),
          '2021' = paste0('(',`1`,', ',`2`,')'))
-
-bold <- function(x){
-  paste0('{\\bfseries ', x, '}')
-}
 
 tablevals.pretty <- c('Overall Admissions',
                      'Admissions for Supervision Violations',
@@ -250,4 +241,125 @@ print(xtable(cost.final[c("State","cost.vp21.state","cost.tvp21.state")] %>%
                            align = c("llrr")),
       include.rownames = FALSE,
       type             = "html")
+```
+
+
+## Difference in National Estimates
+
+The table below displays results of the difference in National estimates from the previous method (multiple imputation of 8 metrics) to the new method (multiple imputation of 16 metrics, including lowest level of aggregation).
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
+#compare national estimates when including lowest aggregation in multiple imputation
+new <- readRDS("tables_lowagg.RDS") 
+new1 <- new %>% #feature branch
+  mutate(
+    id = case_when(` ` == "Overall Admissions" ~ 1,
+                   ` ` == "Estimate" & row.names(new)=="2" ~ 2,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="3" ~ 3,
+                   ` ` == "Admissions for Supervision Violations" ~ 4,
+                   ` ` == "Estimate" & row.names(new)=="5" ~ 5,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="6" ~ 6,
+                   ` ` == "Admissions for Technical Supervision Violations" ~ 7,
+                   ` ` == "Estimate" & row.names(new)=="8" ~ 8,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="9" ~ 9,
+                   ` ` == "Admissions for New Crime Violations" ~ 10,
+                   ` ` == "Estimate" & row.names(new)=="11" ~ 11,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="12" ~ 12,
+                   ` ` == "Admissions for Technical Probation Violations" ~ 13,
+                   ` ` == "Estimate" & row.names(new)=="14" ~ 14,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="15" ~ 15,
+                   ` ` == "Admissions for Technical Parole Violations" ~ 16,
+                   ` ` == "Estimate" & row.names(new)=="17" ~ 17,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="18" ~ 18,
+                   ` ` == "Admissions for New Crime Probation Violations" ~ 19,
+                   ` ` == "Estimate" & row.names(new)=="20" ~ 20,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="21" ~ 21,
+                   ` ` == "Admissions for New Crime Parole Violations" ~ 22,
+                   ` ` == "Estimate" & row.names(new)=="23" ~ 23,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="24" ~ 24,
+                   ` ` == "Overall Population" ~ 25,
+                   ` ` == "Estimate" & row.names(new)=="26" ~ 26,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="27" ~ 27,
+                   ` ` == "Population of Supervision Violators" ~ 28,
+                   ` ` == "Estimate" & row.names(new)=="29" ~ 29,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="30" ~ 30,
+                   ` ` == "Population of Technical Supervision Violators" ~ 31,
+                   ` ` == "Estimate" & row.names(new)=="32" ~ 32,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="33" ~ 33,
+                   ` ` == "Population of New Crime Violators" ~ 34,
+                   ` ` == "Estimate" & row.names(new)=="35" ~ 35,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="36" ~ 36,
+                   ` ` == "Population of Technical Probation Violations" ~ 37,
+                   ` ` == "Estimate" & row.names(new)=="38" ~ 38,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="39" ~ 39,
+                   ` ` == "Population of Technical Parole Violations" ~ 40,
+                   ` ` == "Estimate" & row.names(new)=="41" ~ 41,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="42" ~ 42,
+                   ` ` == "Population of New Crime Probation Violations" ~ 43,
+                   ` ` == "Estimate" & row.names(new)=="44" ~ 44,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="45" ~ 45,
+                   ` ` == "Population of New Crime Parole Violations" ~ 46,
+                   ` ` == "Estimate" & row.names(new)=="47" ~ 47,
+                   ` ` == "95% Confidence Interval" & row.names(new)=="48" ~ 48)
+  )
+    
+orig <- readRDS("tables_orig8metrics.RDS")
+orig1 <- orig %>% #main branch
+  mutate(
+    id = case_when(` ` == "Overall Admissions" ~ 1,
+                   ` ` == "Estimate" & row.names(orig)=="2" ~ 2,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="3" ~ 3,
+                   ` ` == "Admissions for Supervision Violations" ~ 4,
+                   ` ` == "Estimate" & row.names(orig)=="5" ~ 5,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="6" ~ 6,
+                   ` ` == "Admissions for Technical Supervision Violations" ~ 7,
+                   ` ` == "Estimate" & row.names(orig)=="8" ~ 8,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="9" ~ 9,
+                   ` ` == "Admissions for New Crime Violations" ~ 10,
+                   ` ` == "Estimate" & row.names(orig)=="11" ~ 11,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="12" ~ 12,
+
+                   ` ` == "Overall Population" ~ 25,
+                   ` ` == "Estimate" & row.names(orig)=="14" ~ 26,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="15" ~ 27,
+                   ` ` == "Population of Supervision Violators" ~ 28,
+                   ` ` == "Estimate" & row.names(orig)=="17" ~ 29,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="18" ~ 30,
+                   ` ` == "Population of Technical Supervision Violators" ~ 31,
+                   ` ` == "Estimate" & row.names(orig)=="20" ~ 32,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="21" ~ 33,
+                   ` ` == "Population of New Crime Violators" ~ 34,
+                   ` ` == "Estimate" & row.names(orig)=="23" ~ 35,
+                   ` ` == "95% Confidence Interval" & row.names(orig)=="24" ~ 36)
+  )
+
+
+#compare difference in multiple imputation using different approaches (just estimates)
+compare <- merge(orig1,new1,by = "id") %>%
+  filter(` .x` != "95% Confidence Interval") %>%
+  mutate(
+    `Difference in 2018` = as.numeric(`2018.x`) - as.numeric(`2018.y`),
+    `Difference in 2019` = as.numeric(`2019.x`) - as.numeric(`2019.y`),
+    `Difference in 2020` = as.numeric(`2020.x`) - as.numeric(`2020.y`),
+    `Difference in 2021` = as.numeric(`2021.x`) - as.numeric(`2021.y`)
+  ) %>%
+  select(c(` .x`, 
+           `Difference in 2018`, 
+           `Difference in 2019`, 
+           `Difference in 2020`, 
+           `Difference in 2021`)) %>%
+  dplyr::rename(` ` = ` .x`) %>%
+  mutate(
+    `Difference in 2018` = ifelse(!is.na(`Difference in 2018`),format(as.numeric(`Difference in 2018`), nsmall=0, digits = 3, scientific = F,big.mark=","),''),
+    `Difference in 2019` = ifelse(!is.na(`Difference in 2019`),format(as.numeric(`Difference in 2019`), nsmall=0, digits = 3, scientific = F,big.mark=","),''),
+    `Difference in 2020` = ifelse(!is.na(`Difference in 2020`),format(as.numeric(`Difference in 2020`), nsmall=0, digits = 3, scientific = F,big.mark=","),''),
+    `Difference in 2021` = ifelse(!is.na(`Difference in 2021`),format(as.numeric(`Difference in 2021`), nsmall=0, digits = 3, scientific = F,big.mark=","),'')
+  )
+
+#print table
+print(xtable(compare[1:16,],
+                           align = c("llcccc")),
+      include.rownames = FALSE,
+      type             = "html")
+
 ```
