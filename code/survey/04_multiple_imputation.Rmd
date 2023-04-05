@@ -146,11 +146,7 @@ tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Est
   arrange(id,id2) %>%
   select(-c(id,id2))
 
-#create table
-#creates colored horizontal line and gray alternating rows
-addtorow         <- list()
-addtorow$pos     <- as.list(c(seq(0,9,by=3)))
-addtorow$command <- c(rep("\\rowcolor{lightgray}",4))
+saveRDS(tab.full, file = "C:/Users/jmallett/OneDrive - The Council of State Governments/GitProjects/MCLC_survey/code/survey/tables_orig8metrics.RDS")
 
 ##############################################################
 ##############################################################
@@ -179,11 +175,6 @@ total.vp21 <- sum(cost.final$cost.vp21) #national
 ##Annual cost for incarcerating those w/just technical violations
 total.tvp21 <- sum(cost.final$cost.tvp21) #national
 
-#create table
-#creates colored horizontal line and gray alternating rows
-addtorow         <- list()
-addtorow$pos     <- as.list(c(seq(1,50,by=2)))
-addtorow$command <- c(rep("\\rowcolor{lightgray}",25))
 ```
 
 ## National Estimates
