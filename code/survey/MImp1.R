@@ -1,29 +1,20 @@
-#New National Variables/columns - REQUIRES UPDATING!
+#New National Variables/columns
 m.imp <- adm_pop_analysis %>% mutate(
   overall_admissions                  = total_prison_admissions,
-  admissions_for_violations           = total_supervision_violation_admissions,
-  admissions_for_technical_violations = technical_probation_violation_admissions + technical_parole_violation_admissions,
-  admissions_for_new_crime_violations = new_offense_probation_violation_admissions + new_offense_parole_violation_admissions,
-
-  overall_population                  = total_prison_population,
-  violator_population                 = total_supervision_violation_population,
-  technical_violator_population       = technical_probation_violation_population + technical_parole_violation_population,
-  new_crime_violator_population       = new_offense_probation_violation_population + new_offense_parole_violation_population
+  overall_population                  = total_prison_population
 ) %>%
   select(states, year,
          overall_admissions,
-         admissions_for_violations,
-         admissions_for_technical_violations,
-         admissions_for_new_crime_violations,
+         probation_violation_admissions,
+         parole_violation_admissions,
          technical_probation_violation_admissions, 
          technical_parole_violation_admissions,
          new_offense_probation_violation_admissions,
          new_offense_parole_violation_admissions,
          
          overall_population,
-         violator_population,
-         technical_violator_population,
-         new_crime_violator_population,
+         probation_violation_population,
+         parole_violation_population,
          technical_probation_violation_population,
          technical_parole_violation_population,
          new_offense_probation_violation_population,
@@ -57,3 +48,6 @@ for (i in 1:5) {
          micedata,
          envir = .GlobalEnv)
 }
+
+#get response columns from survey
+tablevals<- colnames(mice_imputed_data1[numvar[3]:(length(numvar)+2)])

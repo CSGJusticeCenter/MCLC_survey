@@ -7,23 +7,21 @@ for (h in refnum) {
   temp_data$data$year <- relevel(as.factor(temp_data$data$year), ref = h+1)
   
   #response columns, run model to produce estimates/CIs
-  fit.overall_admissions                  <- with(temp_data,lm(overall_admissions~year + states + year:states))
-  fit.admissions_for_violations           <- with(temp_data,lm(admissions_for_violations~year + states + year:states))
-  fit.admissions_for_technical_violations <- with(temp_data,lm(admissions_for_technical_violations~year + states + year:states))
-  fit.admissions_for_new_crime_violations <- with(temp_data,lm(admissions_for_new_crime_violations~year + states + year:states))
-  fit.technical_probation_violation_admissions <- with(temp_data,lm(technical_probation_violation_admissions~year + states + year:states))
-  fit.technical_parole_violation_admissions <- with(temp_data,lm(technical_parole_violation_admissions~year + states + year:states))
+  fit.overall_admissions                         <- with(temp_data,lm(overall_admissions~year + states + year:states))
+  fit.probation_violation_admissions             <- with(temp_data,lm(probation_violation_admissions~year + states + year:states))
+  fit.parole_violation_admissions                <- with(temp_data,lm(parole_violation_admissions~year + states + year:states))
+  fit.technical_probation_violation_admissions   <- with(temp_data,lm(technical_probation_violation_admissions~year + states + year:states))
+  fit.technical_parole_violation_admissions      <- with(temp_data,lm(technical_parole_violation_admissions~year + states + year:states))
   fit.new_offense_probation_violation_admissions <- with(temp_data,lm(new_offense_probation_violation_admissions~year + states + year:states))
-  fit.new_offense_parole_violation_admissions <- with(temp_data,lm(new_offense_parole_violation_admissions~year + states + year:states))
+  fit.new_offense_parole_violation_admissions    <- with(temp_data,lm(new_offense_parole_violation_admissions~year + states + year:states))
   
-  fit.overall_population                  <- with(temp_data,lm(overall_population~year + states + year:states))
-  fit.violator_population                 <- with(temp_data,lm(violator_population~year + states + year:states))
-  fit.technical_violator_population       <- with(temp_data,lm(technical_violator_population~year + states + year:states))
-  fit.new_crime_violator_population       <- with(temp_data,lm(new_crime_violator_population~year + states + year:states))
-  fit.technical_probation_violation_population <- with(temp_data,lm(technical_probation_violation_population~year + states + year:states))
-  fit.technical_parole_violation_population <- with(temp_data,lm(technical_parole_violation_population~year + states + year:states))
+  fit.overall_population                         <- with(temp_data,lm(overall_population~year + states + year:states))
+  fit.probation_violation_population             <- with(temp_data,lm(probation_violation_population~year + states + year:states))
+  fit.parole_violation_population                <- with(temp_data,lm(parole_violation_population~year + states + year:states))
+  fit.technical_probation_violation_population   <- with(temp_data,lm(technical_probation_violation_population~year + states + year:states))
+  fit.technical_parole_violation_population      <- with(temp_data,lm(technical_parole_violation_population~year + states + year:states))
   fit.new_offense_probation_violation_population <- with(temp_data,lm(new_offense_probation_violation_population~year + states + year:states))
-  fit.new_offense_parole_violation_population <- with(temp_data,lm(new_offense_parole_violation_population~year + states + year:states))
+  fit.new_offense_parole_violation_population    <- with(temp_data,lm(new_offense_parole_violation_population~year + states + year:states))
   
   for (i in numvar) {
     CI             <- summary(pool(get(fit[i])),conf.int=TRUE) %>%
@@ -58,14 +56,11 @@ for (h in refnum) {
 
 #cbind each data frame: 2019, 2020, 2021 REQUIRES UPDATING
 national.est                                   <- cbind(national.est.CIt2019,national.est.CIt2020,national.est.CIt2021)
-national.est$new_crime_violator_population2019 <- as.numeric(format(round(national.est$new_crime_violator_population2019,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_probation_violation_population2019 <- as.numeric(format(round(national.est$new_offense_probation_violation_population2019,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_parole_violation_population2019 <- as.numeric(format(round(national.est$new_offense_parole_violation_population2019,2), nsmall=0,scientific = F, digits = 3))
 
-national.est$new_crime_violator_population2020 <- as.numeric(format(round(national.est$new_crime_violator_population2020,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_probation_violation_population2020 <- as.numeric(format(round(national.est$new_offense_probation_violation_population2020,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_parole_violation_population2020 <- as.numeric(format(round(national.est$new_offense_parole_violation_population2020,2), nsmall=0,scientific = F, digits = 3))
 
-national.est$new_crime_violator_population2021 <- as.numeric(format(round(national.est$new_crime_violator_population2021,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_probation_violation_population2021 <- as.numeric(format(round(national.est$new_offense_probation_violation_population2021,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_parole_violation_population2021 <- as.numeric(format(round(national.est$new_offense_parole_violation_population2021,2), nsmall=0,scientific = F, digits = 3))
