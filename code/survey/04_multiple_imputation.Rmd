@@ -1,7 +1,7 @@
 ---
 title: "2022 MCLC Survey Results"
 author: "The CSG Justice Center"
-date: "4/6/2023"
+date: "4/7/2023"
 output:
   html_document
 ---
@@ -175,7 +175,7 @@ These estimates incorporate BJS total population and admissions data in calculat
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
 
-print(xtable(tab.full[1:24,],
+print(xtable(tab.full[1:21,],
                            align = c("llcccc")),
       include.rownames = FALSE,
       type             = "html")
@@ -187,7 +187,7 @@ print(xtable(tab.full[1:24,],
 
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-print(xtable(tab.full[25:48,],
+print(xtable(tab.full[22:42,],
                            align = c("llcccc")),
       include.rownames = FALSE,
       type             = "html")
