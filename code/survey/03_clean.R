@@ -16,7 +16,7 @@
 #######################################
 
 # Get v4 of data and replace total admissions and total population with BJS numbers
-# Will create version 6 at the end of this file
+# Will create latest version at the end of this file
 readin <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
 #readin <- "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
 

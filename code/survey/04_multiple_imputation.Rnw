@@ -62,7 +62,7 @@ library(xtable)
 # #read automated_clean to get data, reformat
 # source("02_clean.R")
 
-source("code/survey/03_clean.R")
+source("03_clean.R")
 
 ##SETUP
 #years of data
@@ -72,7 +72,7 @@ refyear  <- c('2019','2020','2021')
 refnum   <- 1:3
 
 #number of survey variables
-numvar   <- 1:8
+numvar   <- 1:16
 
 #labels
 var.labels = c(year                                = "Year",
@@ -80,10 +80,19 @@ var.labels = c(year                                = "Year",
                admissions_for_violations           = "Admissions for violations",
                admissions_for_technical_violations = "Admissions for technical violations",
                admissions_for_new_crime_violations = "Admissions for new crime violations",
+               technical_probation_violation_admissions= "Admissions for technical violations, probation", 
+               technical_parole_violation_admissions= "Admissions for technical violations, parole",
+               new_offense_probation_violation_admissions= "Admissions for new crime violations, probation",
+               new_offense_parole_violation_admissions= "Admissions for new crime violations, parole",
+               
                overall_population                  = "Overall population",
                violator_population                 = "Violator population",
                technical_violator_population       = "Technical violator population",
-               new_crime_violator_population       = "New crime violator population"
+               new_crime_violator_population       = "New crime violator population",
+               technical_probation_violation_population= "Technical violator population, probation",
+               technical_parole_violation_population= "Technical violator population, parole",
+               new_offense_probation_violation_population= "New crime violator population, probation",
+               new_offense_parole_violation_population= "New crime violator population, parole"
 )
 
 ################################################################################
@@ -111,7 +120,7 @@ source("MImp2.R")
 #combine
 table2018 <- cbind(nat.2018all,natCI.2018all) %>%
   mutate(across(where(is.numeric),formattable::comma,1),
-         id     = 1:8,
+         id     = 1:16,
          ' '    = '95% Confidence Interval',
          '2018' = paste0('(',`1`,', ',`2`,')')
          )
@@ -133,13 +142,23 @@ tablevals.pretty <- c('Overall Admissions',
                      'Admissions for Supervision Violations',
                      'Admissions for Technical Supervision Violations',
                      'Admissions for New Crime Violations',
+                     'Admissions for Technical Probation Violations',
+                     'Admissions for Technical Parole Violations',
+                     'Admissions for New Crime Probation Violations',
+                     'Admissions for New Crime Parole Violations',
+                     
                      'Overall Population',
                      'Population of Supervision Violators',
                      'Population of Technical Supervision Violators',
-                     'Population of New Crime Violators')
+                     'Population of New Crime Violators',
+                     'Population of Technical Probation Violations',
+                     'Population of Technical Parole Violations',
+                     'Population of New Crime Probation Violations',
+                     'Population of New Crime Parole Violations'
+                     )
 
 tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Estimate,table2021$Estimate)) %>%
-  mutate(id = 1:8,
+  mutate(id = 1:16,
          ' ' = 'Estimate', .before="V1") %>%
   dplyr::rename('2018' = "V1",
                 '2019' = "V2",
@@ -147,7 +166,7 @@ tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Est
                 '2021' = "V4") %>%
   rbind(
     data.table(' ' = tablevals.pretty,
-               id  = 1:8,
+               id  = 1:16,
                id2 = 0),
 
     data.table(cbind(
@@ -168,7 +187,7 @@ addtorow         <- list()
 addtorow$pos     <- as.list(c(seq(0,9,by=3)))
 addtorow$command <- c(rep("\\rowcolor{lightgray}",4))
 
-table_nat1 <- print(xtable(tab.full[1:12,],
+table_nat1 <- print(xtable(tab.full[1:24,],
                            align = c("llcccc")),
                      add.to.row                 = addtorow,
                      include.rownames           = FALSE,
@@ -177,7 +196,7 @@ table_nat1 <- print(xtable(tab.full[1:12,],
                      latex.environments         = "",
                      sanitize.colnames.function = bold)
 
-table_nat2 <- print(xtable(tab.full[13:24,],
+table_nat2 <- print(xtable(tab.full[25:48,],
                            align = c("llcccc")),
                      add.to.row                 = addtorow,
                      include.rownames           = FALSE,

@@ -39,14 +39,23 @@ for (i in 1:5) {
 #rename columns to indicate which imputed data frame
 for (i in 1:5) {
   nameit <- get(paste0(micelist[i],".nat"))
-  names(nameit)[names(nameit) == "overall_admissions"]                  <- "overall_admissions1"
-  names(nameit)[names(nameit) == "admissions_for_violations"]           <- "admissions_for_violations1"
-  names(nameit)[names(nameit) == "admissions_for_technical_violations"] <- "admissions_for_technical_violations1"
-  names(nameit)[names(nameit) == "admissions_for_new_crime_violations"] <- "admissions_for_new_crime_violations1"
-  names(nameit)[names(nameit) == "overall_population"]                  <- "overall_population1"
-  names(nameit)[names(nameit) == "violator_population"]                 <- "violator_population1"
-  names(nameit)[names(nameit) == "technical_violator_population"]       <- "technical_violator_population1"
-  names(nameit)[names(nameit) == "new_crime_violator_population"]       <- "new_crime_violator_population1"
+  names(nameit)[names(nameit) == "overall_admissions"]                         <- "overall_admissions1"
+  names(nameit)[names(nameit) == "probation_violation_admissions"]             <- "probation_violation_admissions1"
+  names(nameit)[names(nameit) == "parole_violation_admissions"]                <- "parole_violation_admissions1"
+  names(nameit)[names(nameit) == "technical_probation_violation_admissions"]   <- "technical_probation_violation_admissions1"
+  names(nameit)[names(nameit) == "technical_parole_violation_admissions"]      <- "technical_parole_violation_admissions1"
+  names(nameit)[names(nameit) == "new_offense_probation_violation_admissions"] <- "new_offense_probation_violation_admissions1"
+  names(nameit)[names(nameit) == "new_offense_parole_violation_admissions"]    <- "new_offense_parole_violation_admissions1"
+  
+  names(nameit)[names(nameit) == "overall_population"]                         <- "overall_population1"
+  names(nameit)[names(nameit) == "probation_violation_population"]             <- "probation_violation_population1"
+  names(nameit)[names(nameit) == "parole_violation_population"]                <- "parole_violation_population1"
+  names(nameit)[names(nameit) == "technical_probation_violation_population"]   <- "technical_probation_violation_population1"
+  names(nameit)[names(nameit) == "technical_parole_violation_population"]      <- "technical_parole_violation_population1"
+  names(nameit)[names(nameit) == "new_offense_probation_violation_population"] <- "new_offense_probation_violation_population1"
+  names(nameit)[names(nameit) == "new_offense_parole_violation_population"]    <- "new_offense_parole_violation_population1"
+  
+  
   assign(paste0(micelist[i],".nat"),nameit,envir = .GlobalEnv)
 }
 
@@ -56,14 +65,21 @@ for (i in 1:5) {
 #sum of theta estimates divided by total number of imputations
 for (j in yearnum){
   parest <- data.frame(
-    overall_admissions                  = floor(as.numeric((mice_imputed_data1.nat[j,1] + mice_imputed_data2.nat[j,1] + mice_imputed_data3.nat[j,1] + mice_imputed_data4.nat[j,1] + mice_imputed_data5.nat[j,1])/5)),
-    admissions_for_violations           = floor(as.numeric((mice_imputed_data1.nat[j,2] + mice_imputed_data2.nat[j,2] + mice_imputed_data3.nat[j,2] + mice_imputed_data4.nat[j,2] + mice_imputed_data5.nat[j,2])/5)),
-    admissions_for_technical_violations = floor(as.numeric((mice_imputed_data1.nat[j,3] + mice_imputed_data2.nat[j,3] + mice_imputed_data3.nat[j,3] + mice_imputed_data4.nat[j,3] + mice_imputed_data5.nat[j,3])/5)),
-    admissions_for_new_crime_violations = floor(as.numeric((mice_imputed_data1.nat[j,4] + mice_imputed_data2.nat[j,4] + mice_imputed_data3.nat[j,4] + mice_imputed_data4.nat[j,4] + mice_imputed_data5.nat[j,4])/5)),
-    overall_population                  = floor(as.numeric((mice_imputed_data1.nat[j,5] + mice_imputed_data2.nat[j,5] + mice_imputed_data3.nat[j,5] + mice_imputed_data4.nat[j,5] + mice_imputed_data5.nat[j,5])/5)),
-    violator_population                 = floor(as.numeric((mice_imputed_data1.nat[j,6] + mice_imputed_data2.nat[j,6] + mice_imputed_data3.nat[j,6] + mice_imputed_data4.nat[j,6] + mice_imputed_data5.nat[j,6])/5)),
-    technical_violator_population       = floor(as.numeric((mice_imputed_data1.nat[j,7] + mice_imputed_data2.nat[j,7] + mice_imputed_data3.nat[j,7] + mice_imputed_data4.nat[j,7] + mice_imputed_data5.nat[j,7])/5)),
-    new_crime_violator_population       = floor(as.numeric((mice_imputed_data1.nat[j,8] + mice_imputed_data2.nat[j,8] + mice_imputed_data3.nat[j,8] + mice_imputed_data4.nat[j,8] + mice_imputed_data5.nat[j,8])/5))
+    overall_admissions                         = floor(as.numeric((mice_imputed_data1.nat[j,1] + mice_imputed_data2.nat[j,1] + mice_imputed_data3.nat[j,1] + mice_imputed_data4.nat[j,1] + mice_imputed_data5.nat[j,1])/5)),
+    probation_violation_admissions             = floor(as.numeric((mice_imputed_data1.nat[j,2] + mice_imputed_data2.nat[j,2] + mice_imputed_data3.nat[j,2] + mice_imputed_data4.nat[j,2] + mice_imputed_data5.nat[j,2])/5)),
+    parole_violation_admissions                = floor(as.numeric((mice_imputed_data1.nat[j,3] + mice_imputed_data2.nat[j,3] + mice_imputed_data3.nat[j,3] + mice_imputed_data4.nat[j,3] + mice_imputed_data5.nat[j,3])/5)),
+    technical_probation_violation_admissions   = floor(as.numeric((mice_imputed_data1.nat[j,4] + mice_imputed_data2.nat[j,4] + mice_imputed_data3.nat[j,4] + mice_imputed_data4.nat[j,4] + mice_imputed_data5.nat[j,4])/5)),
+    technical_parole_violation_admissions      = floor(as.numeric((mice_imputed_data1.nat[j,5] + mice_imputed_data2.nat[j,5] + mice_imputed_data3.nat[j,5] + mice_imputed_data4.nat[j,5] + mice_imputed_data5.nat[j,5])/5)),
+    new_offense_probation_violation_admissions = floor(as.numeric((mice_imputed_data1.nat[j,6] + mice_imputed_data2.nat[j,6] + mice_imputed_data3.nat[j,6] + mice_imputed_data4.nat[j,6] + mice_imputed_data5.nat[j,6])/5)),
+    new_offense_parole_violation_admissions    = floor(as.numeric((mice_imputed_data1.nat[j,7] + mice_imputed_data2.nat[j,7] + mice_imputed_data3.nat[j,7] + mice_imputed_data4.nat[j,7] + mice_imputed_data5.nat[j,7])/5)),
+    
+    overall_population                         = floor(as.numeric((mice_imputed_data1.nat[j,8] + mice_imputed_data2.nat[j,8] + mice_imputed_data3.nat[j,8] + mice_imputed_data4.nat[j,8] + mice_imputed_data5.nat[j,8])/5)),
+    probation_violation_population             = floor(as.numeric((mice_imputed_data1.nat[j,9] + mice_imputed_data2.nat[j,9] + mice_imputed_data3.nat[j,9] + mice_imputed_data4.nat[j,9] + mice_imputed_data5.nat[j,9])/5)),
+    parole_violation_population                = floor(as.numeric((mice_imputed_data1.nat[j,10] + mice_imputed_data2.nat[j,10] + mice_imputed_data3.nat[j,10] + mice_imputed_data4.nat[j,10] + mice_imputed_data5.nat[j,10])/5)),
+    technical_probation_violation_population   = floor(as.numeric((mice_imputed_data1.nat[j,11] + mice_imputed_data2.nat[j,11] + mice_imputed_data3.nat[j,11] + mice_imputed_data4.nat[j,11] + mice_imputed_data5.nat[j,11])/5)),
+    technical_parole_violation_population      = floor(as.numeric((mice_imputed_data1.nat[j,12] + mice_imputed_data2.nat[j,12] + mice_imputed_data3.nat[j,12] + mice_imputed_data4.nat[j,12] + mice_imputed_data5.nat[j,12])/5)),
+    new_offense_probation_violation_population = floor(as.numeric((mice_imputed_data1.nat[j,13] + mice_imputed_data2.nat[j,13] + mice_imputed_data3.nat[j,13] + mice_imputed_data4.nat[j,13] + mice_imputed_data5.nat[j,13])/5)),
+    new_offense_parole_violation_population    = floor(as.numeric((mice_imputed_data1.nat[j,14] + mice_imputed_data2.nat[j,14] + mice_imputed_data3.nat[j,14] + mice_imputed_data4.nat[j,14] + mice_imputed_data5.nat[j,14])/5))
   )
   assign(paste0("final.parest.imp",year[j]),parest,envir = .GlobalEnv)
 }
@@ -106,13 +122,21 @@ for (h in yearnum){
 
 #append confidence intervals for ease of output REQUIRES UPDATING!!!!
 natCI.2018all <- rbind(natCI.2018.1,natCI.2018.2,natCI.2018.3,natCI.2018.4,
-                       natCI.2018.5,natCI.2018.6,natCI.2018.7,natCI.2018.8)
+                       natCI.2018.5,natCI.2018.6,natCI.2018.7,natCI.2018.8,
+                       natCI.2018.9,natCI.2018.10,natCI.2018.11,natCI.2018.12,
+                       natCI.2018.13,natCI.2018.14)
 natCI.2019all <- rbind(natCI.2019.1,natCI.2019.2,natCI.2019.3,natCI.2019.4,
-                       natCI.2019.5,natCI.2019.6,natCI.2019.7,natCI.2019.8)
+                       natCI.2019.5,natCI.2019.6,natCI.2019.7,natCI.2019.8,
+                       natCI.2019.9,natCI.2019.10,natCI.2019.11,natCI.2019.12,
+                       natCI.2019.13,natCI.2019.14)
 natCI.2020all <- rbind(natCI.2020.1,natCI.2020.2,natCI.2020.3,natCI.2020.4,
-                       natCI.2020.5,natCI.2020.6,natCI.2020.7,natCI.2020.8)
+                       natCI.2020.5,natCI.2020.6,natCI.2020.7,natCI.2020.8,
+                       natCI.2020.9,natCI.2020.10,natCI.2020.11,natCI.2020.12,
+                       natCI.2020.13,natCI.2020.14)
 natCI.2021all <- rbind(natCI.2021.1,natCI.2021.2,natCI.2021.3,natCI.2021.4,
-                       natCI.2021.5,natCI.2021.6,natCI.2021.7,natCI.2021.8)
+                       natCI.2021.5,natCI.2021.6,natCI.2021.7,natCI.2021.8,
+                       natCI.2021.9,natCI.2021.10,natCI.2021.11,natCI.2021.12,
+                       natCI.2021.13,natCI.2021.14)
 rownames(natCI.2018all) <- numvar
 rownames(natCI.2019all) <- numvar
 rownames(natCI.2020all) <- numvar

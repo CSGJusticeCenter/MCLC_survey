@@ -5,13 +5,12 @@
 ################################################################################
 
 #just for state-level cost report REQUIRES UPDATING!!!
-#community supervision violators, technical supervision violators populations
-forreport <- national.est[,c("violator_population2019",          "violator_population2020",          "violator_population2021",
-                             "technical_violator_population2019","technical_violator_population2020","technical_violator_population2021")]
+#all aggregations except overall
+forreport <- national.est[,grepl( paste0("population",last(refyear)), names(national.est))] %>% select(-c(starts_with("overall")))
 
 #use non-imputed data for calculating costs by state
 forreport.state <- adm_pop_analysis[,c("states","year","total_supervision_violation_population","technical_parole_violation_population","technical_probation_violation_population")] %>%
-  filter(year==2021) %>%
+  filter(year==as.numeric(last(refyear))) %>%
   mutate(technical_violator_population.NA          = case_when(as.numeric(technical_probation_violation_population) >= 0 & as.numeric(technical_parole_violation_population) >= 0 ~ 
                                                                  as.numeric(technical_probation_violation_population) + as.numeric(technical_parole_violation_population),
                                                                TRUE ~ NA_real_),
@@ -31,15 +30,24 @@ cost.final <- costs %>%
   ) %>% 
   bind_cols(forreport,forreport.state) %>%
   mutate(
-    averted_costs20_21 = (violator_population2020*Cost.in.2021*365) - 
-                         (violator_population2021*Cost.in.2021*365),
-    averted_costs19_21 = (violator_population2019*Cost.in.2021*365) - 
-                         (violator_population2021*Cost.in.2021*365),    
-    averted_costs19_20 = (violator_population2019*Cost.in.2020*365) - 
-                         (violator_population2020*Cost.in.2020*365),
-    cost.vp21          = (Cost.in.2021*365*violator_population2021),
-    cost.tvp21         = (Cost.in.2021*365*technical_violator_population2021),
-    cost.vp21.state    = (Cost.in.2021*365*total_supervision_violation_population.NA),
-    cost.tvp21.state   = (Cost.in.2021*365*technical_violator_population.NA)
+    #national estimated costs
+    cost.pr.vp       = (Cost.in.2021*365*probation_violation_population2021),
+    cost.pa.vp       = (Cost.in.2021*365*parole_violation_population2021),
+    cost.pr.tvp      = (Cost.in.2021*365*technical_probation_violation_population2021),
+    cost.pa.tvp      = (Cost.in.2021*365*technical_parole_violation_population2021),
+    cost.pr.novp     = (Cost.in.2021*365*new_offense_probation_violation_population2021),
+    cost.pa.novp    = (Cost.in.2021*365*new_offense_parole_violation_population2021),
+    
+    #state costs
+    cost.vp.state    = (Cost.in.2021*365*total_supervision_violation_population.NA),
+    cost.tvp.state   = (Cost.in.2021*365*technical_violator_population.NA)
     ) %>%
   dplyr::rename(State=state) 
+
+##Annual costs for incarceration nationally (most recent year)
+total.pr.vp   <- sum(cost.final$cost.pr.vp)
+total.pa.vp   <- sum(cost.final$cost.pa.vp)
+total.pr.tvp  <- sum(cost.final$cost.pr.tvp)
+total.pa.tvp  <- sum(cost.final$cost.pa.tvp)
+total.pr.novp <- sum(cost.final$cost.pr.novp)
+total.pa.novp <- sum(cost.final$cost.pa.novp)
