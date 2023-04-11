@@ -1,7 +1,7 @@
 ---
 title: "2022 MCLC Survey Results"
 author: "The CSG Justice Center"
-date: "3/13/2023"
+date: "4/7/2023"
 output:
   html_document
 ---
@@ -12,11 +12,6 @@ output:
 # PURPOSE: Impute values, national estimates, state estimates and costs
 # AUTHOR: JSM
 #######################################
-
-#LaTeX setup
-bold <- function(x){
-  paste0('{\\bfseries ', x, '}')
-}
 
 ###################################################
 #OVERALL SETUP
@@ -40,12 +35,7 @@ library(csgjcr)
 library(scales)
 library(xtable)
 
-# #name of data to import and path
-# sp_data_path <- csgjcr::csg_sp_path("50 State Revocations Project/50 State Survey (2022)/Data")
-# dataname     <- "/mclc_data_2022_v4.xlsx"
-
-# #read automated_clean to get data, reformat
-# source("02_clean.R")
+#read automated_clean to get data, reformat
 source("03_clean.R")
 
 ##SETUP
@@ -56,18 +46,25 @@ refyear  <- c('2019','2020','2021')
 refnum   <- 1:3
 
 #number of survey variables
-numvar   <- 1:8
+numvar   <- 1:14
 
 #labels
-var.labels = c(year                                = "Year",
-               overall_admissions                  = "Overall admissions",
-               admissions_for_violations           = "Admissions for violations",
-               admissions_for_technical_violations = "Admissions for technical violations",
-               admissions_for_new_crime_violations = "Admissions for new crime violations",
-               overall_population                  = "Overall population",
-               violator_population                 = "Violator population",
-               technical_violator_population       = "Technical violator population",
-               new_crime_violator_population       = "New crime violator population"
+var.labels = c(year                                       = "Year",
+               overall_admissions                         = "Overall admissions",
+               probation_violation_admissions             = "Total probation violation admissions",
+               parole_violation_admissions                = "Total parole violation admissions",
+               technical_probation_violation_admissions   = "Admissions for technical violations, probation", 
+               technical_parole_violation_admissions      = "Admissions for technical violations, parole",
+               new_offense_probation_violation_admissions = "Admissions for new crime violations, probation",
+               new_offense_parole_violation_admissions    = "Admissions for new crime violations, parole",
+               
+               overall_population                         = "Overall population",
+               probation_violation_population             = "Total probation violation population",
+               parole_violation_population                = "Total parole violation population",
+               technical_probation_violation_population   = "Technical violator population, probation",
+               technical_parole_violation_population      = "Technical violator population, parole",
+               new_offense_probation_violation_population = "New crime violator population, probation",
+               new_offense_parole_violation_population    = "New crime violator population, parole"
 )
 
 ################################################################################
@@ -84,9 +81,6 @@ source("MImp1.R")
 #post multiple imputation t-test
 #grab response columns for creating estimated counts/CIs
 ######
-#get response columns from survey
-#there are 8 response columns
-tablevals<- colnames(mice_imputed_data1[numvar[3]:(length(numvar)+2)])
 
 source("MImp2.R")
 
@@ -95,7 +89,7 @@ source("MImp2.R")
 #combine
 table2018 <- cbind(nat.2018all,natCI.2018all) %>%
   mutate(across(where(is.numeric),formattable::comma,0),
-         id     = 1:8,
+         id     = 1:14,
          ' '    = '95% Confidence Interval',
          '2018' = paste0('(',`1`,', ',`2`,')')
          )
@@ -109,21 +103,25 @@ table2021 <- cbind(nat.2021all,natCI.2021all) %>%
   mutate(across(where(is.numeric),formattable::comma,0),
          '2021' = paste0('(',`1`,', ',`2`,')'))
 
-bold <- function(x){
-  paste0('{\\bfseries ', x, '}')
-}
-
 tablevals.pretty <- c('Overall Admissions',
-                     'Admissions for Supervision Violations',
-                     'Admissions for Technical Supervision Violations',
-                     'Admissions for New Crime Violations',
+                     'Admissions for Probation Violations',
+                     'Admissions for Parole Violations',
+                     'Admissions for Technical Probation Violations',
+                     'Admissions for Technical Parole Violations',
+                     'Admissions for New Crime Probation Violations',
+                     'Admissions for New Crime Parole Violations',
+                     
                      'Overall Population',
-                     'Population of Supervision Violators',
-                     'Population of Technical Supervision Violators',
-                     'Population of New Crime Violators')
+                     'Population of Probation Violators',
+                     'Population of Parole Violators',
+                     'Population of Technical Probation Violations',
+                     'Population of Technical Parole Violations',
+                     'Population of New Crime Probation Violations',
+                     'Population of New Crime Parole Violations'
+                     )
 
 tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Estimate,table2021$Estimate)) %>%
-  mutate(id = 1:8,
+  mutate(id = 1:14,
          ' ' = 'Estimate', .before="V1") %>%
   dplyr::rename('2018' = "V1",
                 '2019' = "V2",
@@ -131,22 +129,27 @@ tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Est
                 '2021' = "V4") %>%
   rbind(
     data.table(' ' = tablevals.pretty,
-               id  = 1:8,
+               id  = 1:14,
                id2 = 0),
     
-    data.table(cbind(
+    data.table(
+      cbind(
       ' '    = table2018$` `,
       '2018' = table2018$`2018`,
       '2019' = table2019$`2019`,
       '2020' = table2020$`2020`,
       '2021' = table2021$`2021`,
       'id'   = table2018$id
-  )),
-  fill = TRUE) %>%
+      )),
+    fill = TRUE) %>%
+  mutate(id     = as.numeric(id),
+         `2018` =  ifelse(` `=="Estimate",format(as.numeric(`2018`), nsmall=0, digits = 3, scientific = F,big.mark=","),`2018`),
+         `2019` =  ifelse(` `=="Estimate",format(as.numeric(`2019`), nsmall=0, digits = 3, scientific = F,big.mark=","),`2019`),
+         `2020` =  ifelse(` `=="Estimate",format(as.numeric(`2020`), nsmall=0, digits = 3, scientific = F,big.mark=","),`2020`),
+         `2021` =  ifelse(` `=="Estimate",format(as.numeric(`2021`), nsmall=0, digits = 3, scientific = F,big.mark=","),`2021`)
+         ) %>%
   arrange(id,id2) %>%
   select(-c(id,id2))
-
-saveRDS(tab.full, file = "C:/Users/jmallett/OneDrive - The Council of State Governments/GitProjects/MCLC_survey/code/survey/tables_orig8metrics.RDS")
 
 ##############################################################
 ##############################################################
@@ -162,19 +165,6 @@ source("MImp3.R")
 
 source("Costs.R")
 
-#averted cost total
-avert19_20last <- 2742725774
-avert19_20     <- sum(cost.final$averted_costs19_20, na.rm = TRUE) #2019 - 2020
-avertdiff      <- avert19_20last - avert19_20 
-avert19_21     <- sum(cost.final$averted_costs19_21, na.rm = TRUE) #2019 - 2021
-avert20_21     <- sum(cost.final$averted_costs20_21, na.rm = TRUE) #2020 - 2021
-
-##Annual cost for incarcerating community supervision violators
-total.vp21 <- sum(cost.final$cost.vp21) #national
-
-##Annual cost for incarcerating those w/just technical violations
-total.tvp21 <- sum(cost.final$cost.tvp21) #national
-
 ```
 
 ## National Estimates
@@ -183,7 +173,7 @@ These estimates incorporate BJS total population and admissions data in calculat
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
 
-print(xtable(tab.full[1:12,],
+print(xtable(tab.full[1:21,],
                            align = c("llcccc")),
       include.rownames = FALSE,
       type             = "html")
@@ -195,37 +185,41 @@ print(xtable(tab.full[1:12,],
 
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-print(xtable(tab.full[13:24,],
+print(xtable(tab.full[22:42,],
                            align = c("llcccc")),
       include.rownames = FALSE,
       type             = "html")
 ```
 
-## 2021 Costs
+## `r as.numeric(last(refyear))` Costs
 
-The total annual cost for incarcerating community supervision violators in 2021 is `r dollar_format()(total.vp21)`.
-
-<br>
-
-\noindent The total annual cost for incarcerating just those with technical violations in 2021 is `r dollar_format()(total.tvp21)`.
+The total annual cost for incarcerating **probation violators** in `r as.numeric(last(refyear))` is `r dollar_format()(total.pr.vp)`. The total annual cost for incarcerating **parole violators** in `r as.numeric(last(refyear))` is `r dollar_format()(total.pa.vp)`.
 
 <br>
 
-### 2021 Costs by State
+\noindent The total annual cost for incarcerating just those on **probation with technical violations** in `r as.numeric(last(refyear))` is `r dollar_format()(total.pr.tvp)`. The total annual cost for incarcerating just those on **parole with technical violations** in `r as.numeric(last(refyear))` is `r dollar_format()(total.pa.tvp)`.
 
-Below is a table of these costs by state (no imputation). Note that missing cells indicate that a state did not submit 2021 population data:
+<br>
+
+\noindent The total annual cost for incarcerating just those on **probation with new offense violations** in `r as.numeric(last(refyear))` is `r dollar_format()(total.pr.novp)`. The total annual cost for incarcerating just those on **parole with new offense violations** in `r as.numeric(last(refyear))` is `r dollar_format()(total.pa.novp)`.
+
+<br>
+
+### `r as.numeric(last(refyear))` Costs by State
+
+Below is a table of these costs by state (no imputation). Note that missing cells indicate that a state did not submit `r as.numeric(last(refyear))` population data:
 
 <br>
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-print(xtable(cost.final[c("State","cost.vp21.state","cost.tvp21.state")] %>%
+print(xtable(cost.final[c("State","cost.vp.state","cost.tvp.state")] %>%
                               mutate(
-                                `Community Supervision Violator Cost` = case_when(cost.vp21.state >=0 ~ dollar_format()(cost.vp21.state),
+                                `Community Supervision Violator Cost` = case_when(cost.vp.state >=0 ~ dollar_format()(cost.vp.state),
                                                                                   TRUE ~ NA_character_),
-                                `Technical Violator Cost`             = case_when(cost.vp21.state >=0 ~ dollar_format()(cost.tvp21.state),
+                                `Technical Violator Cost`             = case_when(cost.vp.state >=0 ~ dollar_format()(cost.tvp.state),
                                                                                   TRUE ~ NA_character_)
                                      ) %>%
-                              select(-c(cost.vp21.state,cost.tvp21.state)),
+                              select(-c(cost.vp.state,cost.tvp.state)),
                            align = c("llrr")),
       include.rownames = FALSE,
       type             = "html")

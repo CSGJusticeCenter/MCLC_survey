@@ -28,15 +28,15 @@ if (FULL_JC_FOLDER == "JM"){
 # Import survey data submitted in 2021 to compare with new submissions in 2022.
 # This way we will know who changed their data for 2018, 2019, and 2020.
 # Read in each admissions and population sheet from the xlsx.
-adm18 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Admissions 2018")
-adm19 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Admissions 2019")
-adm20 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Admissions 2020")
-pop18 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Population 2018")
-pop19 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Population 2019")
-pop20 <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Population 2020")
+adm18 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2018")
+adm19 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2019")
+adm20 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2020")
+pop18 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2018")
+pop19 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2019")
+pop20 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2020")
 
 # Import costs.
-costs <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep = ""), sheet = "Costs")
+costs <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Costs")
 
 #####
 # 2022 survey
