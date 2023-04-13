@@ -133,5 +133,5 @@ mclc_data_2022 <- list('Admissions 2018' = adm_2018,
                        'Population 2021' = pop_2021,
                        'Costs'           = costs)
 
-# # Save data to sharepoint (most recent version: version 4 - with manual edits in Excel)
-# write.xlsx(mclc_data_2022, file = paste0(sp_data_path,"/Data/mclc_data_2022.xlsx"))
+# Save data to sharepoint (last version: mclc_data_2022_04_13_2023.xlsx)
+# # write.xlsx(mclc_data_2022, file = paste0(sp_data_path,"/Data/mclc_data_2022_TEST.xlsx"))
