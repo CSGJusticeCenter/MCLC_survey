@@ -84,8 +84,13 @@ for (j in yearnum){
   assign(paste0("final.parest.imp",year[j]),parest,envir = .GlobalEnv)
 }
 
-#rbind final estimates REQUIRES UPDATING!!!!!!!!!
-final.parest.imp      <- rbind(final.parest.imp2018,final.parest.imp2019,final.parest.imp2020,final.parest.imp2021)
+#rbind final estimates
+final.parest.imp <- data.frame()
+for (i in year) {
+  temp <- get(paste0("final.parest.imp",i))
+  final.parest.imp  <- rbind(final.parest.imp,temp)
+}
+
 final.parest.imp$year <- year
 
 ##########################
@@ -120,27 +125,16 @@ for (h in yearnum){
   }
 }
 
-#append confidence intervals for ease of output REQUIRES UPDATING!!!!
-natCI.2018all <- rbind(natCI.2018.1,natCI.2018.2,natCI.2018.3,natCI.2018.4,
-                       natCI.2018.5,natCI.2018.6,natCI.2018.7,natCI.2018.8,
-                       natCI.2018.9,natCI.2018.10,natCI.2018.11,natCI.2018.12,
-                       natCI.2018.13,natCI.2018.14)
-natCI.2019all <- rbind(natCI.2019.1,natCI.2019.2,natCI.2019.3,natCI.2019.4,
-                       natCI.2019.5,natCI.2019.6,natCI.2019.7,natCI.2019.8,
-                       natCI.2019.9,natCI.2019.10,natCI.2019.11,natCI.2019.12,
-                       natCI.2019.13,natCI.2019.14)
-natCI.2020all <- rbind(natCI.2020.1,natCI.2020.2,natCI.2020.3,natCI.2020.4,
-                       natCI.2020.5,natCI.2020.6,natCI.2020.7,natCI.2020.8,
-                       natCI.2020.9,natCI.2020.10,natCI.2020.11,natCI.2020.12,
-                       natCI.2020.13,natCI.2020.14)
-natCI.2021all <- rbind(natCI.2021.1,natCI.2021.2,natCI.2021.3,natCI.2021.4,
-                       natCI.2021.5,natCI.2021.6,natCI.2021.7,natCI.2021.8,
-                       natCI.2021.9,natCI.2021.10,natCI.2021.11,natCI.2021.12,
-                       natCI.2021.13,natCI.2021.14)
-rownames(natCI.2018all) <- numvar
-rownames(natCI.2019all) <- numvar
-rownames(natCI.2020all) <- numvar
-rownames(natCI.2021all) <- numvar
+#append confidence intervals for ease of output
+for (i in year) {
+  test <- data.frame()
+  for (j in numvar) {
+    temp <- get(paste0("natCI.",i,".",j))
+    test  <- rbind(test,temp)
+  }
+  colnames(test) <- c("V1","V2")
+  assign(paste0("natCI.",i,"all"),test,envir = .GlobalEnv)
+}
 
 #manipulate estimates for merging with CIs
 for (i in year) {
