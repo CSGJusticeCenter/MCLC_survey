@@ -2,7 +2,7 @@
 # MCLC Survey
 # Imports/cleans MCLC Survey for Automated Reports
 # by MR/JSM
-# Last Updated: March 9, 2023 (MAR)
+# Last Updated: April 13, 2023 (MAR)
 
 # Version History:
 # Version 3: Data from Google sheets
@@ -10,27 +10,29 @@
 # Version 5: Replace version 4 total admissions and population with BJS numbers - not using anymore bc we're only removing MCLC data for some states not all of them
 # Version 6: Replace version 4 total admissions and population with BJS numbers for specific states flagged in Comparison_MCLC_and_BJS_data_v1.xlsx
 # Version 7: Replace version 4 total admissions and population with BJS numbers for just New Mexico, Nebraska, and Alaska (population only)
+# Version 8: Re-read data from Google Sheets because of Nebraska's new submission. Replace Maine's new offense admissions with NA.
+#            Replace total admissions and population with BJS numbers for just New Mexico and Alaska (2021 population only).
 
-# Input: version 4 of data
-# Final: version 7 of data (3/10/23)
+# Input: mclc_data_2022_04_13_2023.xlsx - re-pulled data from Google Sheets because of Nebraska's submission on 4/13/23
+# Final: version 8 of data (4/13/2023)
 #######################################
 
 # Get v4 of data and replace total admissions and total population with BJS numbers
 # Will create latest version at the end of this file
-readin <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
-#readin <- "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
+# readin <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx"
+readin <- "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx"
 
 # Get info on whether to use BJS or MCLC data by state and admissions vs population
-comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
-comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
-#comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
-#comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
+# comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
+# comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
+comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
+comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
 
 # Import BJS total admissions and population since these numbers are more reliable
-bjs_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
-bjs_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
-#bjs_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
-#bjs_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
+# bjs_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
+# bjs_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
+bjs_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
+bjs_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
 
 
 
@@ -67,7 +69,7 @@ population21$year <- "2021"
 
 # combine pop data
 population <- rbind(population18, population19, population20, population21) %>%
-  select(-c(total_new_offense_population,total_technical_violation_population)) %>%
+  # select(-c(total_new_offense_population,total_technical_violation_population)) %>%
   mutate_at(vars(-c("state", "year")), decomma) %>%
   mutate_at(vars(year),list(factor)) %>%
   dplyr::rename(states = state)
@@ -84,7 +86,7 @@ admissions21$year <- "2021"
 
 # combine pop data
 admissions <- rbind(admissions18, admissions19, admissions20, admissions21) %>%
-  select(-c(total_new_offense_admissions,total_technical_violation_admissions)) %>%
+  # select(-c(total_new_offense_admissions,total_technical_violation_admissions)) %>%
   mutate_at(vars(-c("state", "year")), decomma) %>%
   mutate_at(vars(year),list(factor)) %>%
   dplyr::rename(states = state)
@@ -116,9 +118,6 @@ comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm.xlsx %>%
          bjs_adm_20 = total_adms_8,
          bjs_adm_21 = total_adms_11) %>%
   distinct()
-
-# # Save BJS vs MCLC variable
-# mclc_vs_bjs <- comparison_bjs_mclc_adm %>% select(states, use_mclc_vs_bjs) %>% distinct()
 
 # If MCLC numbers should be used, assign MCLC numbers as final numbers, otherwise use BJS numbers
 comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm %>%
@@ -172,20 +171,23 @@ comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop %>%
 # Replace total admissions and total population with BJS numbers for specific states (use_mclc_vs_bjs), which are more reliable
 ##############
 
-adm_pop_analysis <- adm_pop_analysis %>%
+# Replace total admissions and total population with BJS numbers for specific states
+adm_pop_analysis_with_bjs <- adm_pop_analysis %>%
   left_join(comparison_bjs_mclc_adm, by = c("states", "year")) %>%
   left_join(comparison_bjs_mclc_pop, by = c("states", "year")) %>%
   mutate(
     total_prison_population = case_when(states == "Alaska" &
                                           year == 2021         ~ total_prison_population_bjs,
-                                        states == "Nebraska"   ~ total_prison_population_bjs,
                                         states == "New Mexico" ~ total_prison_population_bjs,
                                         TRUE                   ~ total_prison_population),
-    total_prison_admissions = case_when(states == "Nebraska"   ~ total_prison_admissions_bjs,
-                                        states == "New Mexico" ~ total_prison_admissions_bjs,
+    total_prison_admissions = case_when(states == "New Mexico" ~ total_prison_admissions_bjs,
                                         TRUE                   ~ total_prison_admissions)
   ) %>%
   select(-c(total_prison_population_bjs,total_prison_admissions_bjs))
+
+# Make Maine's new offense violations NA
+adm_pop_analysis_with_bjs <- adm_pop_analysis_with_bjs %>%
+  mutate(total_new_offense_admissions = ifelse(states == "Maine", NA, total_new_offense_admissions))
 
 # add labels
 var.labels = c(states                                     = "State name",
@@ -193,22 +195,32 @@ var.labels = c(states                                     = "State name",
                total_prison_admissions                    = "Total admissions",
                total_supervision_violation_admissions     = "Total probation and parole violation admissions",
                probation_violation_admissions             = "Total probation violation admissions (new offense + technical)",
-               new_offense_probation_violation_admissions = "New offense probation violation admissions",
-               technical_probation_violation_admissions   = "Technical probation violation admissions",
                parole_violation_admissions                = "Total parole violation admissions (new offense + technical)",
-               new_offense_parole_violation_admissions    = "New offense parole violation admissions",
+
+               total_technical_violation_admissions       = "Total technical violation admissions",
+               technical_probation_violation_admissions   = "Technical probation violation admissions",
                technical_parole_violation_admissions      = "Technical parole violation admissions",
+
+               total_new_offense_admissions               = "Total new offense violation admissions",
+               new_offense_probation_violation_admissions = "New offense probation violation admissions",
+               new_offense_parole_violation_admissions    = "New offense parole violation admissions",
+
                total_prison_population                    = "Total population",
                total_supervision_violation_population     = "Total probation and parole violation population",
                probation_violation_population             = "Total probation violation population (new offense + technical)",
-               new_offense_probation_violation_population = "New offense probation violation population",
-               technical_probation_violation_population   = "Technical probation violation population",
                parole_violation_population                = "Total parole violation population (new offense + technical)",
-               new_offense_parole_violation_population    = "New offense parole violation population",
-               technical_parole_violation_population      = "Technical parole violation population")
 
-adm_pop_analysis = upData(adm_pop_analysis, labels = var.labels)
+               total_technical_violation_population       = "Total technical violation population",
+               technical_probation_violation_population   = "Technical probation violation population",
+               technical_parole_violation_population      = "Technical parole violation population",
 
-# Save data to sharepoint (most recent version: version 7 on 3/10/2023)
-# write.xlsx(adm_pop_analysis, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
-#write.xlsx(adm_pop_analysis, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
+               total_new_offense_population               = "Total new offense violation population",
+               new_offense_probation_violation_population = "New offense probation violation population",
+               new_offense_parole_violation_population    = "New offense parole violation population"
+               )
+
+adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.labels)
+
+# Save data to sharepoint (most recent version: version 8 on 4/13/2023)
+# write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
+# write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")

@@ -34,9 +34,16 @@ adm20 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Resea
 pop18 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2018")
 pop19 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2019")
 pop20 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2020")
+# adm18 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2018")
+# adm19 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2019")
+# adm20 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2020")
+# pop18 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2018")
+# pop19 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2019")
+# pop20 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2020")
 
 # Import costs.
 costs <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Costs")
+# costs <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Costs")
 
 #####
 # 2022 survey
