@@ -69,7 +69,8 @@ population21$year <- "2021"
 
 # combine pop data
 population <- rbind(population18, population19, population20, population21) %>%
-  # select(-c(total_new_offense_population,total_technical_violation_population)) %>%
+  mutate(total_new_offense_violation_population = total_new_offense_population) %>%
+  select(-c(total_new_offense_population)) %>%
   mutate_at(vars(-c("state", "year")), decomma) %>%
   mutate_at(vars(year),list(factor)) %>%
   dplyr::rename(states = state)
@@ -86,7 +87,8 @@ admissions21$year <- "2021"
 
 # combine pop data
 admissions <- rbind(admissions18, admissions19, admissions20, admissions21) %>%
-  # select(-c(total_new_offense_admissions,total_technical_violation_admissions)) %>%
+  mutate(total_new_offense_violation_admissions = total_new_offense_admissions) %>%
+  select(-c(total_new_offense_admissions)) %>%
   mutate_at(vars(-c("state", "year")), decomma) %>%
   mutate_at(vars(year),list(factor)) %>%
   dplyr::rename(states = state)
@@ -187,7 +189,7 @@ adm_pop_analysis_with_bjs <- adm_pop_analysis %>%
 
 # Make Maine's new offense violations NA
 adm_pop_analysis_with_bjs <- adm_pop_analysis_with_bjs %>%
-  mutate(total_new_offense_admissions = ifelse(states == "Maine", NA, total_new_offense_admissions))
+  mutate(total_new_offense_violation_admissions = ifelse(states == "Maine", NA, total_new_offense_violation_admissions))
 
 # add labels
 var.labels = c(states                                     = "State name",
@@ -201,7 +203,7 @@ var.labels = c(states                                     = "State name",
                technical_probation_violation_admissions   = "Technical probation violation admissions",
                technical_parole_violation_admissions      = "Technical parole violation admissions",
 
-               total_new_offense_admissions               = "Total new offense violation admissions",
+               total_new_offense_violation_admissions     = "Total new offense violation admissions",
                new_offense_probation_violation_admissions = "New offense probation violation admissions",
                new_offense_parole_violation_admissions    = "New offense parole violation admissions",
 
@@ -214,7 +216,7 @@ var.labels = c(states                                     = "State name",
                technical_probation_violation_population   = "Technical probation violation population",
                technical_parole_violation_population      = "Technical parole violation population",
 
-               total_new_offense_population               = "Total new offense violation population",
+               total_new_offense_violation_population     = "Total new offense violation population",
                new_offense_probation_violation_population = "New offense probation violation population",
                new_offense_parole_violation_population    = "New offense parole violation population"
                )
@@ -223,4 +225,4 @@ adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.label
 
 # Save data to sharepoint (most recent version: version 8 on 4/13/2023)
 # write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
-# write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
+# write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v8.xlsx")
