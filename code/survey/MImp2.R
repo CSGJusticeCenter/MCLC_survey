@@ -42,19 +42,22 @@ for (i in 1:5) {
   names(nameit)[names(nameit) == "overall_admissions"]                         <- "overall_admissions1"
   names(nameit)[names(nameit) == "probation_violation_admissions"]             <- "probation_violation_admissions1"
   names(nameit)[names(nameit) == "parole_violation_admissions"]                <- "parole_violation_admissions1"
+  names(nameit)[names(nameit) == "total_technical_violation_admissions"]       <- "total_technical_violation_admissions1"
   names(nameit)[names(nameit) == "technical_probation_violation_admissions"]   <- "technical_probation_violation_admissions1"
   names(nameit)[names(nameit) == "technical_parole_violation_admissions"]      <- "technical_parole_violation_admissions1"
+  names(nameit)[names(nameit) == "total_new_offense_violation_admissions"]     <- "total_new_offense_violation_admissions1"
   names(nameit)[names(nameit) == "new_offense_probation_violation_admissions"] <- "new_offense_probation_violation_admissions1"
   names(nameit)[names(nameit) == "new_offense_parole_violation_admissions"]    <- "new_offense_parole_violation_admissions1"
   
   names(nameit)[names(nameit) == "overall_population"]                         <- "overall_population1"
   names(nameit)[names(nameit) == "probation_violation_population"]             <- "probation_violation_population1"
   names(nameit)[names(nameit) == "parole_violation_population"]                <- "parole_violation_population1"
+  names(nameit)[names(nameit) == "total_technical_violation_population"]       <- "total_technical_violation_population1"
   names(nameit)[names(nameit) == "technical_probation_violation_population"]   <- "technical_probation_violation_population1"
   names(nameit)[names(nameit) == "technical_parole_violation_population"]      <- "technical_parole_violation_population1"
+  names(nameit)[names(nameit) == "total_new_offense_violation_population"]     <- "total_new_offense_violation_population1"
   names(nameit)[names(nameit) == "new_offense_probation_violation_population"] <- "new_offense_probation_violation_population1"
   names(nameit)[names(nameit) == "new_offense_parole_violation_population"]    <- "new_offense_parole_violation_population1"
-  
   
   assign(paste0(micelist[i],".nat"),nameit,envir = .GlobalEnv)
 }
@@ -68,18 +71,22 @@ for (j in yearnum){
     overall_admissions                         = floor(as.numeric((mice_imputed_data1.nat[j,1] + mice_imputed_data2.nat[j,1] + mice_imputed_data3.nat[j,1] + mice_imputed_data4.nat[j,1] + mice_imputed_data5.nat[j,1])/5)),
     probation_violation_admissions             = floor(as.numeric((mice_imputed_data1.nat[j,2] + mice_imputed_data2.nat[j,2] + mice_imputed_data3.nat[j,2] + mice_imputed_data4.nat[j,2] + mice_imputed_data5.nat[j,2])/5)),
     parole_violation_admissions                = floor(as.numeric((mice_imputed_data1.nat[j,3] + mice_imputed_data2.nat[j,3] + mice_imputed_data3.nat[j,3] + mice_imputed_data4.nat[j,3] + mice_imputed_data5.nat[j,3])/5)),
-    technical_probation_violation_admissions   = floor(as.numeric((mice_imputed_data1.nat[j,4] + mice_imputed_data2.nat[j,4] + mice_imputed_data3.nat[j,4] + mice_imputed_data4.nat[j,4] + mice_imputed_data5.nat[j,4])/5)),
-    technical_parole_violation_admissions      = floor(as.numeric((mice_imputed_data1.nat[j,5] + mice_imputed_data2.nat[j,5] + mice_imputed_data3.nat[j,5] + mice_imputed_data4.nat[j,5] + mice_imputed_data5.nat[j,5])/5)),
-    new_offense_probation_violation_admissions = floor(as.numeric((mice_imputed_data1.nat[j,6] + mice_imputed_data2.nat[j,6] + mice_imputed_data3.nat[j,6] + mice_imputed_data4.nat[j,6] + mice_imputed_data5.nat[j,6])/5)),
-    new_offense_parole_violation_admissions    = floor(as.numeric((mice_imputed_data1.nat[j,7] + mice_imputed_data2.nat[j,7] + mice_imputed_data3.nat[j,7] + mice_imputed_data4.nat[j,7] + mice_imputed_data5.nat[j,7])/5)),
+    total_technical_violation_admissions       = floor(as.numeric((mice_imputed_data1.nat[j,4] + mice_imputed_data2.nat[j,4] + mice_imputed_data3.nat[j,4] + mice_imputed_data4.nat[j,4] + mice_imputed_data5.nat[j,4])/5)),    
+    technical_probation_violation_admissions   = floor(as.numeric((mice_imputed_data1.nat[j,5] + mice_imputed_data2.nat[j,5] + mice_imputed_data3.nat[j,5] + mice_imputed_data4.nat[j,5] + mice_imputed_data5.nat[j,5])/5)),
+    technical_parole_violation_admissions      = floor(as.numeric((mice_imputed_data1.nat[j,6] + mice_imputed_data2.nat[j,6] + mice_imputed_data3.nat[j,6] + mice_imputed_data4.nat[j,6] + mice_imputed_data5.nat[j,6])/5)),
+    total_new_offense_violation_admissions     = floor(as.numeric((mice_imputed_data1.nat[j,7] + mice_imputed_data2.nat[j,7] + mice_imputed_data3.nat[j,7] + mice_imputed_data4.nat[j,7] + mice_imputed_data5.nat[j,7])/5)),    
+    new_offense_probation_violation_admissions = floor(as.numeric((mice_imputed_data1.nat[j,8] + mice_imputed_data2.nat[j,8] + mice_imputed_data3.nat[j,8] + mice_imputed_data4.nat[j,8] + mice_imputed_data5.nat[j,8])/5)),
+    new_offense_parole_violation_admissions    = floor(as.numeric((mice_imputed_data1.nat[j,9] + mice_imputed_data2.nat[j,9] + mice_imputed_data3.nat[j,9] + mice_imputed_data4.nat[j,9] + mice_imputed_data5.nat[j,9])/5)),
     
-    overall_population                         = floor(as.numeric((mice_imputed_data1.nat[j,8] + mice_imputed_data2.nat[j,8] + mice_imputed_data3.nat[j,8] + mice_imputed_data4.nat[j,8] + mice_imputed_data5.nat[j,8])/5)),
-    probation_violation_population             = floor(as.numeric((mice_imputed_data1.nat[j,9] + mice_imputed_data2.nat[j,9] + mice_imputed_data3.nat[j,9] + mice_imputed_data4.nat[j,9] + mice_imputed_data5.nat[j,9])/5)),
-    parole_violation_population                = floor(as.numeric((mice_imputed_data1.nat[j,10] + mice_imputed_data2.nat[j,10] + mice_imputed_data3.nat[j,10] + mice_imputed_data4.nat[j,10] + mice_imputed_data5.nat[j,10])/5)),
-    technical_probation_violation_population   = floor(as.numeric((mice_imputed_data1.nat[j,11] + mice_imputed_data2.nat[j,11] + mice_imputed_data3.nat[j,11] + mice_imputed_data4.nat[j,11] + mice_imputed_data5.nat[j,11])/5)),
-    technical_parole_violation_population      = floor(as.numeric((mice_imputed_data1.nat[j,12] + mice_imputed_data2.nat[j,12] + mice_imputed_data3.nat[j,12] + mice_imputed_data4.nat[j,12] + mice_imputed_data5.nat[j,12])/5)),
-    new_offense_probation_violation_population = floor(as.numeric((mice_imputed_data1.nat[j,13] + mice_imputed_data2.nat[j,13] + mice_imputed_data3.nat[j,13] + mice_imputed_data4.nat[j,13] + mice_imputed_data5.nat[j,13])/5)),
-    new_offense_parole_violation_population    = floor(as.numeric((mice_imputed_data1.nat[j,14] + mice_imputed_data2.nat[j,14] + mice_imputed_data3.nat[j,14] + mice_imputed_data4.nat[j,14] + mice_imputed_data5.nat[j,14])/5))
+    overall_population                         = floor(as.numeric((mice_imputed_data1.nat[j,10] + mice_imputed_data2.nat[j,10] + mice_imputed_data3.nat[j,10] + mice_imputed_data4.nat[j,10] + mice_imputed_data5.nat[j,10])/5)),
+    probation_violation_population             = floor(as.numeric((mice_imputed_data1.nat[j,11] + mice_imputed_data2.nat[j,11] + mice_imputed_data3.nat[j,11] + mice_imputed_data4.nat[j,11] + mice_imputed_data5.nat[j,11])/5)),
+    parole_violation_population                = floor(as.numeric((mice_imputed_data1.nat[j,12] + mice_imputed_data2.nat[j,12] + mice_imputed_data3.nat[j,12] + mice_imputed_data4.nat[j,12] + mice_imputed_data5.nat[j,12])/5)),
+    total_technical_violation_population       = floor(as.numeric((mice_imputed_data1.nat[j,13] + mice_imputed_data2.nat[j,13] + mice_imputed_data3.nat[j,13] + mice_imputed_data4.nat[j,13] + mice_imputed_data5.nat[j,13])/5)),    
+    technical_probation_violation_population   = floor(as.numeric((mice_imputed_data1.nat[j,14] + mice_imputed_data2.nat[j,14] + mice_imputed_data3.nat[j,14] + mice_imputed_data4.nat[j,14] + mice_imputed_data5.nat[j,14])/5)),
+    technical_parole_violation_population      = floor(as.numeric((mice_imputed_data1.nat[j,15] + mice_imputed_data2.nat[j,15] + mice_imputed_data3.nat[j,15] + mice_imputed_data4.nat[j,15] + mice_imputed_data5.nat[j,15])/5)),
+    total_new_offense_violation_population     = floor(as.numeric((mice_imputed_data1.nat[j,16] + mice_imputed_data2.nat[j,16] + mice_imputed_data3.nat[j,16] + mice_imputed_data4.nat[j,16] + mice_imputed_data5.nat[j,16])/5)),    
+    new_offense_probation_violation_population = floor(as.numeric((mice_imputed_data1.nat[j,17] + mice_imputed_data2.nat[j,17] + mice_imputed_data3.nat[j,17] + mice_imputed_data4.nat[j,17] + mice_imputed_data5.nat[j,17])/5)),
+    new_offense_parole_violation_population    = floor(as.numeric((mice_imputed_data1.nat[j,18] + mice_imputed_data2.nat[j,18] + mice_imputed_data3.nat[j,18] + mice_imputed_data4.nat[j,18] + mice_imputed_data5.nat[j,18])/5))
   )
   assign(paste0("final.parest.imp",year[j]),parest,envir = .GlobalEnv)
 }
@@ -99,7 +106,7 @@ final.parest.imp$year <- year
 # w = sum of variance estimates divided by total number of imputations
 # b = sum of the squared difference of the combined estimate (theta hat) from each theta estimate divided by the total number of imputations minus 1
 
-#LOOP OVER ALL 8 RESPONSES: 1 through 8 = 'tablevals' vector
+#LOOP OVER ALL METRICS = 'tablevals' vector
 for (h in yearnum){
   for (i in numvar) {
     #WITHIN-IMPUTATION VARIANCE

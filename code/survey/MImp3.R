@@ -10,16 +10,20 @@ for (h in refnum) {
   fit.overall_admissions                         <- with(temp_data,lm(overall_admissions~year + states + year:states))
   fit.probation_violation_admissions             <- with(temp_data,lm(probation_violation_admissions~year + states + year:states))
   fit.parole_violation_admissions                <- with(temp_data,lm(parole_violation_admissions~year + states + year:states))
+  fit.total_technical_violation_admissions       <- with(temp_data,lm(total_technical_violation_admissions~year + states + year:states))
   fit.technical_probation_violation_admissions   <- with(temp_data,lm(technical_probation_violation_admissions~year + states + year:states))
   fit.technical_parole_violation_admissions      <- with(temp_data,lm(technical_parole_violation_admissions~year + states + year:states))
+  fit.total_new_offense_violation_admissions     <- with(temp_data,lm(total_new_offense_violation_admissions~year + states + year:states))
   fit.new_offense_probation_violation_admissions <- with(temp_data,lm(new_offense_probation_violation_admissions~year + states + year:states))
   fit.new_offense_parole_violation_admissions    <- with(temp_data,lm(new_offense_parole_violation_admissions~year + states + year:states))
   
   fit.overall_population                         <- with(temp_data,lm(overall_population~year + states + year:states))
   fit.probation_violation_population             <- with(temp_data,lm(probation_violation_population~year + states + year:states))
   fit.parole_violation_population                <- with(temp_data,lm(parole_violation_population~year + states + year:states))
+  fit.total_technical_violation_population       <- with(temp_data,lm(total_technical_violation_population~year + states + year:states))
   fit.technical_probation_violation_population   <- with(temp_data,lm(technical_probation_violation_population~year + states + year:states))
   fit.technical_parole_violation_population      <- with(temp_data,lm(technical_parole_violation_population~year + states + year:states))
+  fit.total_new_offense_violation_population     <- with(temp_data,lm(total_new_offense_violation_population~year + states + year:states))
   fit.new_offense_probation_violation_population <- with(temp_data,lm(new_offense_probation_violation_population~year + states + year:states))
   fit.new_offense_parole_violation_population    <- with(temp_data,lm(new_offense_parole_violation_population~year + states + year:states))
   
@@ -71,11 +75,14 @@ for (j in 2019:max(year)) {
 #   national.est[[i]] <- 10000
 # }
 
+national.est$total_new_offense_violation_population2019     <- as.numeric(format(round(national.est$total_new_offense_violation_population2019,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_probation_violation_population2019 <- as.numeric(format(round(national.est$new_offense_probation_violation_population2019,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_parole_violation_population2019    <- as.numeric(format(round(national.est$new_offense_parole_violation_population2019,2), nsmall=0,scientific = F, digits = 3))
 
+national.est$total_new_offense_violation_population2020     <- as.numeric(format(round(national.est$total_new_offense_violation_population2020,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_probation_violation_population2020 <- as.numeric(format(round(national.est$new_offense_probation_violation_population2020,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_parole_violation_population2020    <- as.numeric(format(round(national.est$new_offense_parole_violation_population2020,2), nsmall=0,scientific = F, digits = 3))
 
+national.est$total_new_offense_violation_population2021     <- as.numeric(format(round(national.est$total_new_offense_violation_population2021,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_probation_violation_population2021 <- as.numeric(format(round(national.est$new_offense_probation_violation_population2021,2), nsmall=0,scientific = F, digits = 3))
 national.est$new_offense_parole_violation_population2021    <- as.numeric(format(round(national.est$new_offense_parole_violation_population2021,2), nsmall=0,scientific = F, digits = 3))
