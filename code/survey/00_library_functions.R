@@ -10,7 +10,21 @@
 
 # Instructions for installing the csgjcr package
 # In your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token here"
-# remotes::install_github("csgjusticecenter/csgjcr")
+
+# remove current csgjcr package and download the develop branch to be able to use
+#     the function csg_set_project_path
+# remove.packages("csgjcr")
+# devtools::install_github("CSGJusticeCenter/csgjcr@develop")
+
+# Set project path for MAR/JM - un-comment your part
+# csg_set_project_path(project = "MCLC",
+#                      sp_folder = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project", force = TRUE)
+
+csg_set_project_path(project = "MCLC",
+                     sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project", force = TRUE)
+
+# assign SP path
+sp_data_path <- csg_get_project_path("MCLC")
 
 #####
 # Load packages
