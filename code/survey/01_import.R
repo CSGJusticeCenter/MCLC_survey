@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: import.R
-# Last updated: February 21, 2023 (MAR)
+# Last updated: April 14, 2023 (MAR)
 # Author: Mari Roberts
 
 # Load data directly from google sheets
@@ -15,54 +15,25 @@
 # 2021 survey
 #####
 
-# Change path depending on SP name
-FULL_JC_FOLDER <- svDialogs::dlg_input(message = "Enter initials (e.g. MR)", default = "")$res
-# FULL_JC_FOLDER <- "MR"
-
-if (FULL_JC_FOLDER == "JM"){
-  sp_data_path <- csgjcr::csg_sp_path(file.path("50 State Revocations Project","50 State Survey (2021)", "Data"))
-} else {
-  sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2021)", "Data"))
-}
-
 # Import survey data submitted in 2021 to compare with new submissions in 2022.
 # This way we will know who changed their data for 2018, 2019, and 2020.
 # Read in each admissions and population sheet from the xlsx.
-adm18 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2018")
-adm19 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2019")
-adm20 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2020")
-pop18 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2018")
-pop19 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2019")
-pop20 <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2020")
-# adm18 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2018")
-# adm19 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2019")
-# adm20 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Admissions 2020")
-# pop18 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2018")
-# pop19 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2019")
-# pop20 <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Population 2020")
+adm18 <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Admissions 2018")
+adm19 <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Admissions 2019")
+adm20 <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Admissions 2020")
+pop18 <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Population 2018")
+pop19 <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Population 2019")
+pop20 <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Population 2020")
 
-# Import costs.
-costs <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Costs")
-# costs <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/MCLC Shiny App/Archive/Data/Data for web team 2021 v13.xlsx", sheet = "Costs")
+# Import costs
+costs <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for web team 2021 v13.xlsx"), sheet = "Costs")
 
 #####
 # 2022 survey
 #####
 
-# Get sharepoint path to get Google form links
-
-# Change path depending on SP name
-FULL_JC_FOLDER <- svDialogs::dlg_input(message = "Enter initials (e.g. MR)", default = "")$res
-# FULL_JC_FOLDER <- "MR"
-
-if (FULL_JC_FOLDER == "JM"){
-  sp_data_path <- csgjcr::csg_sp_path(file.path("50 State Revocations Project","50 State Survey (2022)"))
-} else {
-  sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2022)"))
-}
-
 # Google form links
-form_links <- read_excel(paste0(sp_data_path, "/MCLC 2022 Progress Tracking.xlsx", sep = ""))
+form_links <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/MCLC 2022 Progress Tracking.xlsx", sep = ""))
 form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>%
   select(state, form_link = google_sheet_link_folder_https_drive_google_com_drive_folders_1i_tbzusu_cd9y_t_dk_rz_kuc_popp_q2on_kr_cv_usp_sharing)
 
@@ -71,8 +42,8 @@ form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>
 #####
 
 # Import BJS total admissions and population since these numbers are more reliable
-bjs_pop.xlsx <- read_excel(paste0(sp_data_path, "/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx"))
-bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx"))
+bjs_pop.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx"))
+bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx"))
 
 ###################    Attention    #####################
 

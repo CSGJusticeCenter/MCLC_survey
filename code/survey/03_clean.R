@@ -2,7 +2,7 @@
 # MCLC Survey
 # Imports/cleans MCLC Survey for Automated Reports
 # by MR/JSM
-# Last Updated: April 13, 2023 (MAR)
+# Last updated: April 14, 2023 (MAR)
 
 # Version History:
 # Version 3: Data from Google sheets
@@ -17,23 +17,34 @@
 # Final: version 8 of data (4/13/2023)
 #######################################
 
-# Will create latest version at the end of this file
-readin <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx"
-#readin <- "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx"
+# Instructions for installing the csgjcr package
+# In your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token here"
+
+# remove current csgjcr package and download the develop branch to be able to use
+#     the function csg_set_project_path
+# remove.packages("csgjcr")
+# devtools::install_github("CSGJusticeCenter/csgjcr@develop")
+
+# Set project path for MAR/JM - un-comment your part
+# csg_set_project_path(project = "MCLC",
+#                      sp_folder = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project", force = TRUE)
+
+csg_set_project_path(project = "MCLC",
+                     sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project", force = TRUE)
+
+# assign SP path
+sp_data_path <- csg_get_project_path("MCLC")
+
+# # Will create latest version at the end of this file that was created in format_data.R
+readin <- paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx")
 
 # Get info on whether to use BJS or MCLC data by state and admissions vs population
-comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
-comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
-#comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
-#comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
+comparison_bjs_mclc_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Admissions", skip = 2, col_names = TRUE)
+comparison_bjs_mclc_pop.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Populations", skip = 1, col_names = TRUE)
 
 # Import BJS total admissions and population since these numbers are more reliable
-bjs_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
-bjs_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
-#bjs_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
-#bjs_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
-
-
+bjs_pop.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx"))
+bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx"))
 
 ################################
 # COSTS: read cost data for 2019-2021
@@ -211,5 +222,4 @@ var.labels = c(states                                     = "State name",
 adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.labels)
 
 # Save data to sharepoint (most recent version: version 8 on 4/13/2023)
-# write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
-# write.xlsx(adm_pop_analysis_with_bjs, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v8.xlsx")
+# write.xlsx(adm_pop_analysis_with_bjs, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx"))
