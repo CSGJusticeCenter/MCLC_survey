@@ -60,13 +60,13 @@ for (h in refnum) {
 
 #cbind each data frame 2019+
 national.est <- data.frame()
-for (i in 2019:max(year)) {
+for (i in 2019:MCLCsurveyyear) {
   temp <- get(paste0("national.est.CIt",i))
   national.est  <- as.data.frame(cbind.fill(national.est,temp))
 }
 
 listcol <- c()
-for (j in 2019:max(year)) {
+for (j in 2019:MCLCsurveyyear) {
   listcol <- c(listcol,paste0("new_offense_probation_violation_population",j),paste0("new_offense_parole_violation_population",j))
 }
 

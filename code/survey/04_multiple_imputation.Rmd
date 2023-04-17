@@ -1,7 +1,7 @@
 ---
 title: "2022 MCLC Survey Results"
 author: "The CSG Justice Center"
-date: "4/13/2023"
+date: "4/16/2023"
 output:
   html_document
 ---
@@ -41,16 +41,19 @@ cbind.fill <- function(...){
   nm <- lapply(nm, as.matrix)
   n <- max(sapply(nm, nrow)) 
   do.call(cbind, 
-          lapply(nm, function (x) 
-            rbind(x, matrix( , n-nrow(x), ncol(x)))
-            )
+          lapply(nm, function (x) rbind(x, matrix( , n-nrow(x), ncol(x))))
           ) 
   }
 
-##CHANGE INPUTS!!!#####################################
+##CHANGE INPUT BELOW!!!#####################################
+#
+MCLCsurveyyear <- 2021
+#
+##CHANGE INPUT ABOVE!!!#####################################
+
 #years of data
-year     <- as.character(2018:2021)
-refyear  <- as.character(2019:2021)
+year     <- as.character(2018:MCLCsurveyyear)
+refyear  <- as.character(2019:MCLCsurveyyear)
 
 #for labeling tables in output
 tablevals.pretty <- c('Overall Admissions',
@@ -82,88 +85,27 @@ tablevals.pretty <- c('Overall Admissions',
 source("03_clean.R")
 
 #coding missings for calculating national estimates
-#There are three types of special missings:
-# -99 = REFUSED TO ANSWER SURVEY
-##      A value of -99 is assigned for states that left data blank or submitted NAs (did not submit any data)
-# -88 = MISSING DATA INTENTIONALLY
-##      A value of -88 is assigned for states that submitted 0's, NA's or left data blank *intentionally*
-# -77 = DATA DOESN'T EXIST
-##      A value of -77 is assigned for states were parole was abolished
+#REQUIRES MANUAL REVIEW OF SURVEY SUBMISSIONS/UPDATING!!!!!!!!!!!!!!!
+source("special_missings.R")
 
-adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
-  mutate(
-    #if the lowest level of aggregation is non-missing for both probation and parole (e.g., technical violation admissions probation/parole), then sum to create total (e.g., total technical violation admissions)
-    #if the lowest level of aggregation is missing for either or both probation and parole (e.g., technical violation admissions probation/parole), then summed total is MISSING for total (e.g., total technical violation admissions)
-    total_technical_violation_admissions   = case_when(
-      states %nin% c('Maine','Washington') ~ as.numeric(technical_probation_violation_admissions   + technical_parole_violation_admissions),
-      TRUE ~ as.numeric(total_technical_violation_admissions)),
-    total_new_offense_violation_admissions = case_when(
-      states %nin% c('Maine','Washington') ~ as.numeric(new_offense_probation_violation_admissions + new_offense_parole_violation_admissions),
-      TRUE ~ as.numeric(total_new_offense_violation_admissions)),
-    total_technical_violation_population   = case_when(
-      states %nin% c('Maine','Washington') ~ as.numeric(technical_probation_violation_population   + technical_parole_violation_population),
-      TRUE ~ as.numeric(total_technical_violation_population)),
-    total_new_offense_violation_population = case_when(
-      states %nin% c('Maine','Washington') ~ as.numeric(new_offense_probation_violation_population + new_offense_parole_violation_population),
-      TRUE ~ as.numeric(total_new_offense_violation_population)),
-    
-    ##SPECIAL STATE CASES
-    #MAINE (ADMISSIONS ONLY)- all parole variables get 0
-    #                         set total new offenses to missing (already conducted in clean_03.R program)
-    #                         back calculation new offense probation violations from probation violation total and technical probation violations
-    parole_violation_admissions                = case_when(
-      states == 'Maine' ~ 0,
-      TRUE ~ as.numeric(parole_violation_admissions)),
-    technical_parole_violation_admissions      = case_when(
-      states == 'Maine' ~ 0,
-      TRUE ~ as.numeric(technical_parole_violation_admissions)),
-    new_offense_parole_violation_admissions    = case_when(
-      states == 'Maine' ~ 0,
-      TRUE ~ as.numeric(new_offense_parole_violation_admissions)),
-    new_offense_probation_violation_admissions = case_when(
-      states == 'Maine' ~ as.numeric(probation_violation_admissions - technical_probation_violation_admissions),
-      TRUE ~ as.numeric(new_offense_probation_violation_admissions)),
+#all flags should be 0 - if there is a 1 then stop program and check state and logic
+stopifnot(data.frame(table(check.dat$flag_error.na))[,1] == 0) #flag new offense violation admissions logic
+stopifnot(data.frame(table(check.dat$flag_error.np))[,1] == 0) #flag new offense violation population logic
+stopifnot(data.frame(table(check.dat$flag_error.ta))[,1] == 0) #flag technical violation admissions logic
+stopifnot(data.frame(table(check.dat$flag_error.tp))[,1] == 0) #flag technical violation population logic
 
-    #WASHINGTON- all lowest aggregations should be missing
-    #            next level aggr. should be used instead of sum
-    probation_violation_admissions             = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ probation_violation_admissions),
-    parole_violation_admissions                = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ parole_violation_admissions),
-    technical_parole_violation_admissions      = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_parole_violation_admissions),
-    technical_probation_violation_admissions   = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_probation_violation_admissions),
-    new_offense_parole_violation_admissions    = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_parole_violation_admissions),
-    new_offense_probation_violation_admissions = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_probation_violation_admissions),
+#print states/years/metrics where zeroes exist; should exist only for Maine for Parole (Maine abolished parole)
+cbind(state.zeroes,years.zeroes,var.zeroes)
+#stop program if other states besides Maine have 0s in their data
+stopifnot("Maine" %in% state.zeroes)
 
-    probation_violation_population             = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ probation_violation_population),
-    parole_violation_population                = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ parole_violation_population),
-    technical_parole_violation_population      = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_parole_violation_population),
-    technical_probation_violation_population   = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_probation_violation_population),
-    new_offense_parole_violation_population    = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_parole_violation_population),
-    new_offense_probation_violation_population = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_probation_violation_population)
-    )
+#stop program if analysis dataset has any NAs - there should only be special missings
+stopifnot(nrow(data.frame(which(is.na(specialmissings), arr.ind=TRUE))) == 0)
+#if above check confirms analysis data has no NAs, then write
+write.xlsx(specialmissings, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_v8_specialmissings.xlsx"))
+
+#if above checks confirm data is ready for imputation, proceed and finalize imputation dataframe
+adm_pop_analysis_with_bjs <- adm_pop_analysis_with_bjs1
 
 ################################################################################
 # IMPUTATION
@@ -193,7 +135,7 @@ table2018 <- cbind(nat.2018all,natCI.2018all) %>%
          '2018' = paste0('(',`V1`,', ',`V2`,')')
          )
 
-for (i in 2019:max(year)) {
+for (i in 2019:MCLCsurveyyear) {
   temp1 <- get(paste0("nat.",i,"all"))
   temp2 <- get(paste0("natCI.",i,"all"))
   test  <- cbind(temp1,temp2) %>%
