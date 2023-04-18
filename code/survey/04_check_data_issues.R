@@ -1,3 +1,11 @@
+#######################################
+# MCLC Survey
+# Checks data submissions to see if data is repeated across metrics
+# by MR/JSM
+# Last updated: April 18, 2023 (MAR)
+
+# Checks version 9 of data (4/18/2023)
+#######################################
 
 # check to see if states input the same values twice
 check_data <- adm_pop_analysis_with_bjs %>%
@@ -190,5 +198,3 @@ check_data <- adm_pop_analysis_with_bjs %>%
   select(states, year,
          `Supervision Violation Admissions = Technical Violation Admissions`:`Technical Violation Population = Parole Technical Population`) %>%
   distinct()
-
-# write.xlsx(check_data, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_repeated_values_TEST.xlsx"))

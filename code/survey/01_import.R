@@ -1,7 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: import.R
-# Last updated: April 14, 2023 (MAR)
+# Last updated: April 18, 2023 (MAR)
 # Author: Mari Roberts
 
 # Load data directly from google sheets
@@ -33,7 +33,7 @@ costs <- read_excel(paste0(sp_data_path, "/50 State Survey (2021)/Data/Data for 
 #####
 
 # Google form links
-form_links <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/MCLC 2022 Progress Tracking.xlsx", sep = ""))
+form_links <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/MCLC Overview.xlsx", sep = ""), sheet = "State Info")
 form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>%
   select(state, form_link = google_sheet_link_folder_https_drive_google_com_drive_folders_1i_tbzusu_cd9y_t_dk_rz_kuc_popp_q2on_kr_cv_usp_sharing)
 

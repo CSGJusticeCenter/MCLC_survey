@@ -2,7 +2,7 @@
 # MCLC Survey
 # Imports/cleans MCLC Survey for Automated Reports
 # by MR/JSM
-# Last updated: April 14, 2023 (MAR)
+# Last updated: April 18, 2023 (MAR)
 
 # Version History:
 # Version 3: Data from Google sheets
@@ -12,9 +12,11 @@
 # Version 7: Replace version 4 total admissions and population with BJS numbers for just New Mexico, Nebraska, and Alaska (population only)
 # Version 8: Re-read data from Google Sheets because of Nebraska's new submission. Replace Maine's new offense admissions with NA.
 #            Replace total admissions and population with BJS numbers for just New Mexico and Alaska (2021 population only).
+# Version 9: Re-read data from Google Sheets because of Pennsylvania's corrections. Replace Maine's new offense admissions with NA.
+#            Replace total admissions and population with BJS numbers for just New Mexico and Alaska (2021 population only).
 
-# Input: mclc_data_2022_04_13_2023.xlsx - re-pulled data from Google Sheets because of Nebraska's submission on 4/13/23
-# Final: version 8 of data (4/13/2023)
+# Input: mclc_data_2022_04_18_2023.xlsx - re-pulled data from Google Sheets because of Nebraska's submission on 4/13/23
+# Final: version 9 of data (4/18/2023)
 #######################################
 
 # Instructions for installing the csgjcr package
@@ -36,7 +38,7 @@ csg_set_project_path(project = "MCLC",
 sp_data_path <- csg_get_project_path("MCLC")
 
 # # Will create latest version at the end of this file that was created in format_data.R
-readin <- paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx")
+readin <- paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_04_18_2023.xlsx")
 
 # Get info on whether to use BJS or MCLC data by state and admissions vs population
 comparison_bjs_mclc_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Admissions", skip = 2, col_names = TRUE)
@@ -230,5 +232,5 @@ var.labels = c(states                                     = "State name",
 
 adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.labels)
 
-# Save data to sharepoint (most recent version: version 8 on 4/13/2023)
+# Save data to sharepoint (most recent version: version 9 on 4/18/2023)
 # write.xlsx(adm_pop_analysis_with_bjs, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx"))
