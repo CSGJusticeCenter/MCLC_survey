@@ -94,10 +94,10 @@ stopifnot(data.frame(table(check.dat$flag_error.np))[,1] == 0) #flag new offense
 stopifnot(data.frame(table(check.dat$flag_error.ta))[,1] == 0) #flag technical violation admissions logic
 stopifnot(data.frame(table(check.dat$flag_error.tp))[,1] == 0) #flag technical violation population logic
 
-#print states/years/metrics where zeroes exist; should exist only for Maine for Parole (Maine abolished parole)
+#print states/years/metrics where zeroes exist; should exist only for -77 special missing states (abolished parole)
 cbind(state.zeroes,years.zeroes,var.zeroes)
-#stop program if other states besides Maine have 0s in their data
-stopifnot("Maine" %in% state.zeroes)
+#stop program if other states have 0s in their data (-77 special missings)
+stopifnot(states77 %in% state.zeroes)
 
 #stop program if analysis dataset has any NAs - there should only be special missings
 stopifnot(nrow(data.frame(which(is.na(specialmissings), arr.ind=TRUE))) == 0)

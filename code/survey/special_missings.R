@@ -1,3 +1,73 @@
+#REQUIRES UPDATING EACH YEAR
+states99 <- c("Alaska", 
+              "New Mexico")
+
+#REQUIRES UPDATING EACH YEAR
+states88 <- c("Alabama",
+              "Connecticut",
+              "Delaware",
+              "Georgia",
+              "Illinois",
+              "Iowa",
+              "Kentucky",
+              "Maine",
+              "Maryland",
+              "Massachusetts",
+              "Michigan",
+              "Minnesota",
+              "Nebraska", 
+              "Nevada",
+              "New Hampshire",
+              "New Jersey",
+              "New York",
+              "North Dakota",
+              "Ohio",
+              "Oklahoma",
+              "Pennsylvania",
+              "South Carolina",
+              "Texas",
+              "Vermont",
+              "Washington",
+              "West Virginia")
+
+#REQUIRES UPDATING EACH YEAR
+states77 <- c('Delaware',
+              'Maine')
+
+#for categorizing special missings - ensure that 'whichstate' is mutually exclusive
+fixreporting <- function(whichstate, missval, x) {
+  x = ifelse(adm_pop_analysis_with_bjs1$states %in% whichstate, missval, x)
+  return(x)
+}
+
+
+
+
+
+
+
+#CHECKS!!!###################################
+for (i in 1:200) {
+  CHECKSTATE <- ifelse(sum(grepl("TRUE",duplicated(t(adm_pop_analysis[i,])))) > 0, 1, 0)
+  statename  <- adm_pop_analysis[i,]$states
+  stateyear  <- adm_pop_analysis[i,]$year
+  assign(paste0("valcheck",statename,stateyear),CHECKSTATE,envir = .GlobalEnv)
+}
+
+test<-mget(ls(pattern="valcheck"), .GlobalEnv)
+test2<-data.frame(unlist(Filter(function(x) x == 1, test)))
+test3<-add_rownames(test2,var="states") %>% select(states)
+write.xlsx(test3, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/checkstatesrepeatedvalues.xlsx"))
+#############################################
+
+
+
+
+
+
+
+
+#clean up missing data and incorrectly reported data
 adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
   mutate(
     #blank out 0s - there should never be a 0 value in the data (EXCEPT IF PAROLE HAS BEEN ABOLISHED - see below)
@@ -19,64 +89,44 @@ adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
       TRUE ~ as.numeric(total_new_offense_violation_population)),
     
     ##SPECIAL STATE CASES
-    #MAINE (ADMISSIONS ONLY)- all parole variables get 0
-    #                         set total new offenses to missing (already conducted in clean_03.R program)
-    #                         back calculation new offense probation violations from probation violation total and technical probation violations
-    parole_violation_admissions                = case_when(
-      states == 'Maine' ~ 0,
-      TRUE ~ as.numeric(parole_violation_admissions)),
-    technical_parole_violation_admissions      = case_when(
-      states == 'Maine' ~ 0,
-      TRUE ~ as.numeric(technical_parole_violation_admissions)),
-    new_offense_parole_violation_admissions    = case_when(
-      states == 'Maine' ~ 0,
-      TRUE ~ as.numeric(new_offense_parole_violation_admissions)),
+    #MAINE/DELAWARE- all parole variables get 0
+    #                set total new offenses to missing (already conducted in clean_03.R program)
+    #                back calculation new offense probation violations from probation violation total and technical probation violations
+    across(c(parole_violation_admissions,
+             technical_parole_violation_admissions,
+             new_offense_parole_violation_admissions,
+             parole_violation_population,
+             technical_parole_violation_population,
+             new_offense_parole_violation_population
+             ),
+    fixreporting, whichstate = states77, missval = 0
+    ),
+    #back calculation of new offense probation violation admissions
     new_offense_probation_violation_admissions = case_when(
       states == 'Maine' ~ as.numeric(probation_violation_admissions - technical_probation_violation_admissions),
       TRUE ~ as.numeric(new_offense_probation_violation_admissions)),
     
     #WASHINGTON- all lowest aggregations should be missing
     #            next level aggr. should be used instead of sum
-    probation_violation_admissions             = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ probation_violation_admissions),
-    parole_violation_admissions                = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ parole_violation_admissions),
-    technical_parole_violation_admissions      = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_parole_violation_admissions),
-    technical_probation_violation_admissions   = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_probation_violation_admissions),
-    new_offense_parole_violation_admissions    = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_parole_violation_admissions),
-    new_offense_probation_violation_admissions = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_probation_violation_admissions),
-    
-    probation_violation_population             = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ probation_violation_population),
-    parole_violation_population                = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ parole_violation_population),
-    technical_parole_violation_population      = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_parole_violation_population),
-    technical_probation_violation_population   = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ technical_probation_violation_population),
-    new_offense_parole_violation_population    = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_parole_violation_population),
-    new_offense_probation_violation_population = case_when(
-      states == 'Washington' ~ NA,
-      TRUE ~ new_offense_probation_violation_population)
-  )
+    across(c(probation_violation_admissions,
+             parole_violation_admissions,
+             technical_parole_violation_admissions,
+             technical_probation_violation_admissions,
+             new_offense_parole_violation_admissions,
+             new_offense_probation_violation_admissions,
+             
+             probation_violation_population,
+             parole_violation_population,
+             technical_parole_violation_population,
+             technical_probation_violation_population,
+             new_offense_parole_violation_population,
+             new_offense_probation_violation_population
+             ),
+           ~ifelse(adm_pop_analysis_with_bjs1$states == 'Washington', NA, .x)
+           )
+    )
 
-#check calculations for all states (except Maine/Washington, which have special cases)
+#check summing calculations for all states (except Maine/Washington, which have special cases)
 check.dat <- adm_pop_analysis_with_bjs1 %>%
   select(c("states","year",
            "total_technical_violation_admissions",  "technical_probation_violation_admissions",  "technical_parole_violation_admissions",
@@ -120,85 +170,64 @@ var.zeroes   <- names(adm_pop_analysis_with_bjs1[,check.zeroes[,2]]) #variables 
 # -77 = DATA DOESN'T EXIST
 ##      A value of -77 is assigned for states were parole was abolished
 
-#REQUIRES UPDATING EACH YEAR
-states99 <- c("Alaska", 
-              "New Mexico")
-
-#REQUIRES UPDATING EACH YEAR
-states88 <- c("Alabama",
-              "Connecticut",
-              "Delaware",
-              "Georgia",
-              "Illinois",
-              "Iowa",
-              "Kentucky",
-              "Maryland",
-              "Massachusetts",
-              "Michigan",
-              "Minnesota",
-              "Nebraska", 
-              "Nevada",
-              "New Hampshire",
-              "New Jersey",
-              "New York",
-              "North Dakota",
-              "Ohio",
-              "Oklahoma",
-              "Pennsylvania",
-              "South Carolina",
-              "Texas",
-              "Vermont",
-              "Washington",
-              "West Virginia")
-
-#REQUIRES UPDATING EACH YEAR
-states77 <- c()
-
-#for categorizing special missings
-replaceNA <- function(x) {
-  x = ifelse(is.na(x) & adm_pop_analysis_with_bjs1$states %in% states99, -99, 
-             ifelse(is.na(x) & adm_pop_analysis_with_bjs1$states %in% states88, -88, 
-                    ifelse(is.na(x) & adm_pop_analysis_with_bjs1$states %in% states77, -77, x
-                    )
-             )
-  )
+#for categorizing special missings - ensure that 'whichstate' is mutually exclusive
+replaceNA <- function(whichstate, missval, x) {
+  x = ifelse(is.na(x) & adm_pop_analysis_with_bjs1$states %in% whichstate, missval, x)
   return(x)
 }
 
-#REQUIRES UPDATING EACH YEAR
-replaceNA.MAINE <- function(x) {
-  x = ifelse(is.na(x) & adm_pop_analysis_with_bjs1$states == "Maine", -88, x)
+#for categorizing special missings for states without parole
+replaceZERO <- function(whichstate, missval, x) {
+  x = ifelse(x == 0 & adm_pop_analysis_with_bjs1$states %in% whichstate, missval, x)
+  return(x)
 }
 
 #create special missings and store as dataframe
 specialmissings <- adm_pop_analysis_with_bjs1 %>%
   mutate(
     #make NAs into special missings
-    across(!states & !year, replaceNA),
+    across(!states & !year, replaceNA, whichstate = states99, missval = -99),
+    across(!states & !year, replaceNA, whichstate = states88, missval = -88),
     
     #REQUIRES UPDATING EACH YEAR
-    #special cases for Maine
-    parole_violation_admissions                = case_when(
-      states == 'Maine' ~ -77,
-      TRUE ~ as.numeric(parole_violation_admissions)),
-    technical_parole_violation_admissions      = case_when(
-      states == 'Maine' ~ -77,
-      TRUE ~ as.numeric(technical_parole_violation_admissions)),
-    new_offense_parole_violation_admissions    = case_when(
-      states == 'Maine' ~ -77,
-      TRUE ~ as.numeric(new_offense_parole_violation_admissions)),
-    total_new_offense_violation_admissions    = case_when(
-      states == 'Maine' ~ -88,
-      TRUE ~ as.numeric(total_new_offense_violation_admissions)),
-    across(c(total_supervision_violation_population,
-             probation_violation_population,
+    #special cases for Maine and Delaware - change parole 0s to -77
+    across(c(parole_violation_admissions,
+             technical_parole_violation_admissions,
+             new_offense_parole_violation_admissions,
              parole_violation_population,
-             total_technical_violation_population,
-             technical_probation_violation_population,
-             technical_parole_violation_population,      
-             new_offense_probation_violation_population,
-             new_offense_parole_violation_population,
-             total_new_offense_violation_population),
-           replaceNA.MAINE
+             technical_parole_violation_population,
+             new_offense_parole_violation_population
+             ),
+           replaceZERO, whichstate = states77, missval = -77
            )
-  )
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
