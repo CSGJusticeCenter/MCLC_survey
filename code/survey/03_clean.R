@@ -13,8 +13,8 @@
 # Version 8: Re-read data from Google Sheets because of Nebraska's new submission. Replace Maine's new offense admissions with NA.
 #            Replace total admissions and population with BJS numbers for just New Mexico and Alaska (2021 population only).
 
-# Input: mclc_data_2022_04_13_2023.xlsx - re-pulled data from Google Sheets because of Nebraska's submission on 4/13/23
-# Final: version 8 of data (4/13/2023)
+# Input: mclc_data_2022_04_18_2023.xlsx - re-pulled data from Google Sheets because of Nebraska's submission on 4/13/23
+# Final: version 9 of data (4/18/2023)
 #######################################
 
 # Instructions for installing the csgjcr package
@@ -27,7 +27,7 @@
 
 # Set project path for MAR/JM - un-comment your part
 csg_set_project_path(project   = "MCLC",
-                     sp_folder = csg_sp_path("/50 State Revocations Project"), 
+                     sp_folder = csg_sp_path("50 State Revocations Project"), 
                      force = TRUE
                      )
 
@@ -35,7 +35,7 @@ csg_set_project_path(project   = "MCLC",
 sp_data_path <- csg_get_project_path("MCLC")
 
 # # Will create latest version at the end of this file that was created in format_data.R
-readin <- paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_04_13_2023.xlsx")
+readin <- paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_04_18_2023.xlsx")
 
 # Get info on whether to use BJS or MCLC data by state and admissions vs population
 comparison_bjs_mclc_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Admissions", skip = 2, col_names = TRUE)
@@ -51,9 +51,9 @@ bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJ
 
 costs        <- read_xlsx(readin, sheet = "Costs", .name_repair = "universal") %>%
   mutate_at(vars(-c("state")), as.numeric) %>%
-  dplyr::rename(Cost.in.2019 = year_2019,
-                Cost.in.2020 = year_2020,
-                Cost.in.2021 = year_2021)
+  dplyr::rename(Cost.prev2 = year_2019,
+                Cost.prev1 = year_2020,
+                Cost.now   = year_2021)
 
 # read excel population/admissions data for 2018-2021
 population18 <- read_xlsx(readin, sheet = "Population 2018", .name_repair = "universal")
@@ -220,5 +220,5 @@ var.labels = c(states                                     = "State name",
 
 adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.labels)
 
-# Save data to sharepoint (most recent version: version 8 on 4/13/2023)
+# Save data to sharepoint (most recent version: version 9 on 4/18/2023)
 # write.xlsx(adm_pop_analysis_with_bjs, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx"))

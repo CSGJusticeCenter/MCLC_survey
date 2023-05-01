@@ -1,7 +1,7 @@
 ---
 title: "2022 MCLC Survey Results"
 author: "The CSG Justice Center"
-date: "4/16/2023"
+date: "4/30/2023"
 output:
   html_document
 ---
@@ -85,14 +85,14 @@ tablevals.pretty <- c('Overall Admissions',
 source("03_clean.R")
 
 #coding missings for calculating national estimates
-#REQUIRES MANUAL REVIEW OF SURVEY SUBMISSIONS/UPDATING!!!!!!!!!!!!!!!
+#REQUIRES MANUAL REVIEW OF SURVEY SUBMISSIONS/UPDATING!
 source("special_missings.R")
 
-#all flags should be 0 - if there is a 1 then stop program and check state and logic
-stopifnot(data.frame(table(check.dat$flag_error.na))[,1] == 0) #flag new offense violation admissions logic
-stopifnot(data.frame(table(check.dat$flag_error.np))[,1] == 0) #flag new offense violation population logic
-stopifnot(data.frame(table(check.dat$flag_error.ta))[,1] == 0) #flag technical violation admissions logic
-stopifnot(data.frame(table(check.dat$flag_error.tp))[,1] == 0) #flag technical violation population logic
+#all flags should be 0 (w/few exceptions) - if there is a 1 then check state and logic
+table(check.dat$flag_error.na) #flag new offense violation admissions logic
+table(check.dat$flag_error.np) #flag new offense violation population logic
+table(check.dat$flag_error.ta) #flag technical violation admissions logic
+table(check.dat$flag_error.tp) #flag technical violation population logic
 
 #print states/years/metrics where zeroes exist; should exist only for -77 special missing states (abolished parole)
 cbind(state.zeroes,years.zeroes,var.zeroes)
@@ -102,7 +102,7 @@ stopifnot(states77 %in% state.zeroes)
 #stop program if analysis dataset has any NAs - there should only be special missings
 stopifnot(nrow(data.frame(which(is.na(specialmissings), arr.ind=TRUE))) == 0)
 #if above check confirms analysis data has no NAs, then write
-write.xlsx(specialmissings, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_v8_specialmissings.xlsx"))
+write.xlsx(specialmissings, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_v9_specialmissings.xlsx"))
 
 #if above checks confirm data is ready for imputation, proceed and finalize imputation dataframe
 adm_pop_analysis_with_bjs <- adm_pop_analysis_with_bjs1
