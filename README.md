@@ -19,12 +19,14 @@ This repository uses MCLC data from state specific Google Sheets. Version 4 had 
 ## Repository Structure 
 
     |-- code 
-      |-- survey (run in this order, use for current MCLC data)
+      |-- survey (run programs 00 thru 04 in this order; use for current MCLC data)
           |-- 00_library_functions.R   # Custom functions to extract 2022 survey data and load packages
           |-- 01_import.R              # Imports MCLC survey data from Google Sheets and BJS data
           |-- 02_format_data.R         # Save data to sp - no longer needed due to manual changes in data
           |-- 03_clean.R               # Format data like 2021 survey data, replace data with BJS numbers
-          |-- 04_multiple_imputation.R # Imput missing values (sources Costs.R, MImp1.R, MImp3.R, MImp3.R)
+          |-- 04_check_data_issues.R   # Checks data submissions to see if data is repeated across metrics
+          |-- 05_multiple_imputation.R # Input missing values
+              |-- sources the following programs in this order: 03_clean.R, special_missing.R, MImp1.R, MImp3.R, MImp3.R, Costs.R
       |-- automated_emails
           |-- 00_import.R              # Load packages and imports MCLC survey data from Google Sheets  
           |-- 01_functions.R           # Custom functions for data cleaning and qa checklists
