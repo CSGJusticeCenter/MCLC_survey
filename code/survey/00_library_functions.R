@@ -15,6 +15,7 @@
 #     the function csg_set_project_path
 # remove.packages("csgjcr")
 # devtools::install_github("CSGJusticeCenter/csgjcr@develop")
+library(csgjcr)
 
 # Set project path for MAR/JM - un-comment your part
 # csg_set_project_path(project = "MCLC",
@@ -30,7 +31,6 @@ sp_data_path <- csg_get_project_path("MCLC")
 # Load packages
 #####
 
-library(csgjcr)
 library(googlesheets4)
 library(googledrive)
 library(readxl)

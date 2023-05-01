@@ -2,7 +2,7 @@
 # MCLC Survey
 # Imports/cleans MCLC Survey for Automated Reports
 # by MR/JSM
-# Last updated: April 16, 2023 (JSM)
+# Last updated: April 30, 2023 (JSM)
 
 # Version History:
 # Version 3: Data from Google sheets
@@ -11,6 +11,8 @@
 # Version 6: Replace version 4 total admissions and population with BJS numbers for specific states flagged in Comparison_MCLC_and_BJS_data_v1.xlsx
 # Version 7: Replace version 4 total admissions and population with BJS numbers for just New Mexico, Nebraska, and Alaska (population only)
 # Version 8: Re-read data from Google Sheets because of Nebraska's new submission. Replace Maine's new offense admissions with NA.
+#            Replace total admissions and population with BJS numbers for just New Mexico and Alaska (2021 population only).
+# Version 9: Re-read data from Google Sheets because of Pennsylvania's corrections. Replace Maine's new offense admissions with NA.
 #            Replace total admissions and population with BJS numbers for just New Mexico and Alaska (2021 population only).
 
 # Input: mclc_data_2022_04_18_2023.xlsx - re-pulled data from Google Sheets because of Nebraska's submission on 4/13/23
