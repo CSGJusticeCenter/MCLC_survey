@@ -2,7 +2,7 @@
 # MCLC Survey
 # Imports/cleans MCLC Survey for Automated Reports
 # by MR/JSM
-# Last updated: April 18, 2023 (MAR)
+# Last updated: April 30, 2023 (JSM)
 
 # Version History:
 # Version 3: Data from Google sheets
@@ -28,11 +28,10 @@
 # devtools::install_github("CSGJusticeCenter/csgjcr@develop")
 
 # Set project path for MAR/JM - un-comment your part
-# csg_set_project_path(project = "MCLC",
-#                      sp_folder = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project", force = TRUE)
-
-csg_set_project_path(project = "MCLC",
-                     sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project", force = TRUE)
+csg_set_project_path(project   = "MCLC",
+                     sp_folder = csg_sp_path("50 State Revocations Project"), 
+                     force = TRUE
+                     )
 
 # assign SP path
 sp_data_path <- csg_get_project_path("MCLC")
@@ -48,16 +47,15 @@ comparison_bjs_mclc_pop.xlsx <- read_excel(paste0(sp_data_path, "/50 State Surve
 bjs_pop.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx"))
 bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx"))
 
-
 ################################
 # COSTS: read cost data for 2019-2021
 ################################
 
-costs        <- read_xlsx(readin, sheet = "Costs",           .name_repair = "universal") %>%
+costs        <- read_xlsx(readin, sheet = "Costs", .name_repair = "universal") %>%
   mutate_at(vars(-c("state")), as.numeric) %>%
-  dplyr::rename(Cost.in.2019 = year_2019,
-                Cost.in.2020 = year_2020,
-                Cost.in.2021 = year_2021)
+  dplyr::rename(Cost.prev2 = year_2019,
+                Cost.prev1 = year_2020,
+                Cost.now   = year_2021)
 
 # read excel population/admissions data for 2018-2021
 population18 <- read_xlsx(readin, sheet = "Population 2018", .name_repair = "universal")
@@ -115,9 +113,6 @@ adm_pop_analysis <- merge(admissions, population, by = c("states","year")) %>%
   select(states, year, everything()) %>%
   arrange(desc(states)) %>%
   mutate(year = as.character(year))
-
-
-
 
 ################################
 # BJS vs MCLC data: will use total admissions and population for certain states
@@ -177,7 +172,6 @@ comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop %>%
          total_prison_population_bjs = value) %>%
   mutate(year = as.character(year))
 
-
 ##############
 # Replace total admissions and total population with BJS numbers for specific states (use_mclc_vs_bjs), which are more reliable
 ##############
@@ -203,31 +197,27 @@ adm_pop_analysis_with_bjs <- adm_pop_analysis_with_bjs %>%
 # add labels
 var.labels = c(states                                     = "State name",
                year                                       = "Year",
-               total_prison_admissions                    = "Total admissions",
+               total_prison_admissions                    = "Total admissions", overall_admissions = "Overall admissions",
                total_supervision_violation_admissions     = "Total probation and parole violation admissions",
-               probation_violation_admissions             = "Total probation violation admissions (new offense + technical)",
-               parole_violation_admissions                = "Total parole violation admissions (new offense + technical)",
-
+               probation_violation_admissions             = "Total probation violation admissions",
+               parole_violation_admissions                = "Total parole violation admissions",
                total_technical_violation_admissions       = "Total technical violation admissions",
-               technical_probation_violation_admissions   = "Technical probation violation admissions",
-               technical_parole_violation_admissions      = "Technical parole violation admissions",
-
+               technical_probation_violation_admissions   = "Admissions for technical violations, probation", 
+               technical_parole_violation_admissions      = "Admissions for technical violations, parole",
                total_new_offense_violation_admissions     = "Total new offense violation admissions",
-               new_offense_probation_violation_admissions = "New offense probation violation admissions",
-               new_offense_parole_violation_admissions    = "New offense parole violation admissions",
-
-               total_prison_population                    = "Total population",
+               new_offense_probation_violation_admissions = "Admissions for new crime violations, probation",
+               new_offense_parole_violation_admissions    = "Admissions for new crime violations, parole",
+               
+               total_prison_population                    = "Total population", overall_population = "Overall population",
                total_supervision_violation_population     = "Total probation and parole violation population",
-               probation_violation_population             = "Total probation violation population (new offense + technical)",
-               parole_violation_population                = "Total parole violation population (new offense + technical)",
-
+               probation_violation_population             = "Total probation violation population",
+               parole_violation_population                = "Total parole violation population",
                total_technical_violation_population       = "Total technical violation population",
-               technical_probation_violation_population   = "Technical probation violation population",
-               technical_parole_violation_population      = "Technical parole violation population",
-
+               technical_probation_violation_population   = "Technical violator population, probation",
+               technical_parole_violation_population      = "Technical violator population, parole",
                total_new_offense_violation_population     = "Total new offense violation population",
-               new_offense_probation_violation_population = "New offense probation violation population",
-               new_offense_parole_violation_population    = "New offense parole violation population"
+               new_offense_probation_violation_population = "New crime violator population, probation",
+               new_offense_parole_violation_population    = "New crime violator population, parole"
                )
 
 adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.labels)
