@@ -170,8 +170,8 @@ adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
            replaceit, whichstate = 'Kentucky', missval = NA, var = states, pickyear = year    
            ),
     
-    #MAINE - for ADMISSIONS metrics, total new off. set to MISSING, and all parole variables set to 0, and back-calculate new off. prob. by subtracting tech. prob. from total prob.
-    across(c(total_new_offense_violation_admissions,
+    #MAINE - for ADMISSIONS metrics, total new off. set to MISSING, and all parole variables set to 0
+    across(c(total_new_offense_violation_admissions
              ),
            replaceit, whichstate = 'Maine', missval = NA, var = states, pickyear = year    
            ),
