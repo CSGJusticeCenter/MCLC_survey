@@ -184,9 +184,6 @@ adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
              ),
     replaceit, whichstate = 'Maine', missval = 0, var = states, pickyear = year
     ),
-    new_offense_probation_violation_admissions = case_when(
-      states == 'Maine' ~ as.numeric(probation_violation_admissions - technical_probation_violation_admissions),
-      TRUE ~ as.numeric(new_offense_probation_violation_admissions)),
     
     #MASSACHUSETTS - for ADMISSIONS/POPULATION metrics, summed total is MISSING for total tech./total new off.
     total_technical_violation_admissions   = case_when(
