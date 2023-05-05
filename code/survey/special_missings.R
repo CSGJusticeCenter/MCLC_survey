@@ -261,32 +261,6 @@ adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
      TRUE ~ as.numeric(total_new_offense_violation_population)
      ),  
     
-  #NEVADA - for ADMISSIONS/POPULATION metrics, subtract new off. from supervision to fill in tech. (6 variables total)
-  total_technical_violation_admissions = case_when(
-    states == 'Nevada' ~ as.numeric(total_supervision_violation_admissions - total_new_offense_violation_admissions),
-    TRUE ~ as.numeric(total_technical_violation_admissions)
-    ), 
-  technical_probation_violation_admissions = case_when(
-    states == 'Nevada' ~ as.numeric(probation_violation_admissions - new_offense_probation_violation_admissions),
-    TRUE ~ as.numeric(technical_probation_violation_admissions)
-    ), 
-  technical_parole_violation_admissions = case_when(
-    states == 'Nevada' ~ as.numeric(parole_violation_admissions - new_offense_parole_violation_admissions),
-    TRUE ~ as.numeric(technical_parole_violation_admissions)
-    ), 
-  total_technical_violation_population = case_when(
-    states == 'Nevada' ~ as.numeric(total_supervision_violation_population - total_new_offense_violation_population),
-    TRUE ~ as.numeric(total_technical_violation_population)
-    ), 
-  technical_probation_violation_population = case_when(
-    states == 'Nevada' ~ as.numeric(probation_violation_population - new_offense_probation_violation_population),
-    TRUE ~ as.numeric(technical_probation_violation_population)
-    ), 
-  technical_parole_violation_population = case_when(
-    states == 'Nevada' ~ as.numeric(parole_violation_population - new_offense_parole_violation_population),
-    TRUE ~ as.numeric(technical_parole_violation_population)
-    ),  
-   
   #NEW HAMPSHIRE - for ADMISSIONS/POPULATION metrics, set all tech. vars to MISSING 
   across(c(total_technical_violation_admissions,
            technical_probation_violation_admissions,
