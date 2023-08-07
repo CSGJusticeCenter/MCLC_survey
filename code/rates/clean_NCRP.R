@@ -3,6 +3,7 @@ box::use(
     ./admin
   , ./import
   , dplyr[...]
+  , tidycensus[fips_codes]
   , stringr[str_sub]
   , forcats[fct_recode, fct_explicit_na]
   , purrr[map]
@@ -41,8 +42,8 @@ addSTATEids <- function(DF){
     mutate(
         FIPS    = as.factor(str_sub(STATE, 2, 3))
       , FCT_NUM = as.numeric(as.character(FIPS))
-      , ABB     = csgjcr::csg_state_convert(FIPS, "fips", "abbr")
-      , STATE   = csgjcr::csg_state_convert(FIPS, "fips", "name")
+      , ABB     = unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state"]][match(FIPS, unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_code"]])]
+      , STATE   = unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_name"]][match(FIPS, unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_code"]])]
     ) %>% 
     ungroup() %>% 
     #make state id columns the same factor levels (based on FIPS)

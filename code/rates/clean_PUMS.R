@@ -1,6 +1,7 @@
 box::use(
     ./admin
   , dplyr[...]
+  , tidycensus[fips_codes]
   , tidyr[...]
 )
 
@@ -37,8 +38,8 @@ prep <- function(){
     ) %>% 
     # add state informaiton 
     mutate(
-        FIPS = csgjcr::csg_state_convert(STATE, "name", "fips")
-      , ABB  = csgjcr::csg_state_convert(STATE, "name", "abbr")
+        FIPS = unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_code"]][match(STATE, unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_name"]])]
+      , ABB  = unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state"]][match(STATE, unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_name"]])]
       , FCT_NUM = as.numeric(FIPS)
     ) %>% 
     mutate_at(vars(STATE, ABB, FIPS), ~forcats::fct_reorder(factor(.), FCT_NUM)) %>% 

@@ -3,6 +3,7 @@ box::use(
     ./admin
   , ./import
   , dplyr[...]
+  , tidycensus[fips_codes]
   , stringr[str_sub]
   , tidyr[pivot_longer, drop_na]
 )
@@ -22,8 +23,8 @@ addSTATEids <- function(DF){
     #create other state id columns: FIPS, NAME, ABB 
     rowwise() %>%
     mutate(
-        FIPS    = csgjcr::csg_state_convert(ABB, "abbr", "fips")
-      , STATE   = csgjcr::csg_state_convert(ABB, "abbr", "name")
+        FIPS    = unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_code"]][match(ABB, unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state"]])]
+      , STATE   = unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state_name"]][match(ABB, unique(tidycensus::fips_codes %>% select(c(state,state_code,state_name)))[["state"]])]
       , FCT_NUM = as.numeric(FIPS)
     ) %>% 
     ungroup() %>% 
