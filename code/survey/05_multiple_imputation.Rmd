@@ -4,6 +4,7 @@ author: "The CSG Justice Center"
 date: "05/16/2023"
 output:
   html_document
+  #Gmisc::docx_document
 ---
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
@@ -34,6 +35,9 @@ library(eeptools)
 library(csgjcr)
 library(scales)
 library(xtable)
+
+#print to word
+library(Gmisc)
 
 #for binding blank dataframes
 cbind.fill <- function(...){
