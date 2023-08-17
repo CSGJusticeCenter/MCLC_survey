@@ -1,7 +1,7 @@
 ---
 title: "2022 MCLC Survey Results"
 author: "The CSG Justice Center"
-date: "05/16/2023"
+date: "08/17/2023"
 output:
   html_document
   #Gmisc::docx_document
@@ -238,15 +238,19 @@ Below is a table of these costs by state (no imputation). Note that missing cell
 <br>
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='asis'}
-print(xtable(cost.final[c("State","cost.vp.state","cost.tvp.state")] %>%
+print(xtable(cost.final[c("State","cost.pr.state","cost.pa.state","cost.tpr.state","cost.tpa.state")] %>%
                               mutate(
-                                `Community Supervision Violator Cost` = case_when(cost.vp.state >=0 ~ dollar_format()(cost.vp.state),
+                                `Overall Probation Violator Cost`   = case_when(cost.pr.state >=0 ~ dollar_format()(cost.pr.state),
                                                                                   TRUE ~ NA_character_),
-                                `Technical Violator Cost`             = case_when(cost.vp.state >=0 ~ dollar_format()(cost.tvp.state),
+                                `Overall Parole Violator Cost`      = case_when(cost.pa.state >=0 ~ dollar_format()(cost.pa.state),
+                                                                                  TRUE ~ NA_character_),
+                                `Technical Probation Violator Cost` = case_when(cost.tpr.state >=0 ~ dollar_format()(cost.tpr.state),
+                                                                                  TRUE ~ NA_character_),
+                                `Technical Parole Violator Cost`    = case_when(cost.tpa.state >=0 ~ dollar_format()(cost.tpa.state),
                                                                                   TRUE ~ NA_character_)
                                      ) %>%
-                              select(-c(cost.vp.state,cost.tvp.state)),
-                           align = c("llrr")),
+                              select(-c(cost.pr.state,cost.pa.state,cost.tpr.state,cost.tpa.state)),
+                           align = c("llrrrr")),
       include.rownames = FALSE,
       type             = "html")
 ```
