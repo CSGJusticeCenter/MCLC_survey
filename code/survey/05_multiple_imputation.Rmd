@@ -1,10 +1,9 @@
 ---
-title: "2022 MCLC Survey Results"
-author: "The CSG Justice Center"
-date: "08/17/2023"
-output:
-  html_document
-  #Gmisc::docx_document
+params:
+  set_title: ""
+  yearofsurvey: 
+title: "`r params$set_title`"
+date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
 ---
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
@@ -51,7 +50,7 @@ cbind.fill <- function(...){
 
 ##CHANGE INPUT BELOW!!!#####################################
 #
-MCLCsurveyyear <- 2021
+MCLCsurveyyear <- params$yearofsurvey
 #
 ##CHANGE INPUT ABOVE!!!#####################################
 

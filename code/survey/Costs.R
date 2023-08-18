@@ -4,7 +4,7 @@
 #Take state-level estimates and calculate costs
 ################################################################################
 
-#just for state-level cost report REQUIRES UPDATING!!!
+#just for state-level cost report
 #all aggregations except overall
 forreport           <- national.est[,grepl(paste0("population",last(refyear)), names(national.est))] %>% select(-c(starts_with("overall"),contains("_probation_"),contains("_parole_")))
 #remove year from column names
