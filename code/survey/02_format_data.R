@@ -2,7 +2,6 @@
 # Project:  MCLC Survey (2022)
 # File: format_data.R
 # Last updated: September 7, 2023
-
 # Format MCLC survey data
 ############################################
 

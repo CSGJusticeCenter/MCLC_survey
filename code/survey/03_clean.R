@@ -14,11 +14,11 @@ readin <- file_name
 # COSTS: read cost data for 2019-2021
 ################################
 
-costs        <- read_xlsx(readin, sheet = "Costs",           .name_repair = "universal") %>%
+costs        <- read_xlsx(readin, sheet = "Costs", .name_repair = "universal") %>%
   mutate_at(vars(-c("state")), as.numeric) %>%
-  dplyr::rename(Cost.in.2019 = year_2019,
-                Cost.in.2020 = year_2020,
-                Cost.in.2021 = year_2021)
+  dplyr::rename(Cost.prev2 = year_2019,
+                Cost.prev1 = year_2020,
+                Cost.now   = year_2021)
 
 # read excel population/admissions data for 2018-2021
 population18 <- read_xlsx(readin, sheet = "Population 2018", .name_repair = "universal")
@@ -43,7 +43,8 @@ population21$year <- "2021"
 
 # combine pop data
 population <- rbind(population18, population19, population20, population21) %>%
-  select(-c(total_new_offense_population,total_technical_violation_population)) %>%
+  mutate(total_new_offense_violation_population = total_new_offense_population) %>%
+  select(-c(total_new_offense_population)) %>%
   mutate_at(vars(-c("state", "year")), decomma) %>%
   mutate_at(vars(year),list(factor)) %>%
   dplyr::rename(states = state)
@@ -60,7 +61,8 @@ admissions21$year <- "2021"
 
 # combine pop data
 admissions <- rbind(admissions18, admissions19, admissions20, admissions21) %>%
-  select(-c(total_new_offense_admissions,total_technical_violation_admissions)) %>%
+  mutate(total_new_offense_violation_admissions = total_new_offense_admissions) %>%
+  select(-c(total_new_offense_admissions)) %>%
   mutate_at(vars(-c("state", "year")), decomma) %>%
   mutate_at(vars(year),list(factor)) %>%
   dplyr::rename(states = state)
@@ -74,9 +76,6 @@ adm_pop_analysis <- merge(admissions, population, by = c("states","year")) %>%
   select(states, year, everything()) %>%
   arrange(desc(states)) %>%
   mutate(year = as.character(year))
-
-
-
 
 ################################
 # BJS vs MCLC data: will use total admissions and population for certain states
@@ -92,9 +91,6 @@ comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm.xlsx %>%
          bjs_adm_20 = total_adms_8,
          bjs_adm_21 = total_adms_11) %>%
   distinct()
-
-# # Save BJS vs MCLC variable
-# mclc_vs_bjs <- comparison_bjs_mclc_adm %>% select(states, use_mclc_vs_bjs) %>% distinct()
 
 # If MCLC numbers should be used, assign MCLC numbers as final numbers, otherwise use BJS numbers
 comparison_bjs_mclc_adm <- comparison_bjs_mclc_adm %>%
@@ -139,51 +135,55 @@ comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop %>%
          total_prison_population_bjs = value) %>%
   mutate(year = as.character(year))
 
-
-
-
-
-
 ##############
 # Replace total admissions and total population with BJS numbers for specific states (use_mclc_vs_bjs), which are more reliable
 ##############
 
-adm_pop_analysis <- adm_pop_analysis %>%
+# Replace total admissions and total population with BJS numbers for specific states
+adm_pop_analysis_with_bjs_orig <- adm_pop_analysis %>%
   left_join(comparison_bjs_mclc_adm, by = c("states", "year")) %>%
   left_join(comparison_bjs_mclc_pop, by = c("states", "year")) %>%
   mutate(
     total_prison_population = case_when(states == "Alaska" &
                                           year == 2021         ~ total_prison_population_bjs,
-                                        states == "Nebraska"   ~ total_prison_population_bjs,
                                         states == "New Mexico" ~ total_prison_population_bjs,
                                         TRUE                   ~ total_prison_population),
-    total_prison_admissions = case_when(states == "Nebraska"   ~ total_prison_admissions_bjs,
-                                        states == "New Mexico" ~ total_prison_admissions_bjs,
+    total_prison_admissions = case_when(states == "New Mexico" ~ total_prison_admissions_bjs,
                                         TRUE                   ~ total_prison_admissions)
   ) %>%
   select(-c(total_prison_population_bjs,total_prison_admissions_bjs))
 
+# Make Maine's new offense violations NA
+adm_pop_analysis_with_bjs_orig <- adm_pop_analysis_with_bjs_orig %>%
+  mutate(total_new_offense_violation_admissions = ifelse(states == "Maine", NA, total_new_offense_violation_admissions))
+
 # add labels
 var.labels = c(states                                     = "State name",
                year                                       = "Year",
-               total_prison_admissions                    = "Total admissions",
+               total_prison_admissions                    = "Total admissions", overall_admissions = "Overall admissions",
                total_supervision_violation_admissions     = "Total probation and parole violation admissions",
-               probation_violation_admissions             = "Total probation violation admissions (new offense + technical)",
-               new_offense_probation_violation_admissions = "New offense probation violation admissions",
-               technical_probation_violation_admissions   = "Technical probation violation admissions",
-               parole_violation_admissions                = "Total parole violation admissions (new offense + technical)",
-               new_offense_parole_violation_admissions    = "New offense parole violation admissions",
-               technical_parole_violation_admissions      = "Technical parole violation admissions",
-               total_prison_population                    = "Total population",
+               probation_violation_admissions             = "Total probation violation admissions",
+               parole_violation_admissions                = "Total parole violation admissions",
+               total_technical_violation_admissions       = "Total technical violation admissions",
+               technical_probation_violation_admissions   = "Admissions for technical violations, probation", 
+               technical_parole_violation_admissions      = "Admissions for technical violations, parole",
+               total_new_offense_violation_admissions     = "Total new offense violation admissions",
+               new_offense_probation_violation_admissions = "Admissions for new crime violations, probation",
+               new_offense_parole_violation_admissions    = "Admissions for new crime violations, parole",
+               
+               total_prison_population                    = "Total population", overall_population = "Overall population",
                total_supervision_violation_population     = "Total probation and parole violation population",
-               probation_violation_population             = "Total probation violation population (new offense + technical)",
-               new_offense_probation_violation_population = "New offense probation violation population",
-               technical_probation_violation_population   = "Technical probation violation population",
-               parole_violation_population                = "Total parole violation population (new offense + technical)",
-               new_offense_parole_violation_population    = "New offense parole violation population",
-               technical_parole_violation_population      = "Technical parole violation population")
+               probation_violation_population             = "Total probation violation population",
+               parole_violation_population                = "Total parole violation population",
+               total_technical_violation_population       = "Total technical violation population",
+               technical_probation_violation_population   = "Technical violator population, probation",
+               technical_parole_violation_population      = "Technical violator population, parole",
+               total_new_offense_violation_population     = "Total new offense violation population",
+               new_offense_probation_violation_population = "New crime violator population, probation",
+               new_offense_parole_violation_population    = "New crime violator population, parole"
+               )
 
-adm_pop_analysis = upData(adm_pop_analysis, labels = var.labels)
+adm_pop_analysis_with_bjs_orig = upData(adm_pop_analysis_with_bjs_orig, labels = var.labels)
 
 # Save data to sharepoint
 # Define the folder and filename pattern to look for
@@ -207,4 +207,3 @@ file_name <- paste0(sp_data_path, "/Data/mclc_data_2022_", current_time, ".xlsx"
 
 # Write the Excel file
 write.xlsx(adm_pop_analysis, file = file_name)
-
