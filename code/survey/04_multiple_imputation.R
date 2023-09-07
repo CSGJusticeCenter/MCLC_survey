@@ -14,8 +14,9 @@ output:
 # AUTHOR: JSM
 #######################################
 
-# read automated_clean to get data, reformat
-# source("02_clean.R")
+# Get data, clean, and reformat
+source("code/survey/01_library_functions.R")
+source("code/survey/02_import.R")
 source("code/survey/03_clean.R")
 
 ##SETUP

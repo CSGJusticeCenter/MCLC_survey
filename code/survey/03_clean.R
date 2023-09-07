@@ -1,38 +1,14 @@
-#######################################
-# MCLC Survey
-# Imports/cleans MCLC Survey for Automated Reports
-# by MR/JSM
-# Last Updated: March 9, 2023 (MAR)
+############################################
+# Project:  MCLC Survey (2022)
+# File: clean.R
+# Last updated: September 7, 2023
 
-# Version History:
-# Version 3: Data from Google sheets
-# Version 4: Manual changes by making Maine's new offense admissions NA in Excel
-# Version 5: Replace version 4 total admissions and population with BJS numbers - not using anymore bc we're only removing MCLC data for some states not all of them
-# Version 6: Replace version 4 total admissions and population with BJS numbers for specific states flagged in Comparison_MCLC_and_BJS_data_v1.xlsx
-# Version 7: Replace version 4 total admissions and population with BJS numbers for just New Mexico, Nebraska, and Alaska (population only)
+# Format final version MCLC survey data
+# Use BJS numbers for some states
+############################################
 
-# Input: version 4 of data
-# Final: version 7 of data (3/10/23)
-#######################################
-
-# Get v4 of data and replace total admissions and total population with BJS numbers
-# Will create latest version at the end of this file
-readin <- "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
-#readin <- "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_v4.xlsx"
-
-# Get info on whether to use BJS or MCLC data by state and admissions vs population
-comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
-comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
-#comparison_bjs_mclc_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Admissions", skip = 2, col_names = TRUE)
-#comparison_bjs_mclc_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Comparison_MCLC_and_BJS_data_v1.xlsx", sheet = "Populations", skip = 1, col_names = TRUE)
-
-# Import BJS total admissions and population since these numbers are more reliable
-bjs_pop.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
-bjs_adm.xlsx <- read_excel("C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
-#bjs_pop.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx")
-#bjs_adm.xlsx <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx")
-
-
+# Get xlsx created in format_data.R
+readin <- file_name
 
 ################################
 # COSTS: read cost data for 2019-2021
@@ -209,6 +185,26 @@ var.labels = c(states                                     = "State name",
 
 adm_pop_analysis = upData(adm_pop_analysis, labels = var.labels)
 
-# Save data to sharepoint (most recent version: version 7 on 3/10/2023)
-# write.xlsx(adm_pop_analysis, file = "C:/Users/jmallett/The Council of State Governments/JC Research - Documents/50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
-#write.xlsx(adm_pop_analysis, file = "C:/Users/mroberts/The Council of State Governments/JC Research - 50 State Revocations Project/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx")
+# Save data to sharepoint
+# Define the folder and filename pattern to look for
+folder_path <- paste0(sp_data_path, "/Data/")
+# A pattern that specifically looks for filenames with timestamps
+pattern <- "^mclc_data_2022_\\d{8}_\\d{6}\\.xlsx$"
+
+# Get a list of files that match the pattern
+existing_files <- list.files(path = folder_path, pattern = pattern)
+
+# Remove existing files with system time in their names
+if (length(existing_files) > 0) {
+  sapply(paste0(folder_path, existing_files), unlink)
+}
+
+# Get system time and format it
+current_time <- format(Sys.time(), "%Y%m%d_%H%M%S")
+
+# Generate filename with current time
+file_name <- paste0(sp_data_path, "/Data/mclc_data_2022_", current_time, ".xlsx")
+
+# Write the Excel file
+write.xlsx(adm_pop_analysis, file = file_name)
+
