@@ -42,8 +42,8 @@ form_links <- form_links %>% clean_names() %>%
 #####
 
 # Import BJS total admissions and population since these numbers are more reliable
-bjs_pop.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx"))
-bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/50 State Survey (2022)/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx"))
+bjs_pop.xlsx <- read_excel(paste0(sp_data_path, "/Data/BJS - Prison Year-End Populations - 1978 to current.xlsx"))
+bjs_adm.xlsx <- read_excel(paste0(sp_data_path, "/Data/BJS - Prison Admissions & Releases - 1978 to current.xlsx"))
 
 # Get info on whether to use BJS or MCLC data by state and admissions vs population
 comparison_bjs_mclc_adm.xlsx <- read_excel(paste0(sp_data_path, "/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Admissions", skip = 2, col_names = TRUE)

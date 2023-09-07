@@ -165,12 +165,12 @@ var.labels = c(states                                     = "State name",
                probation_violation_admissions             = "Total probation violation admissions",
                parole_violation_admissions                = "Total parole violation admissions",
                total_technical_violation_admissions       = "Total technical violation admissions",
-               technical_probation_violation_admissions   = "Admissions for technical violations, probation", 
+               technical_probation_violation_admissions   = "Admissions for technical violations, probation",
                technical_parole_violation_admissions      = "Admissions for technical violations, parole",
                total_new_offense_violation_admissions     = "Total new offense violation admissions",
                new_offense_probation_violation_admissions = "Admissions for new crime violations, probation",
                new_offense_parole_violation_admissions    = "Admissions for new crime violations, parole",
-               
+
                total_prison_population                    = "Total population", overall_population = "Overall population",
                total_supervision_violation_population     = "Total probation and parole violation population",
                probation_violation_population             = "Total probation violation population",
@@ -206,4 +206,4 @@ current_time <- format(Sys.time(), "%Y%m%d_%H%M%S")
 file_name <- paste0(sp_data_path, "/Data/mclc_data_2022_", current_time, ".xlsx")
 
 # Write the Excel file
-write.xlsx(adm_pop_analysis, file = file_name)
+write.xlsx(adm_pop_analysis_with_bjs_orig, file = file_name)
