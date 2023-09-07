@@ -85,11 +85,11 @@ tablevals.pretty <- c('Overall Admissions',
 ################################################################################
 
 #read automated_clean to get data, reformat
-source("03_clean.R")
+source("code/survey/03_clean.R")
 
 #coding missings for calculating national estimates
 #REQUIRES MANUAL REVIEW OF SURVEY SUBMISSIONS/UPDATING!
-source("special_missings.R")
+source("code/survey/special_missings.R")
 
 #all flags should be 0 (w/few exceptions) - if there is a 1 then check state and logic
 table(check.dat$flag_error.na) #flag new offense violation admissions logic
@@ -119,7 +119,7 @@ yearnum <- 1:length(year)
 refnum  <- 1:(max(yearnum)-1)
 
 #calculate imputed values (multiple imputation)
-source("MImp1.R")
+source("code/survey/MImp1.R")
 
 ######
 #produce confidence intervals
@@ -127,7 +127,7 @@ source("MImp1.R")
 #grab response columns for creating estimated counts/CIs
 ######
 
-source("MImp2.R")
+source("code/survey/MImp2.R")
 
 ##############################################################
 ################## CREATE A TABLE HERE #######################
@@ -184,12 +184,12 @@ tab.full <- tab.full1 %>%
 ###############CALCULATING STATE ESTIMATES
 #############################################################################
 
-source("MImp3.R")
+source("code/survey/MImp3.R")
 
 #############################
 ###COSTS#####################
 
-source("Costs.R")
+source("code/survey/Costs.R")
 
 ```
 

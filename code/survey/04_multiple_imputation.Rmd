@@ -76,7 +76,7 @@ var.labels = c(year                                       = "Year",
 ################################################################################
 
 #calculate imputed values (multiple imputation)
-source("MImp1.R")
+source("code/survey/MImp1.R")
 
 ######
 #produce confidence intervals
@@ -84,7 +84,7 @@ source("MImp1.R")
 #grab response columns for creating estimated counts/CIs
 ######
 
-source("MImp2.R")
+source("code/survey/MImp2.R")
 
 ##############################################################
 ##################CREATE A TABLE HERE!!!!!!!!!!!!#############
@@ -160,12 +160,12 @@ tab.full <- data.table(cbind(table2018$Estimate,table2019$Estimate,table2020$Est
 ###############CALCULATING STATE ESTIMATES
 #############################################################################
 
-source("MImp3.R")
+source("code/survey/MImp3.R")
 
 #############################
 ###COSTS#####################
 
-source("Costs.R")
+source("code/survey/Costs.R")
 
 ```
 

@@ -8,6 +8,10 @@
 ############################################
 
 # Get xlsx created in format_data.R
+source("code/survey/00_library_functions.R")
+source("code/survey/01_import.R")
+source("code/survey/02_format_data.R")
+
 readin <- file_name
 
 ################################
