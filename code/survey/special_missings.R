@@ -67,7 +67,7 @@ replaceit <- function(whichstate, missval, var, pickyear, x, whichyear = year, m
 #clean up missing data and incorrectly reported data
 #if the lowest level of aggregation is non-missing for both probation and parole (e.g., technical violation admissions probation/parole), then sum to create total (e.g., total technical violation admissions)
 #if the lowest level of aggregation is missing for either or both probation and parole (e.g., technical violation admissions probation/parole), then summed total is MISSING for total (e.g., total technical violation admissions)
-adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs %>%
+adm_pop_analysis_with_bjs1 <- adm_pop_analysis_with_bjs_orig %>%
   mutate(
     #fix column type
     total_prison_admissions = as.numeric(total_prison_admissions),

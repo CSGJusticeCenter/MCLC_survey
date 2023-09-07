@@ -4,24 +4,28 @@
 #Take state-level estimates and calculate costs
 ################################################################################
 
-#just for state-level cost report REQUIRES UPDATING!!!
+#just for state-level cost report
 #all aggregations except overall
 forreport           <- national.est[,grepl(paste0("population",last(refyear)), names(national.est))] %>% select(-c(starts_with("overall"),contains("_probation_"),contains("_parole_")))
 #remove year from column names
 colnames(forreport) <-gsub(last(year), "", colnames(forreport))
 
-#use non-imputed data for calculating costs by state
-forreport.state <- adm_pop_analysis_with_bjs[,c("states","year","total_supervision_violation_population","technical_parole_violation_population","technical_probation_violation_population")] %>%
+#use non-imputed, original, state-reported data for calculating costs by state
+forreport.state <- adm_pop_analysis_with_bjs_orig[,c("states","year",
+                                                     "probation_violation_population",
+                                                     "parole_violation_population",
+                                                     "technical_parole_violation_population",
+                                                     "technical_probation_violation_population")] %>%
   filter(year==as.numeric(last(refyear))) %>%
-  mutate(technical_violator_population.NA          = case_when(as.numeric(technical_probation_violation_population) >= 0 & as.numeric(technical_parole_violation_population) >= 0 ~ 
-                                                                 as.numeric(technical_probation_violation_population) + as.numeric(technical_parole_violation_population),
-                                                               TRUE ~ NA_real_),
-         total_supervision_violation_population.NA = case_when(as.numeric(total_supervision_violation_population) >= 0 ~ as.numeric(total_supervision_violation_population),
-                                                               TRUE ~ NA_real_)
-         ) %>%
+  dplyr::rename(
+    probation_violation_population.NA           = probation_violation_population,
+    parole_violation_population.NA              = parole_violation_population,
+    technical_parole_violation_population.NA    = technical_parole_violation_population,
+    technical_probation_violation_population.NA = technical_probation_violation_population
+  ) %>%
   arrange(states) %>%
   column_to_rownames(var="states") %>%
-  select(-c(year,technical_probation_violation_population,technical_parole_violation_population,total_supervision_violation_population))
+  select(-c(year))
 
 cost.final <- costs %>%
   mutate(
@@ -38,9 +42,11 @@ cost.final <- costs %>%
     cost.tvp      = (Cost.now*365*total_technical_violation_population),
     cost.novp     = (Cost.now*365*total_new_offense_violation_population),
     
-    #state costs
-    cost.vp.state    = (Cost.now*365*total_supervision_violation_population.NA),
-    cost.tvp.state   = (Cost.now*365*technical_violator_population.NA)
+    #original state-reported costs
+    cost.pr.state    = as.numeric(Cost.now*365*probation_violation_population.NA),
+    cost.pa.state    = as.numeric(Cost.now*365*parole_violation_population.NA),
+    cost.tpa.state   = as.numeric(Cost.now*365*technical_parole_violation_population.NA),
+    cost.tpr.state   = as.numeric(Cost.now*365*technical_probation_violation_population.NA)
     ) %>%
   dplyr::rename(State=state) 
 

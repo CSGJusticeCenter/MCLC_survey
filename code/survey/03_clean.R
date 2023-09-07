@@ -177,7 +177,7 @@ comparison_bjs_mclc_pop <- comparison_bjs_mclc_pop %>%
 ##############
 
 # Replace total admissions and total population with BJS numbers for specific states
-adm_pop_analysis_with_bjs <- adm_pop_analysis %>%
+adm_pop_analysis_with_bjs_orig <- adm_pop_analysis %>%
   left_join(comparison_bjs_mclc_adm, by = c("states", "year")) %>%
   left_join(comparison_bjs_mclc_pop, by = c("states", "year")) %>%
   mutate(
@@ -191,7 +191,7 @@ adm_pop_analysis_with_bjs <- adm_pop_analysis %>%
   select(-c(total_prison_population_bjs,total_prison_admissions_bjs))
 
 # Make Maine's new offense violations NA
-adm_pop_analysis_with_bjs <- adm_pop_analysis_with_bjs %>%
+adm_pop_analysis_with_bjs_orig <- adm_pop_analysis_with_bjs_orig %>%
   mutate(total_new_offense_violation_admissions = ifelse(states == "Maine", NA, total_new_offense_violation_admissions))
 
 # add labels
@@ -220,7 +220,7 @@ var.labels = c(states                                     = "State name",
                new_offense_parole_violation_population    = "New crime violator population, parole"
                )
 
-adm_pop_analysis_with_bjs = upData(adm_pop_analysis_with_bjs, labels = var.labels)
+adm_pop_analysis_with_bjs_orig = upData(adm_pop_analysis_with_bjs_orig, labels = var.labels)
 
 # Save data to sharepoint (most recent version: version 9 on 4/18/2023)
-# write.xlsx(adm_pop_analysis_with_bjs, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx"))
+# write.xlsx(adm_pop_analysis_with_bjs_orig, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_TEST.xlsx"))
