@@ -36,7 +36,9 @@ library(scales)
 library(xtable)
 
 #read automated_clean to get data, reformat
-source("03_clean.R")
+source("code/survey/01_library_functions.R")
+source("code/survey/02_import.R")
+source("code/survey/03_clean.R")
 
 ##SETUP
 #years of data

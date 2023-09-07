@@ -61,7 +61,8 @@ state_data <- state_data_all %>%
   gather(key = "year", value = "total", year_2018:year_2021, factor_key = TRUE) %>%
   spread(key = "metric", value = "total") %>%
   clean_names() %>%
-  mutate(year = as.numeric(str_remove_all(year, "year_"))) %>%
+  mutate(year = as.numeric(str_remove_all(year, "year_")),
+         state = str_replace_all(state, "\\.", " ")) %>%
   select(
     state, year,
     # admissions
