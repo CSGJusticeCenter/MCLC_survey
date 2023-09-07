@@ -8,14 +8,14 @@
 #set_title - title of report
 #yearofsurvey - this is the latest data year collected from the MCLC survey (numeric)
 
-rmarkdown::render('05_multiple_imputation.Rmd',
+rmarkdown::render('code/survey/05_multiple_imputation.Rmd',
                   #output_format = Gmisc::docx_document(),
                   output_format  = "html_document",
                   output_file = paste0(
                     'MCLCestimates_v',
                     "1",
                     "_",
-                    Sys.Date(), 
+                    Sys.Date(),
                     '.html'
                   ),
                   params = list(

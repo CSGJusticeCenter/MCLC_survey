@@ -206,4 +206,4 @@ current_time <- format(Sys.time(), "%Y%m%d_%H%M%S")
 file_name <- paste0(sp_data_path, "/Data/mclc_data_2022_", current_time, ".xlsx")
 
 # Write the Excel file
-write.xlsx(adm_pop_analysis_with_bjs_orig, file = file_name)
+write.xlsx(adm_pop_analysis, file = file_name)
