@@ -8,7 +8,7 @@
 #######################################
 
 # check to see if states input the same values twice
-check_repeated_values <- adm_pop_analysis_with_bjs %>%
+check_repeated_values <- adm_pop_analysis_with_bjs_orig %>%
 
   # change data to numeric
   mutate(states = as.factor(states)) %>%
@@ -200,7 +200,7 @@ check_repeated_values <- adm_pop_analysis_with_bjs %>%
   distinct()
 
 # check to see if data adds up in the way we expect
-check_math <- adm_pop_analysis_with_bjs %>%
+check_math <- adm_pop_analysis_with_bjs_orig %>%
 
   # change data to numeric
   mutate(states = as.factor(states)) %>%
