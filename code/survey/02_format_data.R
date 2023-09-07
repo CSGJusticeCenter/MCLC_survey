@@ -1,9 +1,7 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: format_data.R
-# Last updated: April 18, 2023 (MAR)
-# Author: Mari Roberts
-
+# Last updated: September 7, 2023
 # Format MCLC survey data
 ############################################
 
@@ -13,21 +11,22 @@
 
 ################################################################################
 
-# Create empty list
-df_final <- list()
+# Get state names
+states <- state.name
 
-costs <- map(.x = states,  .f = function(x) {
-  df_state <- state_dfs[[x]]
-  df_final[x] <- fnc_extract_costs(df_state, x)
+# Extract data and row-bind it into a data frame
+costs <- purrr::map_dfr(states, function(x) {
+  state_name <- make.names(x)
+  df_state <- state_dfs[[state_name]]
+  fnc_extract_costs(df_state, state_name)
 })
 
-# Change list into a data frame
-costs <- bind_rows(costs)
-
-# Replace strings concerning no data to NA
-costs[costs == "No Data" ]    <- NA
-costs[costs == "null" ]       <- NA
-costs[costs == "Left Blank" ] <- NA
+# Replace specified strings with NA in one step
+costs <- costs %>%
+  mutate(across(everything(), ~na_if(., "No Data"))) %>%
+  mutate(across(everything(), ~na_if(., "null"))) %>%
+  mutate(across(everything(), ~na_if(., "Left Blank"))) %>%
+  select(state, everything())
 
 ################################################################################
 
@@ -35,25 +34,21 @@ costs[costs == "Left Blank" ] <- NA
 
 ################################################################################
 
-# Create empty list
-df_final <- list()
+# Get state names
+states <- state.name
 
-# Run custom function to extract admissions and population data
-# Ignore warnings - can't make NA's numeric so there is a warning
-state_data_all <- map(.x = states,  .f = function(x) {
-  df_state <- state_dfs[[x]]
-  df_final[x] <- fnc_extract_data(df_state, x)
+# Extract data and row-bind it into a data frame
+state_data_all <- purrr::map_dfr(states, function(x) {
+  state_name <- make.names(x)
+  df_state <- state_dfs[[state_name]]
+  fnc_extract_data(df_state, state_name)
 })
 
-# change list into a data frame and arrange columns
-state_data_all <- bind_rows(state_data_all)
-
-# remove commas and make data numeric
+# Remove commas and make data numeric
+# Generation of NA's expected (i.e., changes "Left Blank" to NA)
 state_data_all <- state_data_all %>%
-  mutate(year_2018 = as.numeric(gsub(",","",year_2018)),
-         year_2019 = as.numeric(gsub(",","",year_2019)),
-         year_2020 = as.numeric(gsub(",","",year_2020)),
-         year_2021 = as.numeric(gsub(",","",year_2021)))
+  mutate(across(starts_with("year_"), ~as.numeric(gsub(",", "", .))))
+
 
 ################################################################################
 
@@ -61,65 +56,66 @@ state_data_all <- state_data_all %>%
 
 ################################################################################
 
-# Reshape data so variables are columns and states are rows
-state_data <- gather(state_data_all, year, total, year_2018:year_2021, factor_key=TRUE)
-state_data <- spread(state_data, metric, total)
+state_data <- state_data_all %>%
+  gather(key = "year", value = "total", year_2018:year_2021, factor_key = TRUE) %>%
+  spread(key = "metric", value = "total") %>%
+  clean_names() %>%
+  mutate(year = as.numeric(str_remove_all(year, "year_"))) %>%
+  select(
+    state, year,
+    # admissions
+    total_prison_admissions,
+    total_supervision_violation_admissions,
+    probation_violation_admissions,
+    parole_violation_admissions,
+    total_technical_violation_admissions,
+    technical_probation_violation_admissions,
+    technical_parole_violation_admissions,
+    total_new_offense_admissions,
+    new_offense_probation_violation_admissions,
+    new_offense_parole_violation_admissions,
+    # population
+    total_prison_population,
+    total_supervision_violation_population,
+    probation_violation_population,
+    parole_violation_population,
+    total_technical_violation_population,
+    technical_probation_violation_population,
+    technical_parole_violation_population,
+    total_new_offense_population,
+    new_offense_probation_violation_population,
+    new_offense_parole_violation_population
+  )
 
-# Order variables
-state_data <- state_data  %>% clean_names() %>%
-  mutate(year = str_remove_all(year, "year_")) %>%
-  select(state,
-         year,
+# Create "sheet" for each data year
+# Admissions
+adm_2018 <- state_data %>%
+  filter(year == 2018) %>%
+  select(state, year, ends_with("_admissions"))
+adm_2019 <- state_data %>%
+  filter(year == 2019) %>%
+  select(state, year, ends_with("_admissions"))
+adm_2020 <- state_data %>%
+  filter(year == 2020) %>%
+  select(state, year, ends_with("_admissions"))
+adm_2021 <- state_data %>%
+  filter(year == 2021) %>%
+  select(state, year, ends_with("_admissions"))
 
-         # admissions
-         total_prison_admissions,
-         total_supervision_violation_admissions,
-
-         probation_violation_admissions,
-         parole_violation_admissions,
-
-         total_technical_violation_admissions,
-         technical_probation_violation_admissions,
-         technical_parole_violation_admissions,
-
-         total_new_offense_admissions,
-         new_offense_probation_violation_admissions,
-         new_offense_parole_violation_admissions,
-
-         # population
-         total_prison_population,
-         total_supervision_violation_population,
-
-         probation_violation_population,
-         parole_violation_population,
-
-         total_technical_violation_population,
-         technical_probation_violation_population,
-         technical_parole_violation_population,
-
-         total_new_offense_population,
-         new_offense_probation_violation_population,
-         new_offense_parole_violation_population)
-
-# Create "sheet" for each adm data year
-# Same format as last year
-adm_2018 <- state_data %>% filter(year == 2018) %>%
-  select(state, year, total_prison_admissions:new_offense_parole_violation_admissions)
-adm_2019 <- state_data %>% filter(year == 2019) %>%
-  select(state, year, total_prison_admissions:new_offense_parole_violation_admissions)
-adm_2020 <- state_data %>% filter(year == 2020) %>%
-  select(state, year, total_prison_admissions:new_offense_parole_violation_admissions)
-adm_2021 <- state_data %>% filter(year == 2021) %>%
-  select(state, year, total_prison_admissions:new_offense_parole_violation_admissions)
-
-pop_2018 <- state_data %>% filter(year == 2018) %>%
-  select(state, year, total_prison_population:new_offense_parole_violation_population)
-pop_2019 <- state_data %>% filter(year == 2019) %>%
-  select(state, year, total_prison_population:new_offense_parole_violation_population)
-pop_2020 <- state_data %>% filter(year == 2020) %>%
-  select(state, year, total_prison_population:new_offense_parole_violation_population)
-pop_2021 <- state_data %>% filter(year == 2021) %>%
-  select(state, year, total_prison_population:new_offense_parole_violation_population)
+# Create "sheet" for each population data year
+# Population
+pop_2018 <- state_data %>%
+  filter(year == 2018) %>%
+  select(state, year, ends_with("_population"))
+pop_2019 <- state_data %>%
+  filter(year == 2019) %>%
+  select(state, year, ends_with("_population"))
+pop_2020 <- state_data %>%
+  filter(year == 2020) %>%
+  select(state, year, ends_with("_population"))
+pop_2021 <- state_data %>%
+  filter(year == 2021) %>%
+  select(state, year, ends_with("_population"))
 
 # Write each data frame as a sheet into an excel workbook
 mclc_data_2022 <- list('Admissions 2018' = adm_2018,
@@ -133,5 +129,25 @@ mclc_data_2022 <- list('Admissions 2018' = adm_2018,
                        'Population 2021' = pop_2021,
                        'Costs'           = costs)
 
-# Save data to sharepoint (last version: mclc_data_2022_04_13_2023.xlsx)
-# # write.xlsx(mclc_data_2022, file = paste0(sp_data_path, "/50 State Survey (2022)/Data/mclc_data_2022_04_18_2023.xlsx"))
+# Save data to sharepoint
+# Define the folder and filename pattern to look for
+folder_path <- paste0(sp_data_path, "/Data/")
+# A pattern that specifically looks for filenames with timestamps
+pattern <- "^mclc_pre_data_2022_\\d{8}_\\d{6}\\.xlsx$"
+
+# Get a list of files that match the pattern
+existing_files <- list.files(path = folder_path, pattern = pattern)
+
+# Remove existing files with system time in their names
+if (length(existing_files) > 0) {
+  sapply(paste0(folder_path, existing_files), unlink)
+}
+
+# Get system time and format it
+current_time <- format(Sys.time(), "%Y%m%d_%H%M%S")
+
+# Generate filename with current time
+file_name <- paste0(sp_data_path, "/Data/mclc_pre_data_2022_", current_time, ".xlsx")
+
+# Write the Excel file
+write.xlsx(mclc_data_2022, file = file_name)

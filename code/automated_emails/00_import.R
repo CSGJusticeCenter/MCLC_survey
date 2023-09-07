@@ -1,11 +1,10 @@
 ############################################
 # Project:  MCLC Survey (2022)
 # File: import.R
-# Last updated:October 19, 2022
-# Author: Mari Roberts
+# Last updated: October 19, 2022
 
-# Load data directly from google sheets
-# Each state has it's own google sheet
+# Load data directly from Google sheets
+# Each state has it's own Google sheet
 # Previous survey file: Data for web team 2021 v13.xlsx
 ############################################
 
