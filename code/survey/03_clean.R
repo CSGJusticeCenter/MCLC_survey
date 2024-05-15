@@ -1,18 +1,19 @@
 ############################################
 # Project:  MCLC Survey (2022)
-# File: clean.R
+# File: 03_clean.R
 # Last updated: September 7, 2023
 
 # Format final version MCLC survey data
 # Use BJS numbers for some states
 ############################################
 
-# Get xlsx created in format_data.R
-source("code/survey/00_library_functions.R")
-source("code/survey/01_import.R")
-source("code/survey/02_format_data.R")
+sp_data_path <- csgjcr::csg_sp_path(file.path("50 State Revocations Project",
+                                              "50 State Survey (2022)"))
+readin       <- paste0(sp_data_path, "/Data/mclc_pre_data_2022.xlsx")
 
-readin <- file_name
+# Get info on whether to use BJS or MCLC data by state and admissions vs population
+comparison_bjs_mclc_adm.xlsx <- read_excel(paste0(sp_data_path, "/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Admissions", skip = 2, col_names = TRUE)
+comparison_bjs_mclc_pop.xlsx <- read_excel(paste0(sp_data_path, "/Comparison_MCLC_and_BJS_data_v1.xlsx"), sheet = "Populations", skip = 1, col_names = TRUE)
 
 ################################
 # COSTS: read cost data for 2019-2021
@@ -189,25 +190,4 @@ var.labels = c(states                                     = "State name",
 
 adm_pop_analysis_with_bjs_orig = upData(adm_pop_analysis_with_bjs_orig, labels = var.labels)
 
-# Save data to sharepoint
-# Define the folder and filename pattern to look for
-folder_path <- paste0(sp_data_path, "/Data/")
-# A pattern that specifically looks for filenames with timestamps
-pattern <- "^mclc_data_2022_\\d{8}_\\d{6}\\.xlsx$"
-
-# Get a list of files that match the pattern
-existing_files <- list.files(path = folder_path, pattern = pattern)
-
-# Remove existing files with system time in their names
-if (length(existing_files) > 0) {
-  sapply(paste0(folder_path, existing_files), unlink)
-}
-
-# Get system time and format it
-current_time <- format(Sys.time(), "%Y%m%d_%H%M%S")
-
-# Generate filename with current time
-file_name <- paste0(sp_data_path, "/Data/mclc_data_2022_", current_time, ".xlsx")
-
-# Write the Excel file
-write.xlsx(adm_pop_analysis, file = file_name)
+write.xlsx(adm_pop_analysis_with_bjs_orig, file = paste0(sp_data_path, "/Data/mclc_data_2022.xlsx"))
