@@ -25,11 +25,6 @@ source("code/automated_emails/06_create_email.R")
 # connect to outlook
 outlb <- get_business_outlook()
 
-########
-# First email to be sent out on September 14, 2022
-# Second email to be sent out on September 21, 2022
-########
-
 # loop through states and send email to contact
 for(i in 1:length(states)){
   # assign state name
@@ -45,8 +40,8 @@ for(i in 1:length(states)){
   state_email_name <- get(paste0("email_", state_name,sep=''))
 
   # create email
-  # the commented out line will send to mari instead of contact
-  state_email <- outlb$create_email(state_email_name, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = "mroberts@csg.org")
+  # the commented out line will send to contact instead of CSG staff
+  state_email <- outlb$create_email(state_email_name, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = "mroberts@csg.org", cc = c("meichlersmith@csg.org"))
   # state_email <- outlb$create_email(state_email_name, content_type = "html")$set_subject(paste(subject_line_text))$set_recipients(to = contact_info, cc = c("jmallett@csg.org", "agunter@csg.org", "mroberts@csg.org"))
 
   # send email
