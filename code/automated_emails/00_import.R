@@ -40,7 +40,7 @@ library(openxlsx)
 #####
 
 # Get sharepoint path to get previous survey in 2021 folder.
-sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2021)", "Data"))
+sp_data_path <- csgjcr::csg_sp_path(file.path("50 State Revocations Project","50 State Survey (2021)", "Data"))
 
 # Import survey data submitted in 2021 to compare with new submissions in 2022.
 # This way we will know who changed their data for 2018, 2019, and 2020.
@@ -61,10 +61,10 @@ costs <- read_excel(paste0(sp_data_path, "/Data for web team 2021 v13.xlsx", sep
 
 # Get sharepoint path to get Google form links.
 # Will use these in the email.
-sp_data_path <- csgjcr::csg_sp_path(file.path("JC Research - 50 State Revocations Project","50 State Survey (2022)"))
-form_links <- read_excel(paste0(sp_data_path, "/MCLC 2022 Progress Tracking.xlsx", sep = ""))
+sp_data_path <- csgjcr::csg_sp_path(file.path("50 State Revocations Project","50 State Survey (2022)"))
+form_links <- read_excel(paste0(sp_data_path, "/MCLC Overview.xlsx", sep = ""))
 form_links <- form_links %>% clean_names() %>% filter(!grepl('Excel', state)) %>%
-  select(state, form_link = google_sheet_link_folder_https_drive_google_com_drive_folders_1i_tbzusu_cd9y_t_dk_rz_kuc_popp_q2on_kr_cv_usp_sharing)
+  select(state, form_link = google_sheet_link)
 
 ###################    Attention    #####################
 
